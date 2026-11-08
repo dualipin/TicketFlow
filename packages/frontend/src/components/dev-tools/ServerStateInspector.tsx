@@ -64,7 +64,7 @@ export const ServerStateInspector: React.FC<ServerStateInspectorProps> = ({
   const cachedQueries = queryClient.getQueryCache().getAll();
 
   return (
-    <Card className="p-4 shadow-xs bg-card/80 backdrop-blur-xs transition-all gap-0">
+    <Card className="p-4 rounded-xl border border-border bg-card transition-all gap-0">
       <CardHeader className="p-0 flex flex-wrap flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <div className="flex size-7 items-center justify-center rounded-md bg-primary/10 text-primary">
@@ -122,7 +122,7 @@ export const ServerStateInspector: React.FC<ServerStateInspectorProps> = ({
       </CardHeader>
 
       {isOpen && (
-        <CardContent className="p-0 mt-4 space-y-4 pt-4 border-t border-border/60 text-xs animate-in fade-in duration-200">
+        <CardContent className="p-0 mt-4 flex flex-col gap-4 pt-4 border-t border-border/60 text-xs animate-in fade-in duration-200">
           {/* Interactive targeted invalidation triggers */}
           <div>
             <span className="text-[11px] font-semibold text-foreground uppercase tracking-wider block mb-2">
@@ -168,7 +168,7 @@ export const ServerStateInspector: React.FC<ServerStateInspectorProps> = ({
                 <Sparkles className="size-3 text-primary" />
                 Jerarquía de Claves del Dominio Tickets
               </span>
-              <ul className="space-y-1 font-mono text-[11px] text-muted-foreground">
+              <ul className="flex flex-col gap-1 font-mono text-[11px] text-muted-foreground">
                 <li className="flex items-center gap-1.5">
                   <span className="text-primary font-bold">1. All:</span>
                   <span>{JSON.stringify(ticketsKeys.all)}</span>
@@ -199,7 +199,7 @@ export const ServerStateInspector: React.FC<ServerStateInspectorProps> = ({
                 <Database className="size-3 text-emerald-600 dark:text-emerald-400" />
                 Separación de Responsabilidades
               </span>
-              <div className="space-y-1 text-[11px] text-muted-foreground leading-relaxed">
+              <div className="flex flex-col gap-1 text-[11px] text-muted-foreground leading-relaxed">
                 <p>
                   <strong className="text-foreground">Estado del Servidor:</strong> Gestionado
                   exclusivamente por TanStack Query (datos de tickets, clientes, bitácora y pagos).

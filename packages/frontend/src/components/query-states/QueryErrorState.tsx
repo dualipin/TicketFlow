@@ -36,7 +36,7 @@ export const QueryErrorState: React.FC<QueryErrorStateProps> = ({
     <Alert variant="destructive" className="p-4 sm:p-5">
       <ServerCrash className="size-5 shrink-0" />
 
-      <div className="flex-1 space-y-2">
+      <div className="flex-1 flex flex-col gap-2">
         <div className="flex items-center gap-2">
           <AlertTitle className="text-sm font-semibold">{title}</AlertTitle>
           {isSimulated && (

@@ -3,6 +3,7 @@ import type { TicketEstado } from '../../api/types.ts';
 import { useUpdateTicketStatus } from '../../queries/tickets/mutations.ts';
 import { Button } from '../ui/button.tsx';
 import { Spinner } from '../ui/spinner.tsx';
+import { toast } from '../ui/sonner.tsx';
 import { cn } from '../../lib/utils.ts';
 
 interface TicketStatusChangerProps {
@@ -40,16 +41,24 @@ export const TicketStatusChanger: React.FC<TicketStatusChangerProps> = ({
       },
       {
         onSuccess: () => {
+          toast.success(`Estado actualizado`, {
+            description: `Folio #${ticketId} cambió a ${newStatus}`,
+          });
           onSuccess?.();
+        },
+        onError: (err: any) => {
+          toast.error(`Error al cambiar estado`, {
+            description: err?.message || 'No se pudo actualizar el ticket.',
+          });
         },
       }
     );
   };
 
   return (
-    <div className={cn('flex flex-wrap items-center gap-1', className)}>
-      <span className="text-[11px] font-medium text-muted-foreground mr-1">
-        Cambiar a:
+    <div className={cn('flex flex-wrap items-center gap-1.5', className)}>
+      <span className="text-[11px] font-normal text-muted-foreground mr-1">
+        Estado:
       </span>
       {statusOptions.map((opt) => {
         const isCurrent = opt.value === currentStatus;
@@ -62,13 +71,15 @@ export const TicketStatusChanger: React.FC<TicketStatusChangerProps> = ({
           <Button
             key={opt.value}
             type="button"
-            variant={isCurrent ? 'secondary' : 'outline'}
+            variant={isCurrent ? 'default' : 'outline'}
             size="xs"
             disabled={isCurrent || updateStatus.isPending}
             onClick={() => handleSelect(opt.value)}
             className={cn(
-              'h-6 px-2 text-[11px] select-none',
-              isCurrent && 'bg-primary/15 text-primary border-primary/30 font-semibold cursor-default hover:bg-primary/15 hover:text-primary'
+              'h-5.5 px-2 text-[11px] select-none rounded-full',
+              isCurrent
+                ? 'bg-primary text-primary-foreground cursor-default font-normal'
+                : 'text-muted-foreground hover:text-foreground border-border/80'
             )}
             title={`Cambiar a ${opt.label}`}
           >

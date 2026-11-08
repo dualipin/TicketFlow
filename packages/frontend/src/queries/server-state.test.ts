@@ -3,6 +3,9 @@ import { QueryClient } from '@tanstack/react-query';
 import { ticketsKeys } from './tickets/keys.ts';
 import { ticketsQueries } from './tickets/queries.ts';
 import { clientesKeys } from './clientes/keys.ts';
+import { inventarioKeys } from './inventario/keys.ts';
+import { corteCajaKeys } from './corte-caja/keys.ts';
+import { posKeys } from './pos/keys.ts';
 import type { Ticket, TicketFilters } from '../api/types.ts';
 import { ApiClientError } from '../api/client.ts';
 
@@ -257,3 +260,74 @@ describe('5. Separation of Client State vs Server State', () => {
     expect(key2).toEqual(['tickets', 'list', { estado: 'RECIBIDO', q: 'Samsung' }]);
   });
 });
+
+describe('6. POS, Inventario & Corte de Caja Domain Query Keys', () => {
+  it('generates predictable query keys for inventario', () => {
+    expect(inventarioKeys.all).toEqual(['inventario']);
+    expect(inventarioKeys.categorias()).toEqual(['inventario', 'categorias']);
+    expect(inventarioKeys.productos()).toEqual(['inventario', 'productos']);
+    expect(inventarioKeys.productosList({ esServicio: 1 })).toEqual([
+      'inventario',
+      'productos',
+      { esServicio: 1 },
+    ]);
+    expect(inventarioKeys.variaciones()).toEqual(['inventario', 'variaciones']);
+    expect(inventarioKeys.variacionesList({ codigo: 'SKU-1' })).toEqual([
+      'inventario',
+      'variaciones',
+      { codigo: 'SKU-1' },
+    ]);
+  });
+
+  it('generates predictable query keys for corte-caja', () => {
+    expect(corteCajaKeys.all).toEqual(['corte-caja']);
+    expect(corteCajaKeys.activo()).toEqual(['corte-caja', 'activo']);
+    expect(corteCajaKeys.list()).toEqual(['corte-caja', 'list']);
+    expect(corteCajaKeys.detail(5)).toEqual(['corte-caja', 'detail', 5]);
+  });
+
+  it('generates predictable query keys for pos ventas', () => {
+    expect(posKeys.all).toEqual(['pos']);
+    expect(posKeys.ventas()).toEqual(['pos', 'ventas']);
+    expect(posKeys.lists()).toEqual(['pos', 'ventas', 'list']);
+    expect(posKeys.list({ corteCajaId: 1 })).toEqual([
+      'pos',
+      'ventas',
+      'list',
+      { corteCajaId: 1 },
+    ]);
+    expect(posKeys.detail(10)).toEqual(['pos', 'ventas', 'detail', 10]);
+  });
+});
+
+describe('7. POS Sale Cross-Domain Targeted Invalidation', () => {
+  it('invalidates sales, active cash drawer, and inventory stock without wiping tickets or clients', async () => {
+    const queryClient = new QueryClient();
+
+    const posListKey = posKeys.list();
+    const activeCorteKey = corteCajaKeys.activo();
+    const variacionesKey = inventarioKeys.variacionesList();
+    const ticketListKey = ticketsKeys.list();
+    const clientListKey = clientesKeys.list();
+
+    queryClient.setQueryData(posListKey, []);
+    queryClient.setQueryData(activeCorteKey, { activo: true, corte: null });
+    queryClient.setQueryData(variacionesKey, []);
+    queryClient.setQueryData(ticketListKey, [mockTicket1]);
+    queryClient.setQueryData(clientListKey, [mockTicket1.cliente]);
+
+    // Simulate cross-domain invalidation performed on successful sale checkout
+    await queryClient.invalidateQueries({ queryKey: posKeys.lists() });
+    await queryClient.invalidateQueries({ queryKey: corteCajaKeys.activo() });
+    await queryClient.invalidateQueries({ queryKey: inventarioKeys.variaciones() });
+
+    // Assert POS, Corte and Inventory are invalidated
+    expect(queryClient.getQueryCache().find({ queryKey: posListKey })?.state.isInvalidated).toBe(true);
+    expect(queryClient.getQueryCache().find({ queryKey: activeCorteKey })?.state.isInvalidated).toBe(true);
+    expect(queryClient.getQueryCache().find({ queryKey: variacionesKey })?.state.isInvalidated).toBe(true);
+
+    // Assert tickets and clients are unaffected
+    expect(queryClient.getQueryCache().find({ queryKey: ticketListKey })?.state.isInvalidated).toBe(false);
+    expect(queryClient.getQueryCache().find({ queryKey: clientListKey })?.state.isInvalidated).toBe(false);
+  });
+  });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { RefreshCw } from 'lucide-react';
+import { ThinkingOrb } from 'thinking-orbs';
 import { cn } from '../../lib/utils.ts';
 
 interface BackgroundRefetchIndicatorProps {
@@ -29,7 +29,7 @@ export const BackgroundRefetchIndicator: React.FC<BackgroundRefetchIndicatorProp
         className
       )}
     >
-      <RefreshCw className="size-3 animate-spin text-sky-600 dark:text-sky-400" />
+      <ThinkingOrb state="connecting" size={20} aria-hidden="true" />
       <span>{label}</span>
     </div>
   );

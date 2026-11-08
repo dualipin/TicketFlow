@@ -10,6 +10,7 @@ import type {
   UpdateTicketStatusInput,
 } from '../../api/types.ts';
 import { clientesKeys } from '../clientes/keys.ts';
+import { corteCajaKeys } from '../corte-caja/keys.ts';
 import { ticketsKeys } from './keys.ts';
 
 interface StatusMutationContext {
@@ -239,6 +240,7 @@ export function useRegisterPago() {
     onSettled: (_data, _error, variables) => {
       queryClient.invalidateQueries({ queryKey: ticketsKeys.detail(variables.ticketId) });
       queryClient.invalidateQueries({ queryKey: ticketsKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: corteCajaKeys.activo() });
     },
   });
 }
@@ -259,6 +261,7 @@ export function useCreateTicket() {
     onSettled: (createdTicket) => {
       // Invalidate ticket list queries so new ticket shows up
       queryClient.invalidateQueries({ queryKey: ticketsKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: corteCajaKeys.activo() });
       // Invalidate client queries since customer might have been created or had tickets updated
       queryClient.invalidateQueries({ queryKey: clientesKeys.all });
 

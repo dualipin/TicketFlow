@@ -111,11 +111,11 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
         className="w-full sm:max-w-xl p-0 flex flex-col h-full bg-background/95 backdrop-blur-md"
       >
         {/* Top Header */}
-        <SheetHeader className="px-5 py-4 border-b border-border/80 bg-muted/20">
+        <SheetHeader className="px-5 py-4 border-b border-border bg-muted/20">
           <div className="flex items-center justify-between">
-            <div className="space-y-1">
+            <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <SheetTitle className="font-mono text-base font-bold text-foreground">
+                <SheetTitle className="font-mono text-base font-semibold text-foreground">
                   {ticket?.folio ?? `Ticket #${ticketId}`}
                 </SheetTitle>
                 {ticket && <TicketStatusBadge estado={ticket.estado} size="sm" />}
@@ -147,7 +147,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-6">
+        <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-5">
           {isPending && (
             <QueryLoadingState count={3} message="Cargando ficha del ticket..." />
           )}
@@ -163,8 +163,8 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
           {ticket && (
             <>
               {/* Quick Actions Bar */}
-              <Card className="p-3 shadow-2xs gap-2">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <Card className="p-3.5 rounded-xl border border-border bg-card gap-2">
+                <span className="text-[11px] font-normal uppercase tracking-wider text-muted-foreground">
                   Transición rápida de estado
                 </span>
                 <TicketStatusChanger
@@ -179,7 +179,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
               </Card>
 
               {/* General Information Card */}
-              <Card className="p-4 shadow-2xs gap-3">
+              <Card className="p-4 rounded-xl border border-border bg-card gap-3">
                 <CardHeader className="p-0">
                   <CardTitle className="text-xs font-semibold text-primary flex items-center gap-2">
                     <Smartphone className="size-4" />
@@ -187,12 +187,12 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                   </CardTitle>
                 </CardHeader>
 
-                <CardContent className="p-0 space-y-3">
+                <CardContent className="p-0 flex flex-col gap-3">
                   <div>
                     <span className="text-[11px] font-medium text-muted-foreground">
                       Falla reportada por el cliente:
                     </span>
-                    <p className="mt-0.5 text-xs text-foreground bg-muted/40 p-2.5 rounded-md border border-border/30">
+                    <p className="mt-0.5 text-xs text-foreground bg-muted/40 p-2.5 rounded-lg border border-border/30">
                       {ticket.falla}
                     </p>
                   </div>
@@ -239,7 +239,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
               </Card>
 
               {/* Financial Status & Dynamic Budget */}
-              <Card className="p-4 shadow-2xs gap-3">
+              <Card className="p-4 rounded-xl border border-border bg-card gap-3">
                 <CardHeader className="p-0 flex-row items-center justify-between">
                   <CardTitle className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                     <DollarSign className="size-3.5 text-emerald-600 dark:text-emerald-400" />
@@ -253,14 +253,14 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                         setCostoInput(String(ticket.costoTotal));
                         setIsEditingCosto(true);
                       }}
-                      className="text-[11px] h-6 px-2 text-primary"
+                      className="text-[11px] h-6 px-2.5 text-primary rounded-full hover:bg-primary/10"
                     >
                       Ajustar presupuesto
                     </Button>
                   )}
                 </CardHeader>
 
-                <CardContent className="p-0 space-y-3">
+                <CardContent className="p-0 flex flex-col gap-3">
                   {isEditingCosto ? (
                     <form onSubmit={handleUpdateCosto} className="flex items-center gap-2 mt-2">
                       <Input
@@ -333,7 +333,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                         Sin pagos registrados en recepción.
                       </p>
                     ) : (
-                      <div className="space-y-1.5">
+                      <div className="flex flex-col gap-1.5">
                         {ticket.historialPagos.map((pago) => (
                           <div
                             key={pago.id}
@@ -364,20 +364,20 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
               </Card>
 
               {/* Bitácora / Timeline */}
-              <Card className="p-4 shadow-2xs gap-3">
+              <Card className="p-4 rounded-xl border border-border bg-card gap-3">
                 <CardHeader className="p-0 flex-row items-center justify-between">
                   <CardTitle className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                     <Clock className="size-3.5 text-primary" />
                     Bitácora de Seguimiento
                   </CardTitle>
-                  <Badge variant="outline" className="text-[10px]">
+                  <Badge variant="outline" className="text-[10px] rounded-full">
                     {ticket.bitacora?.length || 0} notas
                   </Badge>
                 </CardHeader>
 
-                <CardContent className="p-0 space-y-3">
+                <CardContent className="p-0 flex flex-col gap-3">
                   {/* Form to Add Note Optimistically */}
-                  <form onSubmit={handleAddNota} className="space-y-2">
+                  <form onSubmit={handleAddNota} className="flex flex-col gap-2">
                     <Field>
                       <Textarea
                         value={newNotaText}
@@ -405,7 +405,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                         type="submit"
                         size="sm"
                         disabled={!newNotaText.trim() || addNotaMutation.isPending}
-                        className="gap-1 text-xs"
+                        className="gap-1 text-xs rounded-full"
                       >
                         {addNotaMutation.isPending ? (
                           <Spinner className="size-3" data-icon="inline-start" />
@@ -420,7 +420,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                   <Separator className="my-2" />
 
                   {/* Bitácora Entries List */}
-                  <div className="space-y-2.5">
+                  <div className="flex flex-col gap-2.5">
                     {(!ticket.bitacora || ticket.bitacora.length === 0) ? (
                       <p className="text-xs text-muted-foreground italic text-center py-3">
                         Aún no hay notas registradas en este ticket.

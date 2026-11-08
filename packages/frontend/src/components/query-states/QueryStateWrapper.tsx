@@ -59,7 +59,7 @@ export function QueryStateWrapper<T>({
 
   if (isDataEmpty) {
     return (
-      <div className="space-y-3">
+      <div className="flex flex-col gap-3">
         {showBackgroundIndicator && (
           <div className="flex justify-end">
             <BackgroundRefetchIndicator isFetching={isFetching} isPending={isPending} />
@@ -76,7 +76,7 @@ export function QueryStateWrapper<T>({
 
   // 4 & 5. Success State with optional Background-Refetch and Stale indicators
   return (
-    <div className="space-y-3">
+    <div className="flex flex-col gap-3">
       {(showBackgroundIndicator || showStaleIndicator) && (
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           {showStaleIndicator && (

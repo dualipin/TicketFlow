@@ -29,6 +29,7 @@ import {
 } from '../ui/select.tsx';
 import { Alert, AlertDescription } from '../ui/alert.tsx';
 import { Spinner } from '../ui/spinner.tsx';
+import { toast } from '../ui/sonner.tsx';
 import { Smartphone, User, DollarSign, Plus, Check } from 'lucide-react';
 import type { MetodoPago } from '../../api/types.ts';
 
@@ -81,8 +82,16 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
       },
       {
         onSuccess: (newTicket) => {
+          toast.success(`Orden creada con éxito`, {
+            description: `Folio ${newTicket.folio} - ${newTicket.dispositivo}`,
+          });
           onClose();
           onCreated?.(newTicket.id);
+        },
+        onError: (err: any) => {
+          toast.error(`Error al abrir orden`, {
+            description: err?.message || 'No se pudo crear el ticket.',
+          });
         },
       }
     );
@@ -107,7 +116,7 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
           </div>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto space-y-4 py-2 pr-1">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto flex flex-col gap-4 py-2 pr-1">
           {/* Client Section */}
           <FieldSet className="rounded-lg bg-muted/20 p-3 border border-border/60 gap-3">
             <div className="flex items-center justify-between">

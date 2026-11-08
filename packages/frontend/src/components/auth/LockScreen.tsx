@@ -194,22 +194,22 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-md p-4 animate-in fade-in duration-200">
-      <Card className="w-full max-w-lg p-6 shadow-2xl transition-all">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-200">
+      <Card className="w-full max-w-lg p-6 sm:p-8 rounded-xl border border-border bg-card shadow-none transition-all">
         {/* Header de la Pantalla de Bloqueo */}
         <div className="text-center mb-6">
-          <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner">
+          <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
             <Lock className="size-6" />
           </div>
-          <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-            {selectedUser ? `Hola, ${selectedUser.nombre}` : 'Estación de Trabajo Bloqueada'}
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground">
+            {selectedUser ? `Hola, ${selectedUser.nombre}` : 'Estación de Trabajo'}
           </h2>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-xs text-muted-foreground mt-1 font-normal">
             {selectedUser
               ? selectedUser.rol === 'ADMIN'
-                ? 'Ingresa tu PIN de 6 dígitos o tu contraseña remota'
+                ? 'Ingresa tu PIN de 6 dígitos o tu contraseña'
                 : 'Ingresa tu PIN de 4 dígitos para continuar'
-              : 'Selecciona tu usuario para iniciar sesión en mostrador'}
+              : 'Selecciona tu usuario para iniciar turno o sesión'}
           </p>
         </div>
 
@@ -243,13 +243,10 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
                     <button
                       key={user.id}
                       onClick={() => handleSelectUser(user)}
-                      className="flex items-center gap-3.5 p-3.5 rounded-xl border border-border/70 bg-card hover:border-primary/50 hover:bg-accent/40 text-left transition-all group focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-xs"
+                      className="flex items-center gap-3.5 p-3.5 rounded-xl border border-border bg-card hover:border-white/40 text-left transition-all group focus:outline-none focus:ring-2 focus:ring-white/20"
                     >
                       <Avatar
-                        className={cn(
-                          'size-11 rounded-xl flex items-center justify-center font-bold text-sm border shadow-inner shrink-0 group-hover:scale-105 transition-transform',
-                          badge.avatarBg
-                        )}
+                        className="size-11 rounded-full flex items-center justify-center font-semibold text-sm border border-border bg-muted/60 text-foreground shrink-0 group-hover:scale-105 transition-transform"
                       >
                         <AvatarFallback>{user.nombre.charAt(0).toUpperCase()}</AvatarFallback>
                       </Avatar>
@@ -259,8 +256,8 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
                         </div>
                         <div className="flex items-center gap-1.5 mt-0.5">
                           <Badge
-                            variant="outline"
-                            className={cn('text-[10px] gap-1 font-medium', badge.color)}
+                            variant="secondary"
+                            className="text-[10px] gap-1 font-normal rounded-full"
                           >
                             {badge.icon}
                             {badge.label}
@@ -343,9 +340,9 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
                     <div
                       key={i}
                       className={cn(
-                        'size-4 rounded-full border transition-all duration-150',
+                        'size-3.5 rounded-full border transition-all duration-150',
                         i < pinInput.length
-                          ? 'bg-primary border-primary scale-110 shadow-sm'
+                          ? 'bg-primary border-primary scale-110'
                           : 'border-muted-foreground/30 bg-muted/20'
                       )}
                     />
@@ -353,7 +350,7 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
                 </div>
 
                 {/* Teclado táctil en pantalla (Grid 3x4) */}
-                <div className="grid grid-cols-3 gap-2 w-full max-w-[280px] my-2">
+                <div className="grid grid-cols-3 gap-2.5 w-full max-w-[280px] my-2">
                   {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((digit) => (
                     <Button
                       key={digit}
@@ -361,7 +358,7 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
                       variant="outline"
                       disabled={isSubmitting}
                       onClick={() => handleKeypadPress(digit)}
-                      className="h-12 text-base font-semibold shadow-xs"
+                      className="h-13 text-lg font-normal rounded-full border-border bg-card hover:bg-muted/50 active:scale-[0.95]"
                     >
                       {digit}
                     </Button>
@@ -373,7 +370,7 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
                     variant="outline"
                     disabled={isSubmitting || pinInput.length === 0}
                     onClick={handleKeypadBackspace}
-                    className="h-12 text-muted-foreground hover:text-foreground"
+                    className="h-13 rounded-full border-border bg-card text-muted-foreground hover:text-foreground active:scale-[0.95]"
                     title="Borrar dígito"
                   >
                     <Delete className="size-5" />
@@ -384,7 +381,7 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
                     variant="outline"
                     disabled={isSubmitting}
                     onClick={() => handleKeypadPress('0')}
-                    className="h-12 text-base font-semibold shadow-xs"
+                    className="h-13 text-lg font-normal rounded-full border-border bg-card hover:bg-muted/50 active:scale-[0.95]"
                   >
                     0
                   </Button>
@@ -393,7 +390,7 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
                     type="button"
                     disabled={isSubmitting || pinInput.length === 0}
                     onClick={() => handlePinSubmit(pinInput)}
-                    className="h-12 font-semibold shadow-sm"
+                    className="h-13 rounded-full font-normal active:scale-[0.95]"
                     title="Confirmar PIN"
                   >
                     {isSubmitting ? (
@@ -404,13 +401,13 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
                   </Button>
                 </div>
 
-                <p className="text-[11px] text-muted-foreground mt-3">
+                <p className="text-[11px] text-muted-foreground mt-3 font-normal">
                   Puedes escribir directamente con el teclado numérico de tu PC
                 </p>
               </div>
             ) : (
               /* Sub-vista B: Contraseña tradicional para ADMIN / Remoto */
-              <form onSubmit={handlePasswordSubmit} className="space-y-4 pt-1">
+              <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-4 pt-1">
                 <Field>
                   <FieldLabel htmlFor="pwd-field" className="text-xs">
                     Contraseña tradicional

@@ -306,6 +306,8 @@ export interface CreateVentaInput {
   items: CreateVentaItemInput[];
   clienteId?: number | null;
   metodoPago?: MetodoPagoVenta;
+  montoEfectivo?: number;
+  montoTarjeta?: number;
   notas?: string;
 }
 

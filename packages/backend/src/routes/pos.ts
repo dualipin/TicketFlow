@@ -73,6 +73,32 @@ posRoutes.post("/ventas", async (c) => {
     });
   }
 
+  let notasFinales = body.notas ? String(body.notas).trim() : null;
+
+  if (metodoPago === "MIXTO") {
+    const montoEfectivo = body.montoEfectivo !== undefined ? Number(body.montoEfectivo) : NaN;
+    const montoTarjeta = body.montoTarjeta !== undefined ? Number(body.montoTarjeta) : NaN;
+
+    if (Number.isNaN(montoEfectivo) || Number.isNaN(montoTarjeta) || montoEfectivo < 0 || montoTarjeta < 0) {
+      return c.json(
+        { error: "Para pagos mixtos se requiere especificar montoEfectivo y montoTarjeta válidos (>= 0)" },
+        400
+      );
+    }
+
+    if (Math.abs(montoEfectivo + montoTarjeta - totalCalculado) > 0.01) {
+      return c.json(
+        {
+          error: `La suma de pago mixto (Efectivo: $${montoEfectivo.toFixed(2)} + Tarjeta: $${montoTarjeta.toFixed(2)} = $${(montoEfectivo + montoTarjeta).toFixed(2)}) no coincide con el total ($${totalCalculado.toFixed(2)})`,
+        },
+        400
+      );
+    }
+
+    const tagMixto = `[Pago Mixto: efectivo=$${montoEfectivo.toFixed(2)}, tarjeta=$${montoTarjeta.toFixed(2)}]`;
+    notasFinales = notasFinales ? `${tagMixto} ${notasFinales}` : tagMixto;
+  }
+
   // Transacción: crear venta, crear detalles y descontar inventario de físicos
   const nuevaVenta = await db.transaction(async (tx) => {
     const venta = await tx.orm.Venta.create({
@@ -81,7 +107,7 @@ posRoutes.post("/ventas", async (c) => {
       usuarioId,
       total: totalCalculado,
       metodoPago,
-      notas: body.notas ? String(body.notas).trim() : null,
+      notas: notasFinales,
     });
 
     const detalles = [];

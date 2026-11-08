@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from 'react';
-import { BorderBeam } from 'border-beam';
 import type { Ticket, TicketEstado, TicketFilters } from '../../api/types.ts';
 import { useTickets } from '../../queries/tickets/queries.ts';
 import { useDebounce } from '../../hooks/useDebounce.ts';
@@ -9,11 +8,11 @@ import { CreateTicketModal } from './CreateTicketModal.tsx';
 import { ConfirmEntregaDialog } from './ConfirmEntregaDialog.tsx';
 import { QueryStateWrapper } from '../query-states/QueryStateWrapper.tsx';
 import { SectionCards } from '../layout/SectionCards.tsx';
+import { cn } from '../../lib/utils.ts';
 import { Button } from '../ui/button.tsx';
 import { Badge } from '../ui/badge.tsx';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '../ui/input-group.tsx';
 import { Tabs, TabsList, TabsTrigger } from '../ui/tabs.tsx';
-import { Card, CardContent } from '../ui/card.tsx';
 import {
   Wrench,
   Search,
@@ -75,110 +74,105 @@ export const TallerView: React.FC = () => {
   return (
     <div className="flex flex-col gap-6">
       {/* Top Banner / Actions Bar */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-1">
           <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground flex items-center gap-2.5">
             <Wrench className="size-5 text-primary" />
             <span>Cola Técnica de Reparaciones</span>
           </h1>
           <p className="text-xs text-muted-foreground font-normal">
-            Gestión de folios, estados, diagnósticos, bitácoras y liquidaciones.
+            Gestión operativa de órdenes, diagnósticos, bitácoras y liquidaciones.
           </p>
         </div>
 
         <Button
           onClick={() => setIsCreateModalOpen(true)}
           size="default"
-          className="gap-2 font-normal text-xs self-start sm:self-auto rounded-full"
+          className="gap-2 font-medium text-xs self-start sm:self-auto rounded-lg shadow-2xs"
         >
-          <Plus className="size-3.5" data-icon="inline-start" />
+          <Plus data-icon="inline-start" />
           <span>Nuevo Ticket</span>
         </Button>
       </div>
 
-      {/* KPI Summary Cards (bundui/shadcn-ui-kit architecture) */}
+      {/* KPI Summary Cards */}
       <SectionCards />
 
       {/* Filter Toolbar */}
-      <Card className="p-4 rounded-xl gap-3">
-        <CardContent className="p-0 flex flex-col gap-3">
-          {/* Top row: Search input & quick toggles */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            {/* Search Input using InputGroup (Command-bar style) */}
-            <div className="flex-1 max-w-md">
-              <BorderBeam
-                size="line"
-                active={ticketsQuery.isFetching}
-                theme="auto"
-                className="w-full rounded-lg"
-              >
-                <InputGroup className="h-9">
-                  <InputGroupAddon align="inline-start">
-                    <Search className="size-3.5 text-muted-foreground" />
-                  </InputGroupAddon>
-                  <InputGroupInput
-                    type="text"
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    aria-label="Buscar folio, cliente, teléfono o falla"
-                    placeholder="Buscar folio (TK-1001), cliente, teléfono o falla..."
-                    className="text-xs"
-                  />
-                </InputGroup>
-              </BorderBeam>
-            </div>
+      <div className="rounded-xl border border-border bg-card/70 p-3.5 flex flex-col gap-3 shadow-2xs backdrop-blur-xs">
+        {/* Top row: Search input & quick toggles */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          {/* Search Input using InputGroup */}
+          <div className="flex-1 max-w-md">
+            <InputGroup className="h-9 bg-background">
+              <InputGroupAddon align="inline-start">
+                <Search className="size-3.5 text-muted-foreground" />
+              </InputGroupAddon>
+              <InputGroupInput
+                type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                aria-label="Buscar folio, cliente, teléfono o falla"
+                placeholder="Buscar folio (#TK-1001), cliente, teléfono o falla..."
+                className="text-xs"
+              />
+            </InputGroup>
+          </div>
 
-            {/* Quick Filter: Deudores con saldo pendiente */}
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                variant={onlyConSaldo ? 'default' : 'outline'}
-                size="sm"
-                aria-pressed={onlyConSaldo}
-                onClick={() => setOnlyConSaldo(!onlyConSaldo)}
-                className={onlyConSaldo ? 'rounded-full' : 'rounded-full text-muted-foreground hover:text-foreground'}
-              >
-                <DollarSign className="size-3.5" data-icon="inline-start" />
-                <span>Solo Deudores con Saldo</span>
-              </Button>
-
-              {activeFiltersCount > 0 && (
-                <Button
-                  variant="ghost"
-                  size="xs"
-                  onClick={handleResetFilters}
-                  className="text-xs text-muted-foreground hover:text-foreground rounded-full"
-                >
-                  Limpiar ({activeFiltersCount})
-                </Button>
+          {/* Quick Filter: Deudores con saldo pendiente */}
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant={onlyConSaldo ? 'default' : 'outline'}
+              size="sm"
+              aria-pressed={onlyConSaldo}
+              onClick={() => setOnlyConSaldo(!onlyConSaldo)}
+              className={cn(
+                'rounded-lg text-xs gap-1.5 font-medium transition-colors',
+                !onlyConSaldo && 'text-muted-foreground hover:text-foreground'
               )}
-            </div>
-          </div>
-
-          {/* Status Segmented Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-0.5 scrollbar-none">
-            <Tabs
-              value={selectedEstado}
-              onValueChange={(val) => setSelectedEstado(val as TicketEstado | 'ALL')}
             >
-              <TabsList className="h-8.5">
-                {STATUS_TABS.map((tab) => (
-                  <TabsTrigger
-                    key={tab.value}
-                    value={tab.value}
-                    className="text-xs px-3 py-1"
-                  >
-                    {tab.label}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </Tabs>
+              <DollarSign data-icon="inline-start" />
+              <span>Solo Deudores con Saldo</span>
+            </Button>
+
+            {activeFiltersCount > 0 && (
+              <Button
+                variant="ghost"
+                size="xs"
+                onClick={handleResetFilters}
+                className="text-xs text-muted-foreground hover:text-foreground rounded-lg h-8"
+              >
+                Limpiar ({activeFiltersCount})
+              </Button>
+            )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        {/* Status Segmented Tabs */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-0.5 pt-0.5 scrollbar-none">
+          <Tabs
+            value={selectedEstado}
+            onValueChange={(val) => setSelectedEstado(val as TicketEstado | 'ALL')}
+            className="w-full"
+          >
+            <TabsList className="h-9 w-full sm:w-auto justify-start overflow-x-auto scrollbar-none gap-1 bg-muted/60 p-1 rounded-lg">
+              {STATUS_TABS.map((tab) => (
+                <TabsTrigger
+                  key={tab.value}
+                  value={tab.value}
+                  className="text-xs px-3 py-1 font-medium transition-colors rounded-md"
+                >
+                  {tab.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+        </div>
+      </div>
 
       {/* Tickets Feed & Query State Handling */}
-      <section className="flex flex-col gap-4">
+      <section className="flex flex-col gap-3.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h2 className="text-sm font-semibold tracking-tight text-foreground flex items-center gap-1.5">
@@ -186,7 +180,7 @@ export const TallerView: React.FC = () => {
               <span>Cola de Equipos en Servicio</span>
             </h2>
             {ticketsQuery.data && (
-              <Badge variant="secondary" className="text-xs font-normal">
+              <Badge variant="secondary" className="text-xs font-normal tabular-nums">
                 {ticketsQuery.data.length} órdenes
               </Badge>
             )}
@@ -206,7 +200,7 @@ export const TallerView: React.FC = () => {
           onResetFilters={handleResetFilters}
         >
           {(tickets) => (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {tickets.map((ticket) => (
                 <TicketCard
                   key={ticket.id}

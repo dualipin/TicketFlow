@@ -235,3 +235,26 @@
     scrollbar-color: var(--border) transparent;
   }
 }
+
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-receipt,
+  #printable-receipt * {
+    visibility: visible;
+  }
+  #printable-receipt {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: 80mm;
+    margin: 0 auto;
+    padding: 8px;
+    color: #000;
+    background: #fff;
+    display: block !important;
+  }
+}

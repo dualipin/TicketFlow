@@ -1,5 +1,5 @@
 import React, { useState, useId } from 'react';
-import { cn } from '../../lib/utils.ts';
+import { cn, formatCurrency } from '../../lib/utils.ts';
 import { useTicket } from '../../queries/tickets/queries.ts';
 import {
   useAddBitacoraNota,
@@ -25,12 +25,6 @@ import {
   SheetDescription,
   SheetFooter,
 } from '../ui/sheet.tsx';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from '../ui/card.tsx';
 import { Field, FieldLabel } from '../ui/field.tsx';
 import { useAuth } from '../../lib/auth-context.tsx';
 import { StaleDataIndicator } from '../query-states/StaleDataIndicator.tsx';
@@ -57,16 +51,13 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
   ticketId,
   onClose,
 }) => {
-  // Read server state exclusively from TanStack Query
   const { currentUser } = useAuth();
   const ticketQuery = useTicket(ticketId);
 
-  // Optimistic mutations
   const addNotaMutation = useAddBitacoraNota();
   const updateCostoMutation = useUpdateTicketCosto();
   const updateStatusMutation = useUpdateTicketStatus();
 
-  // Local form UI states (strictly client state, not server data copies!)
   const [newNotaText, setNewNotaText] = useState('');
   const [isNotaPrivada, setIsNotaPrivada] = useState(false);
   const [isEditingCosto, setIsEditingCosto] = useState(false);
@@ -127,7 +118,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                 {ticket && <TicketStatusBadge estado={ticket.estado} size="sm" />}
               </div>
               <SheetDescription className="text-xs text-muted-foreground">
-                Detalle técnico y seguimiento del equipo
+                Detalle operativo y seguimiento de servicio
               </SheetDescription>
             </div>
 
@@ -153,7 +144,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-5">
+        <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
           {isPending && (
             <QueryLoadingState count={3} message="Cargando ficha del ticket..." />
           )}
@@ -168,11 +159,13 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
 
           {ticket && (
             <>
-              {/* Quick Actions Bar */}
-              <Card className="p-3.5 rounded-xl border border-border bg-card gap-2">
-                <span className="text-xs font-normal uppercase tracking-wider text-muted-foreground">
-                  Transición rápida de estado
-                </span>
+              {/* Quick State Transition Bar */}
+              <div className="rounded-xl border border-border bg-muted/25 p-3.5 flex flex-col gap-2.5 shadow-2xs">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-muted-foreground">
+                    Estado de la Orden
+                  </span>
+                </div>
                 <TicketStatusChanger
                   ticketId={ticket.id}
                   currentStatus={ticket.estado}
@@ -180,100 +173,93 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                   onRequestEntregaGuard={() => setIsEntregaGuardOpen(true)}
                 />
                 {updateStatusMutation.isPending && (
-                  <p className="text-xs text-primary animate-pulse">
-                    Aplicando cambio de estado optimista en segundo plano...
+                  <p className="text-xs text-primary">
+                    Actualizando estado en segundo plano...
                   </p>
                 )}
-              </Card>
+              </div>
 
-              {/* General Information Card */}
-              <Card className="p-4 rounded-xl border border-border bg-card gap-3">
-                <CardHeader className="p-0">
-                  <CardTitle className="text-xs font-semibold text-primary flex items-center gap-2">
-                    <Smartphone className="size-4" />
-                    <span>{ticket.dispositivo}</span>
-                  </CardTitle>
-                </CardHeader>
+              {/* General Information Section */}
+              <div className="rounded-xl border border-border bg-card p-4 flex flex-col gap-3 shadow-2xs">
+                <div className="text-xs font-semibold text-primary flex items-center gap-2">
+                  <Smartphone className="size-4 shrink-0" />
+                  <span className="text-foreground text-sm font-medium truncate">{ticket.dispositivo}</span>
+                </div>
 
-                <CardContent className="p-0 flex flex-col gap-3">
-                  <div>
-                    <span className="text-xs font-medium text-muted-foreground">
-                      Falla reportada por el cliente:
-                    </span>
-                    <p className="mt-0.5 text-xs text-foreground bg-muted/40 p-2.5 rounded-lg border border-border/30">
-                      {ticket.falla}
-                    </p>
-                  </div>
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs font-medium text-muted-foreground">
+                    Falla reportada por el cliente:
+                  </span>
+                  <p className="text-xs text-foreground bg-muted/40 p-2.5 rounded-lg border border-border/30 break-words leading-relaxed">
+                    {ticket.falla}
+                  </p>
+                </div>
 
-                  <div className="grid grid-cols-2 gap-3 pt-2 text-xs">
-                    <div className="flex items-start gap-2">
-                      <KeyRound className="size-3.5 text-muted-foreground mt-0.5 shrink-0" />
-                      <div>
-                        <span className="text-xs text-muted-foreground block">
-                          Contraseña / Patrón:
-                        </span>
-                        <span className="font-mono font-medium">
-                          {ticket.contrasena || 'Sin contraseña'}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-2">
-                      <Package className="size-3.5 text-muted-foreground mt-0.5 shrink-0" />
-                      <div>
-                        <span className="text-xs text-muted-foreground block">
-                          Accesorios dejados:
-                        </span>
-                        <span className="font-medium">
-                          {ticket.accesorios || 'Ninguno'}
-                        </span>
-                      </div>
+                <div className="grid grid-cols-2 gap-3 pt-1 text-xs">
+                  <div className="flex items-start gap-2 min-w-0">
+                    <KeyRound className="size-3.5 text-muted-foreground mt-0.5 shrink-0" />
+                    <div className="min-w-0">
+                      <span className="text-muted-foreground block text-xs">
+                        Contraseña / Patrón:
+                      </span>
+                      <span className="font-mono font-medium truncate block">
+                        {ticket.contrasena || 'Sin contraseña'}
+                      </span>
                     </div>
                   </div>
 
-                  <Separator className="my-2" />
-
-                  {/* Customer summary */}
-                  <div className="text-xs flex justify-between items-center">
-                    <div>
-                      <span className="text-xs text-muted-foreground block">Cliente:</span>
-                      <span className="font-medium text-foreground">{ticket.cliente?.nombre}</span>
+                  <div className="flex items-start gap-2 min-w-0">
+                    <Package className="size-3.5 text-muted-foreground mt-0.5 shrink-0" />
+                    <div className="min-w-0">
+                      <span className="text-muted-foreground block text-xs">
+                        Accesorios dejados:
+                      </span>
+                      <span className="font-medium truncate block">
+                        {ticket.accesorios || 'Ninguno'}
+                      </span>
                     </div>
-                    <span className="font-mono text-muted-foreground text-xs">
-                      {ticket.cliente?.telefono}
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-border/50 flex justify-between items-center text-xs">
+                  <div className="min-w-0">
+                    <span className="text-muted-foreground block text-xs">Cliente:</span>
+                    <span className="font-medium text-foreground truncate block">
+                      {ticket.cliente?.nombre ?? 'Cliente sin nombre'}
                     </span>
                   </div>
-                </CardContent>
-              </Card>
+                  <span className="font-mono text-muted-foreground text-xs shrink-0">
+                    {ticket.cliente?.telefono}
+                  </span>
+                </div>
+              </div>
 
-              {/* Multimedia Evidence Card (Fotos, Audio y Video) */}
-              <Card className="p-4 rounded-xl border border-border bg-card gap-3">
-                <CardHeader className="p-0 flex-row items-center justify-between">
-                  <CardTitle className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+              {/* Multimedia Evidence Section */}
+              <div className="rounded-xl border border-border bg-card p-4 flex flex-col gap-3 shadow-2xs">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                     <Camera className="size-3.5 text-primary" />
-                    Evidencias Multimedia
-                  </CardTitle>
-                  <Badge variant="outline" className="text-xs rounded-full">
+                    <span>Evidencias Multimedia</span>
+                  </div>
+                  <Badge variant="outline" className="text-xs rounded-md">
                     {ticket.adjuntos?.length || 0} archivos
                   </Badge>
-                </CardHeader>
+                </div>
 
-                <CardContent className="p-0">
-                  <TicketMediaCapture
-                    adjuntos={ticket.adjuntos ?? []}
-                    ticketId={ticket.id}
-                    compact
-                  />
-                </CardContent>
-              </Card>
+                <TicketMediaCapture
+                  adjuntos={ticket.adjuntos ?? []}
+                  ticketId={ticket.id}
+                  compact
+                />
+              </div>
 
               {/* Financial Status & Dynamic Budget */}
-              <Card className="p-4 rounded-xl border border-border bg-card gap-3">
-                <CardHeader className="p-0 flex-row items-center justify-between">
-                  <CardTitle className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+              <div className="rounded-xl border border-border bg-card p-4 flex flex-col gap-3 shadow-2xs">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                     <DollarSign className="size-3.5 text-emerald-600 dark:text-emerald-400" />
-                    Finanzas y Presupuesto
-                  </CardTitle>
+                    <span>Finanzas y Presupuesto</span>
+                  </div>
                   {!isEditingCosto && (
                     <Button
                       variant="ghost"
@@ -282,246 +268,241 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                         setCostoInput(String(ticket.costoTotal));
                         setIsEditingCosto(true);
                       }}
-                      className="text-xs h-6 px-2.5 text-primary rounded-full hover:bg-primary/10"
+                      className="text-xs h-7 px-2.5 text-primary rounded-md hover:bg-primary/10"
                     >
                       Ajustar presupuesto
                     </Button>
                   )}
-                </CardHeader>
+                </div>
 
-                <CardContent className="p-0 flex flex-col gap-3">
-                  {isEditingCosto ? (
-                    <form onSubmit={handleUpdateCosto} className="flex items-center gap-2 mt-2">
-                      <Input
-                        type="number"
-                        step="0.5"
-                        min="0"
-                        value={costoInput}
-                        onChange={(e) => setCostoInput(e.target.value)}
-                        aria-label="Costo total de cotización"
-                        className="h-7 w-28 text-xs font-medium"
-                        placeholder="Total $"
-                        autoFocus
-                      />
-                      <Button
-                        type="submit"
-                        size="xs"
-                        disabled={updateCostoMutation.isPending}
-                        className="text-xs h-7"
-                      >
-                        {updateCostoMutation.isPending && (
-                          <Spinner className="size-3" data-icon="inline-start" />
-                        )}
-                        Guardar
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="xs"
-                        onClick={() => setIsEditingCosto(false)}
-                        className="text-xs h-7"
-                      >
-                        Cancelar
-                      </Button>
-                    </form>
+                {isEditingCosto ? (
+                  <form onSubmit={handleUpdateCosto} className="flex items-center gap-2 mt-1">
+                    <Input
+                      type="number"
+                      step="0.5"
+                      min="0"
+                      value={costoInput}
+                      onChange={(e) => setCostoInput(e.target.value)}
+                      aria-label="Costo total de cotización"
+                      className="h-8 w-32 text-xs font-medium"
+                      placeholder="Total $"
+                      autoFocus
+                    />
+                    <Button
+                      type="submit"
+                      size="xs"
+                      disabled={updateCostoMutation.isPending}
+                      className="text-xs h-8 px-3 rounded-md"
+                    >
+                      {updateCostoMutation.isPending && (
+                        <Spinner data-icon="inline-start" />
+                      )}
+                      Guardar
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="xs"
+                      onClick={() => setIsEditingCosto(false)}
+                      className="text-xs h-8 px-2.5 rounded-md"
+                    >
+                      Cancelar
+                    </Button>
+                  </form>
+                ) : (
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div className="rounded-lg bg-muted/30 p-2.5 border border-border/40">
+                      <span className="text-muted-foreground block text-xs">
+                        Costo Total Cotizado:
+                      </span>
+                      <span className="text-base font-semibold font-mono tabular-nums text-foreground">
+                        {formatCurrency(ticket.costoTotal)}
+                      </span>
+                    </div>
+
+                    <div
+                      className={cn(
+                        'rounded-lg p-2.5 border',
+                        ticket.saldoPendiente > 0
+                          ? 'bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-400'
+                          : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400'
+                      )}
+                    >
+                      <span className="block text-xs opacity-80">
+                        Saldo Pendiente:
+                      </span>
+                      <span className="text-base font-semibold font-mono tabular-nums">
+                        {formatCurrency(ticket.saldoPendiente)}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Payments History */}
+                <div className="pt-2 border-t border-border/50">
+                  <span className="text-xs font-medium text-muted-foreground block mb-1.5">
+                    Historial de pagos y anticipos:
+                  </span>
+                  {(!ticket.historialPagos || ticket.historialPagos.length === 0) ? (
+                    <p className="text-xs text-muted-foreground italic">
+                      Sin anticipos o pagos registrados.
+                    </p>
                   ) : (
-                    <div className="grid grid-cols-2 gap-3 text-xs">
-                      <div className="rounded-lg bg-muted/30 p-2.5 border border-border/30">
-                        <span className="text-xs text-muted-foreground block">
-                          Costo Total Cotizado:
-                        </span>
-                        <span className="text-base font-bold text-foreground">
-                          ${ticket.costoTotal.toFixed(2)}
-                        </span>
-                      </div>
-
-                      <div
-                        className={cn(
-                          'rounded-lg p-2.5 border',
-                          ticket.saldoPendiente > 0
-                            ? 'bg-destructive/10 border-destructive/20 text-destructive'
-                            : 'bg-primary/10 border-primary/20 text-primary'
-                        )}
-                      >
-                        <span className="text-xs block opacity-80">
-                          Saldo Pendiente:
-                        </span>
-                        <span className="text-base font-bold">
-                          ${ticket.saldoPendiente.toFixed(2)}
-                        </span>
-                      </div>
+                    <div className="flex flex-col gap-1.5">
+                      {ticket.historialPagos.map((pago) => (
+                        <div
+                          key={pago.id}
+                          className="flex items-center justify-between text-xs bg-muted/20 px-2.5 py-1.5 rounded-md border border-border/30"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold font-mono tabular-nums text-emerald-600 dark:text-emerald-400">
+                              +{formatCurrency(pago.monto)}
+                            </span>
+                            <Badge variant="secondary" className="text-xs px-1.5 py-0 h-4.5 rounded-sm">
+                              {pago.metodoPago}
+                            </Badge>
+                            {pago.notas && (
+                              <span className="text-muted-foreground text-xs truncate max-w-[160px]">
+                                - {pago.notas}
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-xs text-muted-foreground font-mono">
+                            {new Date(pago.fecha).toLocaleDateString()}
+                          </span>
+                        </div>
+                      ))}
                     </div>
                   )}
+                </div>
+              </div>
 
-                  {/* Payments History */}
-                  <div className="pt-2">
-                    <Separator className="mb-2" />
-                    <span className="text-xs font-medium text-muted-foreground block mb-1.5">
-                      Historial de pagos / anticipos:
-                    </span>
-                    {(!ticket.historialPagos || ticket.historialPagos.length === 0) ? (
-                      <p className="text-xs text-muted-foreground italic">
-                        Sin pagos registrados en recepción.
-                      </p>
-                    ) : (
-                      <div className="flex flex-col gap-1.5">
-                        {ticket.historialPagos.map((pago) => (
-                          <div
-                            key={pago.id}
-                            className="flex items-center justify-between text-xs bg-muted/20 px-2 py-1.5 rounded"
-                          >
+              {/* Bitácora / Timeline Section */}
+              <div className="rounded-xl border border-border bg-card p-4 flex flex-col gap-3 shadow-2xs">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                    <Clock className="size-3.5 text-primary" />
+                    <span>Bitácora Técnica</span>
+                  </div>
+                  <Badge variant="outline" className="text-xs rounded-md">
+                    {ticket.bitacora?.length || 0} notas
+                  </Badge>
+                </div>
+
+                {/* Form to Add Note Optimistically */}
+                <form onSubmit={handleAddNota} className="flex flex-col gap-2">
+                  <Field>
+                    <Textarea
+                      value={newNotaText}
+                      onChange={(e) => setNewNotaText(e.target.value)}
+                      aria-label="Escribir nota técnica o actualización"
+                      placeholder="Escribir nota técnica o actualización de servicio..."
+                      rows={2}
+                      className="resize-none text-xs"
+                    />
+                  </Field>
+
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        id={notaPrivadaId}
+                        checked={isNotaPrivada}
+                        onCheckedChange={(checked) => setIsNotaPrivada(Boolean(checked))}
+                      />
+                      <FieldLabel htmlFor={notaPrivadaId} className="text-xs cursor-pointer flex items-center gap-1">
+                        <Lock className="size-3 text-muted-foreground" />
+                        <span>Nota privada interna</span>
+                      </FieldLabel>
+                    </div>
+
+                    <Button
+                      type="submit"
+                      size="sm"
+                      disabled={!newNotaText.trim() || addNotaMutation.isPending}
+                      className="gap-1.5 text-xs rounded-lg"
+                    >
+                      {addNotaMutation.isPending ? (
+                        <Spinner data-icon="inline-start" />
+                      ) : (
+                        <Send data-icon="inline-start" />
+                      )}
+                      <span>{addNotaMutation.isPending ? 'Guardando...' : 'Agregar nota'}</span>
+                    </Button>
+                  </div>
+                </form>
+
+                <Separator className="my-1 opacity-50" />
+
+                {/* Bitácora Entries List */}
+                <div className="flex flex-col gap-2">
+                  {(!ticket.bitacora || ticket.bitacora.length === 0) ? (
+                    <p className="text-xs text-muted-foreground italic text-center py-3">
+                      Aún no hay notas registradas en este ticket.
+                    </p>
+                  ) : (
+                    ticket.bitacora.map((item) => {
+                      const isOptimistic = item.id < 0;
+
+                      return (
+                        <div
+                          key={item.id}
+                          className={`rounded-lg p-3 text-xs border transition-all ${
+                            isOptimistic
+                              ? 'border-primary/40 bg-primary/5'
+                              : item.esPrivada === 1
+                              ? 'border-primary/20 bg-primary/5 text-foreground'
+                              : 'border-border/60 bg-muted/20 text-foreground'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
                             <div className="flex items-center gap-1.5">
-                              <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                                +${pago.monto.toFixed(2)}
-                              </span>
-                              <Badge variant="secondary" className="text-xs px-1 py-0 h-4">
-                                {pago.metodoPago}
-                              </Badge>
-                              {pago.notas && (
-                                <span className="text-muted-foreground text-xs">
-                                  - {pago.notas}
+                              {item.esPrivada === 1 ? (
+                                <Badge
+                                  variant="secondary"
+                                  className="gap-1 text-xs font-normal"
+                                >
+                                  <Lock className="size-2.5" />
+                                  Privada
+                                </Badge>
+                              ) : (
+                                <span className="text-muted-foreground font-medium">
+                                  Pública / WhatsApp
+                                </span>
+                              )}
+                              {isOptimistic && (
+                                <span className="text-primary font-semibold">
+                                  (Guardando...)
                                 </span>
                               )}
                             </div>
-                            <span className="text-xs text-muted-foreground">
-                              {new Date(pago.fecha).toLocaleDateString()}
+
+                            <span className="font-mono text-[11px]">
+                              {new Date(item.createdAt).toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
                             </span>
                           </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
 
-              {/* Bitácora / Timeline */}
-              <Card className="p-4 rounded-xl border border-border bg-card gap-3">
-                <CardHeader className="p-0 flex-row items-center justify-between">
-                  <CardTitle className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                    <Clock className="size-3.5 text-primary" />
-                    Bitácora de Seguimiento
-                  </CardTitle>
-                  <Badge variant="outline" className="text-xs rounded-full">
-                    {ticket.bitacora?.length || 0} notas
-                  </Badge>
-                </CardHeader>
-
-                <CardContent className="p-0 flex flex-col gap-3">
-                  {/* Form to Add Note Optimistically */}
-                  <form onSubmit={handleAddNota} className="flex flex-col gap-2">
-                    <Field>
-                      <Textarea
-                        value={newNotaText}
-                        onChange={(e) => setNewNotaText(e.target.value)}
-                        aria-label="Escribir nota técnica o actualización"
-                        placeholder="Escribir nota técnica o actualización para el cliente..."
-                        rows={2}
-                        className="resize-none"
-                      />
-                    </Field>
-
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <Checkbox
-                          id={notaPrivadaId}
-                          checked={isNotaPrivada}
-                          onCheckedChange={(checked) => setIsNotaPrivada(Boolean(checked))}
-                        />
-                        <FieldLabel htmlFor={notaPrivadaId} className="text-xs cursor-pointer flex items-center gap-1">
-                          <Lock className="size-3 text-muted-foreground" />
-                          <span>Nota privada interna</span>
-                        </FieldLabel>
-                      </div>
-
-                      <Button
-                        type="submit"
-                        size="sm"
-                        disabled={!newNotaText.trim() || addNotaMutation.isPending}
-                        className="gap-1 text-xs rounded-full"
-                      >
-                        {addNotaMutation.isPending ? (
-                          <Spinner className="size-3" data-icon="inline-start" />
-                        ) : (
-                          <Send className="size-3" data-icon="inline-start" />
-                        )}
-                        {addNotaMutation.isPending ? 'Guardando...' : 'Agregar nota'}
-                      </Button>
-                    </div>
-                  </form>
-
-                  <Separator className="my-2" />
-
-                  {/* Bitácora Entries List */}
-                  <div className="flex flex-col gap-2.5">
-                    {(!ticket.bitacora || ticket.bitacora.length === 0) ? (
-                      <p className="text-xs text-muted-foreground italic text-center py-3">
-                        Aún no hay notas registradas en este ticket.
-                      </p>
-                    ) : (
-                      ticket.bitacora.map((item) => {
-                        const isOptimistic = item.id < 0;
-
-                        return (
-                          <div
-                            key={item.id}
-                            className={`rounded-lg p-3 text-xs border transition-all ${
-                              isOptimistic
-                                ? 'border-primary/40 bg-primary/5 animate-pulse'
-                                : item.esPrivada === 1
-                                ? 'border-primary/20 bg-primary/5 text-foreground'
-                                : 'border-border/60 bg-muted/20 text-foreground'
-                            }`}
-                          >
-                            <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-                              <div className="flex items-center gap-1.5">
-                                {item.esPrivada === 1 ? (
-                                  <Badge
-                                    variant="secondary"
-                                    className="gap-1 text-xs font-normal"
-                                  >
-                                    <Lock className="size-2.5" />
-                                    Nota Técnica Privada
-                                  </Badge>
-                                ) : (
-                                  <span className="text-muted-foreground font-medium">
-                                    Nota Pública / WhatsApp
-                                  </span>
-                                )}
-                                {isOptimistic && (
-                                  <span className="text-primary font-semibold">
-                                    (Guardando optimista...)
-                                  </span>
-                                )}
-                              </div>
-
-                              <span>
-                                {new Date(item.createdAt).toLocaleTimeString([], {
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                })}
-                              </span>
-                            </div>
-
-                            <p className="text-xs whitespace-pre-wrap leading-relaxed">
-                              {item.nota}
-                            </p>
-                          </div>
-                        );
-                      })
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+                          <p className="text-xs whitespace-pre-wrap leading-relaxed break-words">
+                            {item.nota}
+                          </p>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
             </>
           )}
         </div>
 
         {/* Footer */}
-        <SheetFooter className="border-t border-border/80 px-5 py-3 bg-muted/10 flex-row items-center justify-between">
+        <SheetFooter className="border-t border-border px-5 py-3 bg-muted/10 flex-row items-center justify-between">
           <span className="text-xs text-muted-foreground font-mono">
             Ticket ID: {ticketId}
           </span>
-          <Button variant="outline" size="sm" onClick={onClose} className="text-xs">
+          <Button variant="outline" size="sm" onClick={onClose} className="text-xs rounded-lg">
             Cerrar
           </Button>
         </SheetFooter>

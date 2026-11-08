@@ -376,14 +376,14 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
               type="submit"
               size="sm"
               disabled={createTicket.isPending}
-              className="gap-1.5"
+              className="gap-1.5 rounded-lg"
             >
               {createTicket.isPending ? (
-                <Spinner className="size-3.5" data-icon="inline-start" />
+                <Spinner data-icon="inline-start" />
               ) : (
-                <Check className="size-3.5" data-icon="inline-start" />
+                <Check data-icon="inline-start" />
               )}
-              {createTicket.isPending ? 'Creando ticket...' : 'Guardar y Abrir Folio'}
+              <span>{createTicket.isPending ? 'Creando ticket...' : 'Guardar y Abrir Folio'}</span>
             </Button>
           </DialogFooter>
         </form>

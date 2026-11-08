@@ -90,17 +90,17 @@ export const TicketStatusWorkflow: React.FC<TicketStatusWorkflowProps> = ({
           variant="default"
           disabled={isPending}
           onClick={() => handleApplyStatus(nextStep.nextStatus)}
-          className="h-7.5 px-3 text-xs font-medium rounded-full gap-1.5 shadow-none"
+          className="h-8 px-2.5 text-xs font-medium rounded-lg gap-1.5 shadow-2xs"
         >
           {isPending ? (
-            <Spinner className="size-3" data-icon="inline-start" />
+            <Spinner data-icon="inline-start" />
           ) : (
-            <ArrowRight className="size-3.5" data-icon="inline-end" />
+            <ArrowRight data-icon="inline-end" />
           )}
           <span>{nextStep.label}</span>
         </Button>
       ) : (
-        <span className="text-xs text-muted-foreground font-normal px-2 py-1 rounded-full bg-muted/50 border border-border">
+        <span className="text-xs text-muted-foreground font-normal px-2.5 py-1 rounded-md bg-muted/50 border border-border/70">
           {currentStatus === 'ENTREGADO' ? 'Entregado' : 'Cancelado'}
         </span>
       )}
@@ -115,7 +115,7 @@ export const TicketStatusWorkflow: React.FC<TicketStatusWorkflowProps> = ({
                 variant="outline"
                 size="sm"
                 aria-label="Más transiciones de estado"
-                className="size-7.5 p-0 rounded-full border-border/80 text-muted-foreground hover:text-foreground"
+                className="size-8 p-0 rounded-lg border-border/80 text-muted-foreground hover:text-foreground"
               />
             }
           >
@@ -126,8 +126,8 @@ export const TicketStatusWorkflow: React.FC<TicketStatusWorkflowProps> = ({
             align="end"
             className="w-52 p-1.5 flex flex-col gap-0.5 rounded-xl shadow-lg border-border bg-card"
           >
-            <div className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Cambiar estado
+            <div className="px-2 py-1 text-xs font-medium text-muted-foreground">
+              Otros estados disponibles
             </div>
             {alternatives.map((alt) => (
               <button

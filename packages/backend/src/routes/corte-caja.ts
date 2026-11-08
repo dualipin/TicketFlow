@@ -3,6 +3,30 @@ import { db } from "../prisma/db.ts";
 
 export const corteCajaRoutes = new Hono();
 
+/**
+ * Calcula el monto en efectivo aportado por una venta al arqueo de caja.
+ * Para EFECTIVO aporta el 100% del total.
+ * Para MIXTO extrae la porción en efectivo de la nota sellada por el backend.
+ */
+export function calcularMontoEfectivoVenta(venta: {
+  total: number;
+  metodoPago: string;
+  notas?: string | null;
+}): number {
+  if (venta.metodoPago === "EFECTIVO") {
+    return venta.total || 0;
+  }
+  if (venta.metodoPago === "MIXTO" && venta.notas) {
+    const match = venta.notas.match(
+      /\[(?:Pago\s+)?Mixto:\s*efectivo=\$?([0-9]+(?:\.[0-9]+)?)/i
+    );
+    if (match) {
+      return parseFloat(match[1]) || 0;
+    }
+  }
+  return 0;
+}
+
 // GET /api/corte-caja/activo - Obtiene el corte de caja actualmente abierto (si existe)
 corteCajaRoutes.get("/activo", async (c) => {
   const corte = await db.orm.CorteCaja
@@ -16,10 +40,9 @@ corteCajaRoutes.get("/activo", async (c) => {
     return c.json({ activo: false, corte: null });
   }
 
-  // Calcular ventas en efectivo y pagos en efectivo
+  // Calcular ventas en efectivo (incluyendo porción en efectivo de ventas MIXTO) y pagos en efectivo
   const ventasEfectivo = corte.ventas
-    .filter((v) => v.metodoPago === "EFECTIVO")
-    .reduce((acc, v) => acc + (v.total || 0), 0);
+    .reduce((acc, v) => acc + calcularMontoEfectivoVenta(v), 0);
 
   const pagosEfectivo = corte.pagosCobrados
     .filter((p) => p.metodoPago === "EFECTIVO")
@@ -90,8 +113,7 @@ corteCajaRoutes.post("/:id/cerrar", async (c) => {
 
   const montoReal = Number(body.montoReal);
   const ventasEfectivo = corte.ventas
-    .filter((v) => v.metodoPago === "EFECTIVO")
-    .reduce((acc, v) => acc + (v.total || 0), 0);
+    .reduce((acc, v) => acc + calcularMontoEfectivoVenta(v), 0);
 
   const pagosEfectivo = corte.pagosCobrados
     .filter((p) => p.metodoPago === "EFECTIVO")

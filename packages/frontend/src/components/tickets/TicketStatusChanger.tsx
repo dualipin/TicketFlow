@@ -92,14 +92,14 @@ export const TicketStatusChanger: React.FC<TicketStatusChangerProps> = ({
             disabled={isCurrent || updateStatus.isPending}
             onClick={() => handleSelect(opt.value)}
             className={cn(
-              'h-7 px-2.5 text-xs select-none rounded-full',
+              'h-7 px-2.5 text-xs select-none rounded-md',
               isCurrent
-                ? 'bg-primary text-primary-foreground cursor-default font-normal'
+                ? 'bg-primary text-primary-foreground cursor-default font-medium'
                 : 'text-muted-foreground hover:text-foreground border-border/80'
             )}
             title={`Cambiar a ${opt.label}`}
           >
-            {isSelectedPending && <Spinner className="size-2.5" data-icon="inline-start" />}
+            {isSelectedPending && <Spinner data-icon="inline-start" />}
             {opt.label}
           </Button>
         );

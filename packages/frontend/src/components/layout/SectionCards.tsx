@@ -69,7 +69,7 @@ export const SectionCards: React.FC = () => {
           </CardTitle>
           <CardAction>
             <Badge variant="outline" className="gap-1.5 px-2.5 py-0.5 text-xs font-normal border-border bg-secondary/80">
-              <Wrench className="size-3.5 text-primary" data-icon="inline-start" />
+              <Wrench className="size-3.5 text-primary" />
               <span>En Cola</span>
             </Badge>
           </CardAction>
@@ -96,9 +96,9 @@ export const SectionCards: React.FC = () => {
           <CardAction>
             <Badge
               variant="outline"
-              className="gap-1.5 px-2.5 py-0.5 text-xs font-normal border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+              className="gap-1.5 px-2.5 py-0.5 text-xs font-normal border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
             >
-              <CheckCircle2 className="size-3.5 text-emerald-400" data-icon="inline-start" />
+              <CheckCircle2 className="size-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>Por Cobrar</span>
             </Badge>
           </CardAction>
@@ -127,7 +127,7 @@ export const SectionCards: React.FC = () => {
           </CardTitle>
           <CardAction>
             <Badge variant="outline" className="gap-1.5 px-2.5 py-0.5 text-xs font-normal border-border bg-secondary/80">
-              <TrendingUp className="size-3.5 text-[#59d499]" data-icon="inline-start" />
+              <TrendingUp className="size-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>PdV + Taller</span>
             </Badge>
           </CardAction>
@@ -160,15 +160,15 @@ export const SectionCards: React.FC = () => {
                 variant="outline"
                 className="gap-1.5 px-2.5 py-0.5 text-xs font-normal border-border bg-secondary/80 text-foreground"
               >
-                <Coins className="size-3.5 text-[#ffc533]" data-icon="inline-start" />
+                <Coins className="size-3.5 text-amber-500 dark:text-amber-400" />
                 <span>Arqueo Vivo</span>
               </Badge>
             ) : (
               <Badge
                 variant="outline"
-                className="gap-1.5 px-2.5 py-0.5 text-xs font-normal border-amber-500/30 bg-amber-500/10 text-amber-400"
+                className="gap-1.5 px-2.5 py-0.5 text-xs font-normal border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400"
               >
-                <AlertCircle className="size-3.5" data-icon="inline-start" />
+                <AlertCircle className="size-3.5 text-amber-600 dark:text-amber-400" />
                 <span>Caja Cerrada</span>
               </Badge>
             )}

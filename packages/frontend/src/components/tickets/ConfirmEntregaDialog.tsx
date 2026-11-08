@@ -23,6 +23,7 @@ import { useAuth } from '../../lib/auth-context.tsx';
 import { toast } from '../ui/sonner.tsx';
 import type { MetodoPago } from '../../api/types.ts';
 import { CheckCircle2, ShieldAlert } from 'lucide-react';
+import { formatCurrency } from '../../lib/utils.ts';
 
 interface ConfirmEntregaDialogProps {
   isOpen: boolean;
@@ -133,13 +134,13 @@ export const ConfirmEntregaDialog: React.FC<ConfirmEntregaDialogProps> = ({
         <div className="p-3.5 rounded-xl border border-amber-500/20 bg-amber-500/5 flex flex-col gap-2.5">
           <div className="flex items-center justify-between text-xs">
             <span className="font-mono font-semibold text-foreground">{folio}</span>
-            <span className="text-muted-foreground">{dispositivo}</span>
+            <span className="text-muted-foreground truncate max-w-[200px]">{dispositivo}</span>
           </div>
 
           <div className="flex items-center justify-between pt-1 border-t border-amber-500/15">
             <span className="text-xs font-medium text-foreground">Saldo pendiente por cobrar:</span>
-            <Badge variant="destructive" className="font-mono text-xs px-2 py-0.5">
-              ${saldoPendiente.toFixed(2)}
+            <Badge variant="destructive" className="font-mono tabular-nums text-xs px-2 py-0.5">
+              {formatCurrency(saldoPendiente)}
             </Badge>
           </div>
         </div>
@@ -175,7 +176,7 @@ export const ConfirmEntregaDialog: React.FC<ConfirmEntregaDialogProps> = ({
             size="sm"
             disabled={isSubmitting}
             onClick={onClose}
-            className="text-xs rounded-full"
+            className="text-xs rounded-lg"
           >
             Cancelar
           </Button>
@@ -186,10 +187,10 @@ export const ConfirmEntregaDialog: React.FC<ConfirmEntregaDialogProps> = ({
             size="sm"
             disabled={isSubmitting}
             onClick={handleAutorizarCredito}
-            className="text-xs text-amber-700 dark:text-amber-300 border-amber-500/30 hover:bg-amber-500/10 rounded-full"
+            className="text-xs text-amber-700 dark:text-amber-400 border-amber-500/30 hover:bg-amber-500/10 rounded-lg"
           >
-            {isSubmitting && <Spinner className="size-3" data-icon="inline-start" />}
-            Autorizar a Crédito
+            {isSubmitting && <Spinner data-icon="inline-start" />}
+            <span>Autorizar a Crédito</span>
           </Button>
 
           <Button
@@ -198,14 +199,14 @@ export const ConfirmEntregaDialog: React.FC<ConfirmEntregaDialogProps> = ({
             size="sm"
             disabled={isSubmitting}
             onClick={handleCobrarYEntregar}
-            className="text-xs rounded-full gap-1.5"
+            className="text-xs rounded-lg gap-1.5"
           >
             {isSubmitting ? (
-              <Spinner className="size-3" data-icon="inline-start" />
+              <Spinner data-icon="inline-start" />
             ) : (
-              <CheckCircle2 className="size-3.5" data-icon="inline-start" />
+              <CheckCircle2 data-icon="inline-start" />
             )}
-            Cobrar ${saldoPendiente.toFixed(2)} y Entregar
+            <span>Cobrar {formatCurrency(saldoPendiente)} y Entregar</span>
           </Button>
         </DialogFooter>
       </DialogContent>

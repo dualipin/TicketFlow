@@ -23,7 +23,7 @@ import {
 } from '../ui/empty.tsx';
 import { toast } from '../ui/sonner.tsx';
 import NumberFlow from '@number-flow/react';
-import { formatCurrencyMxn, formatFechaCorte } from './corte-caja-engine.ts';
+import { formatFechaCorte } from './corte-caja-engine.ts';
 import {
   DollarSign,
   Landmark,
@@ -37,7 +37,9 @@ import {
   Wrench,
   Clock,
   User,
+  Eye,
   EyeOff,
+  ShieldCheck,
 } from 'lucide-react';
 
 export const CorteCajaView: React.FC = () => {
@@ -53,7 +55,7 @@ export const CorteCajaView: React.FC = () => {
   const [isConfirmarModalOpen, setIsConfirmarModalOpen] = useState(false);
   const [isCorteZModalOpen, setIsCorteZModalOpen] = useState(false);
 
-  // Estado del protocolo de arqueo ciego y verificación
+  // Estado de arqueo ciego y verificación
   const [isVerificado, setIsVerificado] = useState(false);
   const [adminShowExpected, setAdminShowExpected] = useState(isAdmin);
 
@@ -106,7 +108,7 @@ export const CorteCajaView: React.FC = () => {
           setIsConfirmarModalOpen(false);
           setDatosCierrePendiente(null);
 
-          // Desplegar automáticamente el ticket de Corte Z con los totales consolidados
+          // Desplegar automáticamente el ticket de Corte Z
           setCorteParaTicket({
             ...res.corte,
             ventasEfectivo: res.resumen.ventasEfectivo,
@@ -135,7 +137,7 @@ export const CorteCajaView: React.FC = () => {
         <div>
           <h1 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
             <Coins className="size-6 text-primary" />
-            Corte de Caja & Arqueo de Turno
+            Corte de Caja
           </h1>
           <p className="text-xs text-muted-foreground">
             Control de efectivo en gaveta, conciliación de ventas PdV y cobros de taller.
@@ -170,163 +172,181 @@ export const CorteCajaView: React.FC = () => {
         </Alert>
       )}
 
-      {/* Panel de Turno Activo */}
+      {/* Vista Operativa de Turno Activo */}
       {isLoadingActivo ? (
         <Card className="p-8 flex items-center justify-center">
           <Spinner className="size-6 text-primary" />
         </Card>
       ) : activo && corte ? (
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Columna Izquierda/Central: Desglose de Dinero Esperado */}
-          <div className="lg:col-span-2 flex flex-col gap-4">
-            <Card className="rounded-xl border border-border bg-card">
-              <CardHeader className="pb-3 border-b border-border/50">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-5">
+          {/* Tira Resumen de Telemetría */}
+          <Card className="rounded-xl border border-border bg-card">
+            <CardHeader className="pb-3 border-b border-border/50">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-2.5">
+                  <Badge
+                    variant="outline"
+                    className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 font-semibold text-xs h-5 px-1.5"
+                  >
+                    TURNO ACTIVO #{corte.id}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Clock className="size-3" />
+                    {formatFechaCorte(corte.fechaApertura)}
+                  </span>
+                  <span className="text-xs text-muted-foreground flex items-center gap-1 font-medium">
+                    <User className="size-3" />
+                    {corte.usuario?.nombre || 'Operador'}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {isAdmin && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="xs"
+                      onClick={() => setAdminShowExpected(!adminShowExpected)}
+                      className="text-xs"
+                    >
+                      {adminShowExpected ? (
+                        <>
+                          <EyeOff data-icon="inline-start" />
+                          Ocultar Esperado (Admin)
+                        </>
+                      ) : (
+                        <>
+                          <Eye data-icon="inline-start" />
+                          Revelar Esperado (Admin)
+                        </>
+                      )}
+                    </Button>
+                  )}
+
+                  {isBlindCountActive && (
                     <Badge
                       variant="outline"
-                      className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 font-semibold text-xs h-5 px-1.5"
+                      className="h-6 border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-200 text-xs font-semibold gap-1"
                     >
-                      TURNO ACTIVO #{corte.id}
+                      <ShieldCheck className="size-3" />
+                      Arqueo Ciego Activo
                     </Badge>
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Clock className="size-3" />
-                      Abierto: {formatFechaCorte(corte.fechaApertura)}
-                    </span>
-                  </div>
-                  <div className="text-xs text-muted-foreground flex items-center gap-1 font-medium">
-                    <User className="size-3" />
-                    Responsable: <span className="text-foreground font-semibold">{corte.usuario?.nombre || 'Operador'}</span>
-                  </div>
+                  )}
                 </div>
-              </CardHeader>
+              </div>
+            </CardHeader>
 
-              <CardContent className="pt-4 flex flex-col gap-4">
-                {/* 4 Cards de Totales con NumberFlow & Enmascaramiento de Arqueo Ciego */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="p-3 rounded-xl bg-muted/30 border border-border/60 flex flex-col gap-1">
-                    <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-                      <Landmark className="size-3 text-muted-foreground" />
-                      Fondo Inicial
+            <CardContent className="pt-4 flex flex-col gap-3">
+              {/* Tira Métrica Unificada (Sin tarjetas anidadas) */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-border/60 rounded-xl border border-border/70 bg-muted/20 overflow-hidden">
+                <div className="p-3.5 flex flex-col gap-0.5">
+                  <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                    <Landmark className="size-3.5" />
+                    Fondo Inicial
+                  </span>
+                  <span className="text-base font-bold text-foreground font-mono tabular-nums">
+                    <NumberFlow
+                      value={corte.montoInicial}
+                      format={{ style: 'currency', currency: 'MXN' }}
+                    />
+                  </span>
+                </div>
+
+                <div className="p-3.5 flex flex-col gap-0.5">
+                  <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                    <Store className="size-3.5 text-emerald-500" />
+                    Ventas PdV (Ef.)
+                  </span>
+                  {isBlindCountActive ? (
+                    <span className="text-base font-bold text-muted-foreground tracking-widest flex items-center gap-1">
+                      <EyeOff className="size-3.5 opacity-60" />
+                      ••••••
                     </span>
-                    <span className="text-base font-bold text-foreground font-mono tabular-nums">
+                  ) : (
+                    <span className="text-base font-bold text-emerald-600 dark:text-emerald-400 font-mono tabular-nums">
+                      +
                       <NumberFlow
-                        value={corte.montoInicial}
+                        value={corte.ventasEfectivo || 0}
                         format={{ style: 'currency', currency: 'MXN' }}
                       />
                     </span>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-muted/30 border border-border/60 flex flex-col gap-1">
-                    <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-                      <Store className="size-3 text-emerald-500" />
-                      Ventas PdV (Ef.)
-                    </span>
-                    {isBlindCountActive ? (
-                      <span className="text-base font-bold text-muted-foreground tracking-widest flex items-center gap-1">
-                        <EyeOff className="size-3.5 opacity-60" />
-                        ••••••
-                      </span>
-                    ) : (
-                      <span className="text-base font-bold text-emerald-600 dark:text-emerald-400 font-mono tabular-nums">
-                        +
-                        <NumberFlow
-                          value={corte.ventasEfectivo || 0}
-                          format={{ style: 'currency', currency: 'MXN' }}
-                        />
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-muted/30 border border-border/60 flex flex-col gap-1">
-                    <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-                      <Wrench className="size-3 text-sky-500" />
-                      Pagos Taller (Ef.)
-                    </span>
-                    {isBlindCountActive ? (
-                      <span className="text-base font-bold text-muted-foreground tracking-widest flex items-center gap-1">
-                        <EyeOff className="size-3.5 opacity-60" />
-                        ••••••
-                      </span>
-                    ) : (
-                      <span className="text-base font-bold text-sky-600 dark:text-sky-400 font-mono tabular-nums">
-                        +
-                        <NumberFlow
-                          value={corte.pagosEfectivo || 0}
-                          format={{ style: 'currency', currency: 'MXN' }}
-                        />
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-primary/10 border border-primary/20 flex flex-col gap-1">
-                    <span className="text-xs text-primary font-bold flex items-center gap-1">
-                      <DollarSign className="size-3" />
-                      Efectivo Esperado
-                    </span>
-                    {isBlindCountActive ? (
-                      <span className="text-base font-bold text-primary tracking-widest flex items-center gap-1">
-                        <EyeOff className="size-3.5 opacity-60" />
-                        ••••••
-                      </span>
-                    ) : (
-                      <span className="text-base font-black text-primary font-mono tabular-nums">
-                        <NumberFlow
-                          value={corte.montoCalculado}
-                          format={{ style: 'currency', currency: 'MXN' }}
-                        />
-                      </span>
-                    )}
-                  </div>
+                  )}
                 </div>
 
-                {corte.notas && (
-                  <p className="text-xs text-muted-foreground bg-muted/20 p-2.5 rounded-lg border border-border/40">
-                    <span className="font-semibold text-foreground">Notas de apertura:</span> {corte.notas}
-                  </p>
-                )}
+                <div className="p-3.5 flex flex-col gap-0.5">
+                  <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                    <Wrench className="size-3.5 text-sky-500" />
+                    Pagos Taller (Ef.)
+                  </span>
+                  {isBlindCountActive ? (
+                    <span className="text-base font-bold text-muted-foreground tracking-widest flex items-center gap-1">
+                      <EyeOff className="size-3.5 opacity-60" />
+                      ••••••
+                    </span>
+                  ) : (
+                    <span className="text-base font-bold text-sky-600 dark:text-sky-400 font-mono tabular-nums">
+                      +
+                      <NumberFlow
+                        value={corte.pagosEfectivo || 0}
+                        format={{ style: 'currency', currency: 'MXN' }}
+                      />
+                    </span>
+                  )}
+                </div>
 
-                {/* Resumen de transacciones */}
-                <div className="flex items-center justify-between text-xs text-muted-foreground pt-1 border-t border-border/40">
-                  <div className="flex items-center gap-3">
-                    <span>
-                      <strong className="text-foreground">{corte.ventas?.length || 0}</strong> ventas registradas
+                <div className="p-3.5 flex flex-col gap-0.5 bg-primary/5">
+                  <span className="text-xs text-primary font-bold flex items-center gap-1">
+                    <DollarSign className="size-3.5" />
+                    Efectivo Esperado
+                  </span>
+                  {isBlindCountActive ? (
+                    <span className="text-base font-bold text-primary tracking-widest flex items-center gap-1">
+                      <EyeOff className="size-3.5 opacity-60" />
+                      ••••••
                     </span>
-                    <span>•</span>
-                    <span>
-                      <strong className="text-foreground">{corte.pagosCobrados?.length || 0}</strong> cobros de taller
+                  ) : (
+                    <span className="text-base font-black text-primary font-mono tabular-nums">
+                      <NumberFlow
+                        value={corte.montoCalculado}
+                        format={{ style: 'currency', currency: 'MXN' }}
+                      />
                     </span>
-                  </div>
-                  <span className="font-mono text-xs">
-                    {isBlindCountActive ? (
-                      <span className="italic text-muted-foreground">Arqueo Ciego: balance oculto</span>
-                    ) : (
-                      `Balance teórico: ${formatCurrencyMxn(corte.montoCalculado)}`
-                    )}
+                  )}
+                </div>
+              </div>
+
+              {/* Conteo de operaciones */}
+              <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
+                <div className="flex items-center gap-3">
+                  <span>
+                    <strong className="text-foreground">{corte.ventas?.length || 0}</strong> ventas
+                  </span>
+                  <span>•</span>
+                  <span>
+                    <strong className="text-foreground">{corte.pagosCobrados?.length || 0}</strong> cobros de taller
                   </span>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+                {corte.notas && (
+                  <span className="truncate max-w-sm">
+                    <span className="font-semibold text-foreground">Apertura:</span> {corte.notas}
+                  </span>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
-          {/* Columna Derecha: Formulario de Arqueo Ciego y Denominaciones */}
-          <div className="flex flex-col gap-4">
-            <ArqueoCajaForm
-              corte={corte}
-              isAdmin={isAdmin}
-              isBlindCountActive={isBlindCountActive}
-              adminShowExpected={adminShowExpected}
-              onToggleAdminShowExpected={() => setAdminShowExpected(!adminShowExpected)}
-              isVerificado={isVerificado}
-              onVerificarArqueo={() => setIsVerificado(true)}
-              onRecontar={() => setIsVerificado(false)}
-              onSolicitarCierre={handleSolicitarCierre}
-              isPending={cerrarCorte.isPending}
-            />
-          </div>
+          {/* Formulario de Conteo de Gaveta y Arqueo (Full Width) */}
+          <ArqueoCajaForm
+            corte={corte}
+            isVerificado={isVerificado}
+            onVerificarArqueo={() => setIsVerificado(true)}
+            onRecontar={() => setIsVerificado(false)}
+            onSolicitarCierre={handleSolicitarCierre}
+            isPending={cerrarCorte.isPending}
+          />
         </div>
       ) : (
-        /* Estado cuando no hay caja abierta usando la primitiva canónica Empty */
+        /* Estado vacío canónico */
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
@@ -350,12 +370,12 @@ export const CorteCajaView: React.FC = () => {
         </Empty>
       )}
 
-      {/* Historial de Cortes de Caja Previos */}
+      {/* Historial de Turnos */}
       <div className="flex flex-col gap-3 mt-2">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-bold text-foreground flex items-center gap-1.5">
             <History className="size-4 text-primary" />
-            Historial de Turnos y Arqueos Cerrados
+            Historial de Turnos Cerrados
           </h2>
           {cortesHistory && (
             <Badge variant="secondary" className="text-xs h-5 px-1.5">

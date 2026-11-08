@@ -79,11 +79,16 @@ const parsedPort = rawPort.length > 0 ? Number(rawPort) : Number.NaN;
 const port =
   Number.isInteger(parsedPort) && parsedPort >= 0 && parsedPort <= 65535 ? parsedPort : 3000;
 
-serve({
-  fetch: app.fetch,
-  port,
-});
+if (typeof Bun === "undefined") {
+  serve({
+    fetch: app.fetch,
+    port,
+  });
+}
 
 console.log(`🚀 TicketFlow Backend corriendo en http://localhost:${port}`);
 
-export default app;
+export default {
+  port,
+  fetch: app.fetch,
+};

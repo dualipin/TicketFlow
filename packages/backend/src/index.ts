@@ -5,7 +5,8 @@ import { logger } from "hono/logger";
 
 import { seed } from "./prisma/seed.ts";
 import { authRoutes } from "./routes/auth.ts";
-import { clientesRoutes } from "./routes/clientes.ts";
+import { clientesRoutes } from "./modules/clientes/index.ts";
+import { AppError } from "./lib/errors.ts";
 import { inventarioRoutes } from "./routes/inventario.ts";
 import { tallerRoutes } from "./routes/taller.ts";
 import { posRoutes } from "./routes/pos.ts";
@@ -17,6 +18,22 @@ const app = new Hono();
 
 // Middlewares
 app.use("*", logger());
+
+// Manejo global y centralizado de errores
+app.onError((err, c) => {
+  if (err instanceof AppError) {
+    return c.json(
+      {
+        error: err.message,
+        details: err.details,
+      },
+      err.statusCode as any
+    );
+  }
+
+  console.error("Unhandled error:", err);
+  return c.json({ error: "Error interno del servidor" }, 500);
+});
 app.use(
   "*",
   cors({

@@ -11,10 +11,10 @@ El proyecto consiste en un sistema integral de Punto de Venta y gestión de tall
 Para resolver los retos de infraestructura sin depender de configuraciones complejas de red (como abrir puertos en módems restrictivos), se seleccionó el siguiente stack:
 
 *   **Backend & Runtime:** **Bun + Hono**. Sustituye a Node.js y Express, ofreciendo un rendimiento ultrarrápido y soporte nativo para TypeScript sin configuraciones complejas.
-*   **Base de Datos:** **SQLite** gestionado a través de **Prisma ORM 8**. Al ser una base de datos de un solo archivo (`dev.db`), es extremadamente rápida en redes locales y trivial de respaldar.
+*   **Base de Datos:** **SQLite** gestionado a través de **Prisma ORM 8**. Al ser una base de datos de un solo archivo (`ticketflow.db`), es extremadamente rápida en redes locales y trivial de respaldar.
 *   **Acceso Remoto:** **Cloudflare Tunnels**. Permite exponer el sistema local a un dominio seguro en internet sin tocar el módem del proveedor de internet (Telmex).
-*   **Notificaciones y Bot:** **whatsapp-web.js** con **Google Gemini 1.5 Flash** para interpretar mensajes y enviar actualizaciones de los tickets.
-*   **Backups:** Automatizados hacia la nube (**Cloudflare R2 / Backblaze**) durante la noche, sincronizando tanto la base de datos como las fotografías locales.
+*   **Notificaciones y Bot:** **whatsapp-web.js** con **Google Gemini 3.5 Flash Lite** para interpretar mensajes y enviar actualizaciones de los tickets.
+*   **Backups:** Automatizados hacia la nube (**Google Drive**) durante la noche, sincronizando tanto la base de datos como las fotografías locales.
 
 ---
 

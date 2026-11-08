@@ -27,12 +27,14 @@
   },
   "dependencies": {
     "@hono/node-server": "^2.1.5",
+    "@hono/zod-validator": "^0.9.1",
     "@prisma/composer": "0.38.0",
     "@prisma/composer-prisma-cloud": "0.38.0",
     "@prisma/orm-sqlite": "^8.0.0-rc.23",
     "alchemy": "2.0.0-beta.84",
     "hono": "^4.13.13",
-    "temporal-polyfill": "^1.0.6"
+    "temporal-polyfill": "^1.0.6",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@prisma/dev": "0.25.2",

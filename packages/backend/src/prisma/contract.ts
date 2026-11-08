@@ -7,7 +7,8 @@ export const contract = defineContract({}, ({ field, model, rel, gen, type }) =>
       id: field.column(type.Int()).id().default(autoincrement()),
       nombre: field.column(type.String()),
       rol: field.column(type.String()).default('TECNICO'), // 'ADMIN', 'TECNICO', 'MOSTRADOR'
-      pin: field.column(type.String()), // PIN rápido para compartir terminal en mostrador
+      pin: field.column(type.String()).optional(), // Hash de PIN rápido (4 o 6 dígitos para ADMIN)
+      password: field.column(type.String()).optional(), // Hash de contraseña tradicional para ADMIN / acceso remoto
       activo: field.column(type.Int()).default(1),
       createdAt: field.column(type.DateTime()).default(now()).onCreate(gen.now()),
       updatedAt: field.column(type.temporal.UpdatedAt()),

@@ -37,10 +37,10 @@ A continuación se detallan las tablas generadas en Prisma, organizadas por mód
 
 | Modelo | Campos Principales | Relaciones |
 | :--- | :--- | :--- |
-| **Usuario** | `id`, `nombre`, `rol`, `pin` | `tickets`, `pagosCobrados`, `cortesCaja`, `notasBitacora` |
+| **Usuario** | `id`, `nombre`, `rol`, `pin`, `password` | `tickets`, `pagosCobrados`, `cortesCaja`, `notasBitacora` |
 | **CorteCaja** | `id`, `fechas`, `montoInicial`, `montoCalculado`, `montoReal`, `estado` | Pertenece a un `Usuario`, contiene múltiples `Ventas` |
 
-*   **Justificación:** El uso de un `pin` rápido permite a los técnicos compartir una misma PC/Tablet en mostrador y cambiar de sesión en segundos. El `CorteCaja` es vital porque todos los roles pueden cobrar; cuadra el dinero físico contra el registrado en el sistema.
+*   **Justificación:** Autenticación híbrida y trazabilidad: en mostrador se utiliza **Selección de Operador + PIN hasheado con Argon2** (4 dígitos para mostrador/técnicos, 6 dígitos opcionales para ADMIN) con bloqueo por fuerza bruta para permitir compartir la terminal y cambiar de sesión en segundos. Para el Dueño/ADMIN y acceso remoto (vía Cloudflare Tunnel), se soporta contraseña robusta tradicional. El `CorteCaja` es vital porque todos los roles pueden cobrar; cuadra el dinero físico contra el registrado en el sistema.
 
 ### Módulo de Clientes
 

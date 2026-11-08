@@ -19,7 +19,7 @@ import type {
 } from '@prisma/orm-sqlite/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'e083cee53eca2247d48e30b624abe38075c5036bdd5b7685ac936876a933680a'>;
+  StorageHashBase<'40bbfd6228e7bbee6cb4000790b7d1b01aadb662a0ff0ab9e6b977057a981237'>;
 export type ExecutionHash =
   ExecutionHashBase<'1cdf30796432175d07cec3b9d77241a5643b89231686ec77b90abad1d1d1bbd9'>;
 export type ProfileHash =
@@ -318,6 +318,7 @@ export namespace Models {
     createdAt: FieldOutputTypes['__unbound__']['Usuario']['createdAt'];
     id: FieldOutputTypes['__unbound__']['Usuario']['id'];
     nombre: FieldOutputTypes['__unbound__']['Usuario']['nombre'];
+    password: FieldOutputTypes['__unbound__']['Usuario']['password'];
     pin: FieldOutputTypes['__unbound__']['Usuario']['pin'];
     rol: FieldOutputTypes['__unbound__']['Usuario']['rol'];
     updatedAt: FieldOutputTypes['__unbound__']['Usuario']['updatedAt'];
@@ -919,10 +920,16 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
+                readonly password: {
+                  readonly dataType: 'sqlite/text';
+                  readonly codecId: 'sqlite/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly pin: {
                   readonly dataType: 'sqlite/text';
                   readonly codecId: 'sqlite/text@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly rol: {
@@ -1792,8 +1799,12 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'sqlite/text@1' };
               };
+              readonly password: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'sqlite/text@1' };
+              };
               readonly pin: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'sqlite/text@1' };
               };
               readonly rol: {
@@ -1870,6 +1881,7 @@ type ContractBase = Omit<
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly id: { readonly column: 'id' };
                 readonly nombre: { readonly column: 'nombre' };
+                readonly password: { readonly column: 'password' };
                 readonly pin: { readonly column: 'pin' };
                 readonly rol: { readonly column: 'rol' };
                 readonly updatedAt: { readonly column: 'updatedAt' };

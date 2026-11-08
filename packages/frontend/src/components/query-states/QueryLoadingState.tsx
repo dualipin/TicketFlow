@@ -1,4 +1,6 @@
 import React from 'react';
+import { Skeleton } from '../ui/skeleton.tsx';
+import { Card, CardHeader, CardContent, CardFooter } from '../ui/card.tsx';
 
 interface QueryLoadingStateProps {
   count?: number;
@@ -16,30 +18,27 @@ export const QueryLoadingState: React.FC<QueryLoadingStateProps> = ({
         <span>{message}</span>
       </div>
 
-      <div className="grid gap-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: count }).map((_, index) => (
-          <div
-            key={index}
-            className="rounded-lg border border-border/60 bg-card/60 p-4 shadow-xs backdrop-blur-xs animate-pulse"
-          >
-            <div className="flex items-center justify-between pb-3 border-b border-border/40">
+          <Card key={index} className="p-4 gap-3 bg-card/60 backdrop-blur-xs">
+            <CardHeader className="p-0 flex-row items-center justify-between pb-3 border-b border-border/40">
               <div className="flex items-center gap-2">
-                <div className="h-5 w-20 rounded bg-muted" />
-                <div className="h-5 w-24 rounded bg-muted/70" />
+                <Skeleton className="h-5 w-20" />
+                <Skeleton className="h-5 w-24" />
               </div>
-              <div className="h-5 w-16 rounded bg-muted/60" />
-            </div>
+              <Skeleton className="h-5 w-16" />
+            </CardHeader>
 
-            <div className="mt-3 space-y-2">
-              <div className="h-4 w-3/4 rounded bg-muted" />
-              <div className="h-3 w-1/2 rounded bg-muted/50" />
-            </div>
+            <CardContent className="p-0 space-y-2 py-1">
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-3 w-1/2" />
+            </CardContent>
 
-            <div className="mt-4 flex items-center justify-between pt-2">
-              <div className="h-4 w-28 rounded bg-muted/40" />
-              <div className="h-6 w-20 rounded bg-muted/60" />
-            </div>
-          </div>
+            <CardFooter className="p-0 flex items-center justify-between pt-2 border-t border-border/40">
+              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-6 w-20" />
+            </CardFooter>
+          </Card>
         ))}
       </div>
     </div>

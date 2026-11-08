@@ -3,6 +3,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { ticketsKeys } from '../../queries/tickets/keys.ts';
 import { networkSimulation } from '../../api/client.ts';
 import { Button } from '../ui/button.tsx';
+import { Badge } from '../ui/badge.tsx';
+import { Separator } from '../ui/separator.tsx';
+import { Card, CardHeader, CardContent } from '../ui/card.tsx';
 import {
   Activity,
   Layers,
@@ -61,8 +64,8 @@ export const ServerStateInspector: React.FC<ServerStateInspectorProps> = ({
   const cachedQueries = queryClient.getQueryCache().getAll();
 
   return (
-    <div className="rounded-xl border border-primary/20 bg-card/80 p-4 shadow-sm backdrop-blur-xs transition-all">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <Card className="p-4 shadow-xs bg-card/80 backdrop-blur-xs transition-all gap-0">
+      <CardHeader className="p-0 flex flex-wrap flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <div className="flex size-7 items-center justify-center rounded-md bg-primary/10 text-primary">
             <Activity className="size-4" />
@@ -72,9 +75,9 @@ export const ServerStateInspector: React.FC<ServerStateInspectorProps> = ({
               <h3 className="text-xs font-bold text-foreground">
                 TanStack Query Server-State Inspector
               </h3>
-              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+              <Badge variant="outline" className="bg-primary/10 text-primary text-[10px] font-semibold border-transparent">
                 {cachedQueries.length} consultas en caché
-              </span>
+              </Badge>
             </div>
             <p className="text-[11px] text-muted-foreground">
               Supervisión de estados del servidor, claves por dominio y pruebas de invalidación dirigida
@@ -91,7 +94,7 @@ export const ServerStateInspector: React.FC<ServerStateInspectorProps> = ({
             className="gap-1 text-[11px]"
             title="Provoca un error 503 para validar el estado de Error y la recuperación con Reintentar"
           >
-            <AlertOctagon className="size-3" />
+            <AlertOctagon className="size-3" data-icon="inline-start" />
             {isSimulatingError ? 'Error 503 Activo' : 'Simular Error Servidor'}
           </Button>
 
@@ -102,7 +105,7 @@ export const ServerStateInspector: React.FC<ServerStateInspectorProps> = ({
             className="gap-1 text-[11px]"
             title="Añade 1.5s de latencia artificial para apreciar el estado de Carga y Sincronización en segundo plano"
           >
-            <Clock className="size-3" />
+            <Clock className="size-3" data-icon="inline-start" />
             {simulatedLatency > 0 ? 'Latencia: 1.5s' : 'Latencia normal'}
           </Button>
 
@@ -116,10 +119,10 @@ export const ServerStateInspector: React.FC<ServerStateInspectorProps> = ({
             {isOpen ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />}
           </Button>
         </div>
-      </div>
+      </CardHeader>
 
       {isOpen && (
-        <div className="mt-4 space-y-4 border-t border-border/60 pt-4 text-xs animate-in fade-in duration-200">
+        <CardContent className="p-0 mt-4 space-y-4 pt-4 border-t border-border/60 text-xs animate-in fade-in duration-200">
           {/* Interactive targeted invalidation triggers */}
           <div>
             <span className="text-[11px] font-semibold text-foreground uppercase tracking-wider block mb-2">
@@ -132,7 +135,7 @@ export const ServerStateInspector: React.FC<ServerStateInspectorProps> = ({
                 onClick={handleRefetchActive}
                 className="gap-1.5 text-[11px]"
               >
-                <RefreshCw className="size-3" />
+                <RefreshCw className="size-3" data-icon="inline-start" />
                 Refrescar consultas activas (Segundo plano)
               </Button>
 
@@ -142,7 +145,7 @@ export const ServerStateInspector: React.FC<ServerStateInspectorProps> = ({
                 onClick={handleInvalidateLists}
                 className="gap-1.5 text-[11px] text-amber-600 dark:text-amber-400 border-amber-500/30"
               >
-                <Layers className="size-3" />
+                <Layers className="size-3" data-icon="inline-start" />
                 Invalidar sólo listas: ['tickets', 'list']
               </Button>
 
@@ -152,7 +155,7 @@ export const ServerStateInspector: React.FC<ServerStateInspectorProps> = ({
                 onClick={handleInvalidateAllTickets}
                 className="gap-1.5 text-[11px] text-primary border-primary/30"
               >
-                <Database className="size-3" />
+                <Database className="size-3" data-icon="inline-start" />
                 Invalidar dominio completo: ['tickets']
               </Button>
             </div>
@@ -160,8 +163,8 @@ export const ServerStateInspector: React.FC<ServerStateInspectorProps> = ({
 
           {/* Active Domain Keys Hierarchy */}
           <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-lg bg-muted/30 p-3 border border-border/50">
-              <span className="text-[11px] font-semibold text-foreground flex items-center gap-1 mb-1.5">
+            <Card className="p-3 shadow-none bg-muted/30 border-border/50 gap-2">
+              <span className="text-[11px] font-semibold text-foreground flex items-center gap-1">
                 <Sparkles className="size-3 text-primary" />
                 Jerarquía de Claves del Dominio Tickets
               </span>
@@ -189,10 +192,10 @@ export const ServerStateInspector: React.FC<ServerStateInspectorProps> = ({
                   </li>
                 )}
               </ul>
-            </div>
+            </Card>
 
-            <div className="rounded-lg bg-muted/30 p-3 border border-border/50">
-              <span className="text-[11px] font-semibold text-foreground flex items-center gap-1 mb-1.5">
+            <Card className="p-3 shadow-none bg-muted/30 border-border/50 gap-2">
+              <span className="text-[11px] font-semibold text-foreground flex items-center gap-1">
                 <Database className="size-3 text-emerald-600 dark:text-emerald-400" />
                 Separación de Responsabilidades
               </span>
@@ -209,8 +212,10 @@ export const ServerStateInspector: React.FC<ServerStateInspectorProps> = ({
                   ✓ Cero duplicación de colecciones del servidor en stores globales (sin shadow copies).
                 </p>
               </div>
-            </div>
+            </Card>
           </div>
+
+          <Separator className="my-2" />
 
           {/* Active cache entries table */}
           <div>
@@ -233,32 +238,41 @@ export const ServerStateInspector: React.FC<ServerStateInspectorProps> = ({
                     </div>
 
                     <div className="flex items-center gap-1.5">
-                      <span
-                        className={`rounded px-1.5 py-0.5 text-[9px] font-bold ${
+                      <Badge
+                        variant={
                           status === 'success'
-                            ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                            ? 'outline'
                             : status === 'error'
-                            ? 'bg-destructive/15 text-destructive'
-                            : 'bg-muted text-muted-foreground'
-                        }`}
+                            ? 'destructive'
+                            : 'secondary'
+                        }
+                        className={
+                          status === 'success'
+                            ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/20 text-[9px]'
+                            : 'text-[9px]'
+                        }
                       >
                         {status}
-                      </span>
+                      </Badge>
 
-                      <span
-                        className={`rounded px-1.5 py-0.5 text-[9px] ${
+                      <Badge
+                        variant="outline"
+                        className={`text-[9px] ${
                           isStale
-                            ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300'
-                            : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                            ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/20'
+                            : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/20'
                         }`}
                       >
                         {isStale ? 'STALE' : 'FRESH'}
-                      </span>
+                      </Badge>
 
                       {isFetching && (
-                        <span className="rounded bg-sky-500/15 text-sky-700 dark:text-sky-300 px-1.5 py-0.5 text-[9px] animate-pulse">
+                        <Badge
+                          variant="outline"
+                          className="bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-500/20 text-[9px] animate-pulse"
+                        >
                           FETCHING
-                        </span>
+                        </Badge>
                       )}
                     </div>
                   </div>
@@ -266,8 +280,8 @@ export const ServerStateInspector: React.FC<ServerStateInspectorProps> = ({
               })}
             </div>
           </div>
-        </div>
+        </CardContent>
       )}
-    </div>
+    </Card>
   );
 };

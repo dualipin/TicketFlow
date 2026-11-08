@@ -3,7 +3,16 @@ import type { Ticket } from '../../api/types.ts';
 import { TicketStatusBadge } from './TicketStatusBadge.tsx';
 import { TicketStatusChanger } from './TicketStatusChanger.tsx';
 import { Button } from '../ui/button.tsx';
+import { Badge } from '../ui/badge.tsx';
+import { Separator } from '../ui/separator.tsx';
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+} from '../ui/card.tsx';
 import { Phone, Smartphone, AlertCircle, ChevronRight, DollarSign } from 'lucide-react';
+import { cn } from '../../lib/utils.ts';
 
 interface TicketCardProps {
   ticket: Ticket;
@@ -19,25 +28,29 @@ export const TicketCard: React.FC<TicketCardProps> = ({
   const hasPendingBalance = ticket.saldoPendiente > 0;
 
   return (
-    <div
-      className={`group relative rounded-xl border bg-card p-4 text-card-foreground shadow-xs transition-all hover:border-primary/50 hover:shadow-md ${
+    <Card
+      className={cn(
+        'group relative transition-all hover:border-primary/50 hover:shadow-md py-4 gap-3',
         isSelected
           ? 'border-primary ring-2 ring-primary/20 bg-primary/[0.02]'
           : 'border-border/80'
-      }`}
+      )}
     >
       {/* Header row: Folio, Status Badge & View Detail Button */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 pb-3">
+      <CardHeader className="px-4 py-0 flex-row items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <span className="font-mono text-sm font-bold tracking-tight text-foreground">
             {ticket.folio}
           </span>
           <TicketStatusBadge estado={ticket.estado} size="sm" />
           {hasPendingBalance && ticket.estado === 'ENTREGADO' && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-300 border border-amber-500/20">
+            <Badge
+              variant="outline"
+              className="gap-1 bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/20 text-[10px]"
+            >
               <AlertCircle className="size-2.5" />
               Fiado / Deudor
-            </span>
+            </Badge>
           )}
         </div>
 
@@ -50,10 +63,12 @@ export const TicketCard: React.FC<TicketCardProps> = ({
           <span>Ver detalle</span>
           <ChevronRight className="size-3.5 group-hover:translate-x-0.5 transition-transform" />
         </Button>
-      </div>
+      </CardHeader>
+
+      <Separator className="mx-4 my-1 w-auto opacity-50" />
 
       {/* Body: Device & Issue description */}
-      <div className="mt-3 space-y-2">
+      <CardContent className="px-4 py-0 space-y-2">
         <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
           <Smartphone className="size-3.5 text-primary shrink-0" />
           <span>{ticket.dispositivo}</span>
@@ -64,7 +79,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
         </p>
 
         {/* Customer info */}
-        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 pl-5 text-[11px] text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pl-5 text-[11px] text-muted-foreground">
           <span className="font-medium text-foreground">
             {ticket.cliente?.nombre ?? 'Cliente sin nombre'}
           </span>
@@ -75,10 +90,12 @@ export const TicketCard: React.FC<TicketCardProps> = ({
             </span>
           )}
         </div>
-      </div>
+      </CardContent>
+
+      <Separator className="mx-4 my-1 w-auto opacity-40" />
 
       {/* Footer: Financials and Optimistic Status Changer */}
-      <div className="mt-4 pt-3 border-t border-border/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <CardFooter className="px-4 py-0 flex-col sm:flex-row sm:items-center justify-between gap-3">
         {/* Balances */}
         <div className="flex items-center gap-3 text-xs">
           <div className="flex items-center gap-1 text-muted-foreground">
@@ -101,12 +118,12 @@ export const TicketCard: React.FC<TicketCardProps> = ({
           </div>
         </div>
 
-        {/* Optimistic Status Changer */}
+        {/* Quick status update button group */}
         <TicketStatusChanger
           ticketId={ticket.id}
           currentStatus={ticket.estado}
         />
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
 };

@@ -29,6 +29,7 @@ out/
 .claude/
 .cursor/
 .devin/
+.codex/
 
 # Logs
 *.log

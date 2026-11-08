@@ -1021,8 +1021,15 @@
                   "kind": "scalar"
                 }
               },
+              "password": {
+                "nullable": true,
+                "type": {
+                  "codecId": "sqlite/text@1",
+                  "kind": "scalar"
+                }
+              },
               "pin": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "sqlite/text@1",
                   "kind": "scalar"
@@ -1133,6 +1140,9 @@
                 },
                 "nombre": {
                   "column": "nombre"
+                },
+                "password": {
+                  "column": "password"
                 },
                 "pin": {
                   "column": "pin"
@@ -2066,10 +2076,15 @@
                   "dataType": "sqlite/text",
                   "nullable": false
                 },
+                "password": {
+                  "codecId": "sqlite/text@1",
+                  "dataType": "sqlite/text",
+                  "nullable": true
+                },
                 "pin": {
                   "codecId": "sqlite/text@1",
                   "dataType": "sqlite/text",
-                  "nullable": false
+                  "nullable": true
                 },
                 "rol": {
                   "codecId": "sqlite/text@1",
@@ -2300,7 +2315,7 @@
         "id": "__unbound__"
       }
     },
-    "storageHash": "e083cee53eca2247d48e30b624abe38075c5036bdd5b7685ac936876a933680a"
+    "storageHash": "40bbfd6228e7bbee6cb4000790b7d1b01aadb662a0ff0ab9e6b977057a981237"
   },
   "execution": {
     "executionHash": "1cdf30796432175d07cec3b9d77241a5643b89231686ec77b90abad1d1d1bbd9",

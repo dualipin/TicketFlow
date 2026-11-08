@@ -1,8 +1,9 @@
 import React from 'react';
 import type { TicketEstado } from '../../api/types.ts';
 import { useUpdateTicketStatus } from '../../queries/tickets/mutations.ts';
+import { Button } from '../ui/button.tsx';
+import { Spinner } from '../ui/spinner.tsx';
 import { cn } from '../../lib/utils.ts';
-import { RefreshCw } from 'lucide-react';
 
 interface TicketStatusChangerProps {
   ticketId: number;
@@ -58,23 +59,22 @@ export const TicketStatusChanger: React.FC<TicketStatusChangerProps> = ({
           updateStatus.variables?.estado === opt.value;
 
         return (
-          <button
+          <Button
             key={opt.value}
             type="button"
+            variant={isCurrent ? 'secondary' : 'outline'}
+            size="xs"
             disabled={isCurrent || updateStatus.isPending}
             onClick={() => handleSelect(opt.value)}
             className={cn(
-              'inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-medium transition-all select-none',
-              isCurrent
-                ? 'bg-primary/15 text-primary border border-primary/30 font-semibold cursor-default'
-                : 'bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground active:scale-95 border border-border/40',
-              updateStatus.isPending && !isSelectedPending && 'opacity-60 cursor-not-allowed'
+              'h-6 px-2 text-[11px] select-none',
+              isCurrent && 'bg-primary/15 text-primary border-primary/30 font-semibold cursor-default hover:bg-primary/15 hover:text-primary'
             )}
             title={`Cambiar a ${opt.label}`}
           >
-            {isSelectedPending && <RefreshCw className="size-2.5 animate-spin" />}
+            {isSelectedPending && <Spinner className="size-2.5" data-icon="inline-start" />}
             {opt.label}
-          </button>
+          </Button>
         );
       })}
     </div>

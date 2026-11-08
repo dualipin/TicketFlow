@@ -1,0 +1,101 @@
+[
+  {
+    "id": "recreateTable.Usuario",
+    "label": "Recreate table Usuario",
+    "summary": "Recreates table Usuario to apply schema changes: database/Usuario/column:pin; database/Usuario/column:password",
+    "operationClass": "widening",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "objectType": "table",
+        "name": "Usuario"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Usuario\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "Usuario"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Usuario\""
+        }
+      },
+      {
+        "description": "ensure temp table \"_prisma_new_Usuario\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "_prisma_new_Usuario"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "temp table \"_prisma_new_Usuario\""
+        }
+      },
+      {
+        "description": "ensure table \"Usuario\" has exactly the columns the rebuild copies or leaves out (activo, createdAt, id, nombre, pin, rol, updatedAt)",
+        "sql": "SELECT (SELECT COUNT(*) FROM pragma_table_info('Usuario')) = 7 AND (SELECT COUNT(*) FROM pragma_table_info('Usuario') WHERE name IN ('activo', 'createdAt', 'id', 'nombre', 'pin', 'rol', 'updatedAt')) = 7"
+      }
+    ],
+    "execute": [
+      {
+        "description": "create new table \"_prisma_new_Usuario\" with desired schema",
+        "sql": "CREATE TABLE \"_prisma_new_Usuario\" (\n  \"activo\" INTEGER DEFAULT 1 NOT NULL,\n  \"createdAt\" TEXT DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')) NOT NULL,\n  \"id\" INTEGER PRIMARY KEY AUTOINCREMENT,\n  \"nombre\" TEXT NOT NULL,\n  \"password\" TEXT,\n  \"pin\" TEXT,\n  \"rol\" TEXT DEFAULT 'TECNICO' NOT NULL,\n  \"updatedAt\" TEXT NOT NULL\n)"
+      },
+      {
+        "description": "copy data from \"Usuario\" to \"_prisma_new_Usuario\"",
+        "sql": "INSERT INTO \"_prisma_new_Usuario\" (\"activo\", \"createdAt\", \"id\", \"nombre\", \"pin\", \"rol\", \"updatedAt\") SELECT \"activo\", \"createdAt\", \"id\", \"nombre\", \"pin\", \"rol\", \"updatedAt\" FROM \"Usuario\""
+      },
+      {
+        "description": "drop old table \"Usuario\"",
+        "sql": "DROP TABLE \"Usuario\""
+      },
+      {
+        "description": "rename \"_prisma_new_Usuario\" to \"Usuario\"",
+        "sql": "ALTER TABLE \"_prisma_new_Usuario\" RENAME TO \"Usuario\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Usuario\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "Usuario"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Usuario\""
+        }
+      },
+      {
+        "description": "verify temp table \"_prisma_new_Usuario\" is gone",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "_prisma_new_Usuario"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "temp table \"_prisma_new_Usuario\""
+        }
+      },
+      {
+        "description": "verify \"Usuario\" is stored as the rebuilt table",
+        "sql": "SELECT (SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'Usuario') = 'CREATE TABLE \"Usuario\" (\n  \"activo\" INTEGER DEFAULT 1 NOT NULL,\n  \"createdAt\" TEXT DEFAULT (strftime(''%Y-%m-%dT%H:%M:%fZ'',''now'')) NOT NULL,\n  \"id\" INTEGER PRIMARY KEY AUTOINCREMENT,\n  \"nombre\" TEXT NOT NULL,\n  \"password\" TEXT,\n  \"pin\" TEXT,\n  \"rol\" TEXT DEFAULT ''TECNICO'' NOT NULL,\n  \"updatedAt\" TEXT NOT NULL\n)'"
+      },
+      {
+        "description": "verify \"pin\" nullability on \"Usuario\"",
+        "sql": "SELECT COUNT(*) > 0 FROM pragma_table_info('Usuario') WHERE name = 'pin' AND \"notnull\" = 0"
+      },
+      {
+        "description": "verify \"password\" nullability on \"Usuario\"",
+        "sql": "SELECT COUNT(*) > 0 FROM pragma_table_info('Usuario') WHERE name = 'password' AND \"notnull\" = 0"
+      }
+    ]
+  }
+]

@@ -14,10 +14,35 @@ export interface Usuario {
   id: number;
   nombre: string;
   rol: RolUsuario;
-  pin: string;
-  activo: number;
+  pin?: string;
+  password?: string;
+  activo: number | boolean;
+  hasPin?: boolean;
+  hasPassword?: boolean;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface AuthUser {
+  id: number;
+  nombre: string;
+  rol: RolUsuario;
+}
+
+export interface LoginPinPayload {
+  usuarioId: number;
+  pin: string;
+}
+
+export interface LoginPasswordPayload {
+  usuarioId?: number;
+  nombre?: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  message: string;
+  user: AuthUser;
 }
 
 export interface Cliente {

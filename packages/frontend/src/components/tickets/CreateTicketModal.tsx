@@ -1,8 +1,35 @@
 import React, { useState } from 'react';
 import { useCreateTicket } from '../../queries/tickets/mutations.ts';
 import { useClientes } from '../../queries/clientes/queries.ts';
+import { useAuth } from '../../lib/auth-context.tsx';
 import { Button } from '../ui/button.tsx';
-import { X, Smartphone, User, DollarSign, Plus, Check } from 'lucide-react';
+import { Input } from '../ui/input.tsx';
+import { Textarea } from '../ui/textarea.tsx';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '../ui/dialog.tsx';
+import {
+  Field,
+  FieldLabel,
+  FieldSet,
+  FieldLegend,
+} from '../ui/field.tsx';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+} from '../ui/select.tsx';
+import { Alert, AlertDescription } from '../ui/alert.tsx';
+import { Spinner } from '../ui/spinner.tsx';
+import { Smartphone, User, DollarSign, Plus, Check } from 'lucide-react';
 import type { MetodoPago } from '../../api/types.ts';
 
 interface CreateTicketModalProps {
@@ -16,6 +43,7 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
   onClose,
   onCreated,
 }) => {
+  const { currentUser } = useAuth();
   const createTicket = useCreateTicket();
   const { data: existingClientes } = useClientes();
 
@@ -31,8 +59,6 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
   const [anticipo, setAnticipo] = useState('300');
   const [metodoPago, setMetodoPago] = useState<MetodoPago>('EFECTIVO');
   const [notaInicial, setNotaInicial] = useState('Equipo recibido en mostrador para revisión general');
-
-  if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +76,7 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
         costoTotal: Number(costoTotal) || 0,
         anticipo: Number(anticipo) || 0,
         metodoPago,
-        usuarioId: 3, // Mariana (Mostrador)
+        usuarioId: currentUser?.id ?? 3,
         notaInicial: notaInicial.trim() || undefined,
       },
       {
@@ -63,220 +89,246 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg rounded-2xl border border-border bg-card p-6 shadow-2xl">
-        <div className="flex items-center justify-between border-b border-border/80 pb-3">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-hidden flex flex-col p-6">
+        <DialogHeader>
           <div className="flex items-center gap-2">
             <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
               <Plus className="size-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-foreground">
+              <DialogTitle className="text-base font-bold">
                 Recepción de Equipo (Nuevo Ticket)
-              </h2>
-              <p className="text-[11px] text-muted-foreground">
+              </DialogTitle>
+              <DialogDescription className="text-xs">
                 Registra la falla y datos para iniciar el flujo de taller
-              </p>
+              </DialogDescription>
             </div>
           </div>
+        </DialogHeader>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            className="rounded-full text-muted-foreground hover:text-foreground"
-          >
-            <X className="size-4" />
-          </Button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4 max-h-[75vh] overflow-y-auto pr-1">
-          {/* Client Selection */}
-          <div className="space-y-2 rounded-lg bg-muted/20 p-3 border border-border/60">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto space-y-4 py-2 pr-1">
+          {/* Client Section */}
+          <FieldSet className="rounded-lg bg-muted/20 p-3 border border-border/60 gap-3">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+              <FieldLegend className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-0">
                 <User className="size-3.5 text-primary" />
                 Datos del Cliente
-              </label>
+              </FieldLegend>
 
               {existingClientes && existingClientes.length > 0 && (
-                <button
+                <Button
                   type="button"
+                  variant="link"
+                  size="xs"
                   onClick={() => setUseExistingClient(!useExistingClient)}
-                  className="text-[10px] text-primary hover:underline font-medium"
+                  className="h-auto p-0 text-[11px]"
                 >
                   {useExistingClient ? '+ Registrar cliente nuevo' : 'Seleccionar cliente existente'}
-                </button>
+                </Button>
               )}
             </div>
 
             {useExistingClient ? (
-              <div>
-                <select
-                  value={selectedClienteId ?? ''}
-                  onChange={(e) => setSelectedClienteId(Number(e.target.value))}
-                  required
-                  className="w-full h-8 rounded-md border border-input bg-background px-2 text-xs focus:ring-1 focus:ring-primary"
+              <Field>
+                <FieldLabel htmlFor="cliente-select" className="text-xs">
+                  Cliente Registrado
+                </FieldLabel>
+                <Select
+                  value={selectedClienteId ? String(selectedClienteId) : ''}
+                  onValueChange={(val) => setSelectedClienteId(val ? Number(val) : undefined)}
                 >
-                  <option value="">Selecciona un cliente de la lista...</option>
-                  {existingClientes?.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.nombre} ({c.telefono})
-                    </option>
-                  ))}
-                </select>
-              </div>
+                  <SelectTrigger id="cliente-select" className="w-full">
+                    <SelectValue placeholder="Selecciona un cliente de la lista..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {existingClientes?.map((c) => (
+                        <SelectItem key={c.id} value={String(c.id)}>
+                          {c.nombre} ({c.telefono})
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </Field>
             ) : (
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <span className="text-[10px] text-muted-foreground block mb-0.5">Nombre:</span>
-                  <input
-                    type="text"
+              <div className="grid grid-cols-2 gap-3">
+                <Field>
+                  <FieldLabel htmlFor="nombre-cliente" className="text-xs">
+                    Nombre Completo
+                  </FieldLabel>
+                  <Input
+                    id="nombre-cliente"
                     required
                     placeholder="Ej. Juan Pérez"
                     value={nombreCliente}
                     onChange={(e) => setNombreCliente(e.target.value)}
-                    className="w-full h-8 rounded-md border border-input bg-background px-2.5 text-xs focus:ring-1 focus:ring-primary"
                   />
-                </div>
-                <div>
-                  <span className="text-[10px] text-muted-foreground block mb-0.5">Teléfono (WhatsApp):</span>
-                  <input
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="telefono-cliente" className="text-xs">
+                    Teléfono (WhatsApp)
+                  </FieldLabel>
+                  <Input
+                    id="telefono-cliente"
                     type="tel"
                     required
                     placeholder="52155..."
                     value={telefonoCliente}
                     onChange={(e) => setTelefonoCliente(e.target.value)}
-                    className="w-full h-8 rounded-md border border-input bg-background px-2.5 text-xs focus:ring-1 focus:ring-primary"
                   />
-                </div>
+                </Field>
               </div>
             )}
-          </div>
+          </FieldSet>
 
           {/* Device and Problem */}
-          <div className="space-y-2 rounded-lg bg-muted/20 p-3 border border-border/60">
-            <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+          <FieldSet className="rounded-lg bg-muted/20 p-3 border border-border/60 gap-3">
+            <FieldLegend className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-0">
               <Smartphone className="size-3.5 text-primary" />
               Dispositivo y Falla
-            </label>
+            </FieldLegend>
 
-            <div>
-              <span className="text-[10px] text-muted-foreground block mb-0.5">Dispositivo / Modelo:</span>
-              <input
-                type="text"
+            <Field>
+              <FieldLabel htmlFor="dispositivo" className="text-xs">
+                Dispositivo / Modelo
+              </FieldLabel>
+              <Input
+                id="dispositivo"
                 required
                 placeholder="Ej. iPhone 13 Pro Max Azul, Laptop Dell Inspiron 15"
                 value={dispositivo}
                 onChange={(e) => setDispositivo(e.target.value)}
-                className="w-full h-8 rounded-md border border-input bg-background px-2.5 text-xs focus:ring-1 focus:ring-primary"
               />
-            </div>
+            </Field>
 
-            <div>
-              <span className="text-[10px] text-muted-foreground block mb-0.5">Falla reportada:</span>
-              <textarea
+            <Field>
+              <FieldLabel htmlFor="falla" className="text-xs">
+                Falla reportada
+              </FieldLabel>
+              <Textarea
+                id="falla"
                 required
                 rows={2}
                 placeholder="Descripción detallada de la falla observada por el cliente..."
                 value={falla}
                 onChange={(e) => setFalla(e.target.value)}
-                className="w-full rounded-md border border-input bg-background p-2 text-xs focus:ring-1 focus:ring-primary resize-none"
+                className="resize-none"
               />
-            </div>
+            </Field>
 
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <span className="text-[10px] text-muted-foreground block mb-0.5">PIN / Contraseña:</span>
-                <input
-                  type="text"
+            <div className="grid grid-cols-2 gap-3">
+              <Field>
+                <FieldLabel htmlFor="contrasena" className="text-xs">
+                  PIN / Contraseña
+                </FieldLabel>
+                <Input
+                  id="contrasena"
                   placeholder="PIN o patrón"
                   value={contrasena}
                   onChange={(e) => setContrasena(e.target.value)}
-                  className="w-full h-8 rounded-md border border-input bg-background px-2.5 text-xs focus:ring-1 focus:ring-primary"
                 />
-              </div>
-              <div>
-                <span className="text-[10px] text-muted-foreground block mb-0.5">Accesorios dejados:</span>
-                <input
-                  type="text"
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="accesorios" className="text-xs">
+                  Accesorios dejados
+                </FieldLabel>
+                <Input
+                  id="accesorios"
                   placeholder="Funda, cargador, etc."
                   value={accesorios}
                   onChange={(e) => setAccesorios(e.target.value)}
-                  className="w-full h-8 rounded-md border border-input bg-background px-2.5 text-xs focus:ring-1 focus:ring-primary"
                 />
-              </div>
+              </Field>
             </div>
-          </div>
+          </FieldSet>
 
           {/* Pricing and Advance Payment */}
-          <div className="space-y-2 rounded-lg bg-muted/20 p-3 border border-border/60">
-            <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+          <FieldSet className="rounded-lg bg-muted/20 p-3 border border-border/60 gap-3">
+            <FieldLegend className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-0">
               <DollarSign className="size-3.5 text-emerald-600 dark:text-emerald-400" />
               Presupuesto y Anticipo
-            </label>
+            </FieldLegend>
 
-            <div className="grid grid-cols-3 gap-2">
-              <div>
-                <span className="text-[10px] text-muted-foreground block mb-0.5">Cotización Total ($):</span>
-                <input
+            <div className="grid grid-cols-3 gap-3">
+              <Field>
+                <FieldLabel htmlFor="costo-total" className="text-xs">
+                  Cotización ($)
+                </FieldLabel>
+                <Input
+                  id="costo-total"
                   type="number"
                   min="0"
                   step="0.5"
                   required
                   value={costoTotal}
                   onChange={(e) => setCostoTotal(e.target.value)}
-                  className="w-full h-8 rounded-md border border-input bg-background px-2 text-xs font-semibold focus:ring-1 focus:ring-primary"
+                  className="font-semibold"
                 />
-              </div>
+              </Field>
 
-              <div>
-                <span className="text-[10px] text-muted-foreground block mb-0.5">Anticipo Recibido ($):</span>
-                <input
+              <Field>
+                <FieldLabel htmlFor="anticipo" className="text-xs">
+                  Anticipo ($)
+                </FieldLabel>
+                <Input
+                  id="anticipo"
                   type="number"
                   min="0"
                   step="0.5"
                   value={anticipo}
                   onChange={(e) => setAnticipo(e.target.value)}
-                  className="w-full h-8 rounded-md border border-input bg-background px-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 focus:ring-1 focus:ring-primary"
+                  className="font-semibold text-emerald-600 dark:text-emerald-400"
                 />
-              </div>
+              </Field>
 
-              <div>
-                <span className="text-[10px] text-muted-foreground block mb-0.5">Método de Pago:</span>
-                <select
+              <Field>
+                <FieldLabel htmlFor="metodo-pago" className="text-xs">
+                  Método de Pago
+                </FieldLabel>
+                <Select
                   value={metodoPago}
-                  onChange={(e) => setMetodoPago(e.target.value as MetodoPago)}
-                  className="w-full h-8 rounded-md border border-input bg-background px-1 text-xs focus:ring-1 focus:ring-primary"
+                  onValueChange={(val) => setMetodoPago(val as MetodoPago)}
                 >
-                  <option value="EFECTIVO">Efectivo</option>
-                  <option value="TARJETA">Tarjeta</option>
-                  <option value="TRANSFERENCIA">Transferencia</option>
-                </select>
-              </div>
+                  <SelectTrigger id="metodo-pago" className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="EFECTIVO">Efectivo</SelectItem>
+                      <SelectItem value="TARJETA">Tarjeta</SelectItem>
+                      <SelectItem value="TRANSFERENCIA">Transferencia</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </Field>
             </div>
-          </div>
+          </FieldSet>
 
           {/* Initial Bitácora note */}
-          <div>
-            <span className="text-[10px] text-muted-foreground block mb-0.5">Nota inicial de recepción:</span>
-            <input
-              type="text"
+          <Field>
+            <FieldLabel htmlFor="nota-inicial" className="text-xs">
+              Nota inicial de recepción
+            </FieldLabel>
+            <Input
+              id="nota-inicial"
               value={notaInicial}
               onChange={(e) => setNotaInicial(e.target.value)}
-              className="w-full h-8 rounded-md border border-input bg-background px-2.5 text-xs focus:ring-1 focus:ring-primary"
             />
-          </div>
+          </Field>
 
           {createTicket.isError && (
-            <div className="rounded-md bg-destructive/10 p-2.5 text-xs text-destructive border border-destructive/20">
-              {createTicket.error instanceof Error
-                ? createTicket.error.message
-                : 'Error al crear el ticket.'}
-            </div>
+            <Alert variant="destructive">
+              <AlertDescription className="text-xs">
+                {createTicket.error instanceof Error
+                  ? createTicket.error.message
+                  : 'Error al crear el ticket.'}
+              </AlertDescription>
+            </Alert>
           )}
 
-          <div className="flex items-center justify-end gap-2 pt-2 border-t border-border/80">
+          <DialogFooter className="pt-2">
             <Button type="button" variant="ghost" size="sm" onClick={onClose}>
               Cancelar
             </Button>
@@ -286,12 +338,16 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
               disabled={createTicket.isPending}
               className="gap-1.5"
             >
-              <Check className="size-3.5" />
+              {createTicket.isPending ? (
+                <Spinner className="size-3.5" data-icon="inline-start" />
+              ) : (
+                <Check className="size-3.5" data-icon="inline-start" />
+              )}
               {createTicket.isPending ? 'Creando ticket...' : 'Guardar y Abrir Folio'}
             </Button>
-          </div>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };

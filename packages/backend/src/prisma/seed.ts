@@ -12,21 +12,22 @@ export async function seed(): Promise<void> {
   const admin = await db.orm.Usuario.create({
     nombre: "Administrador",
     rol: "ADMIN",
-    pin: "1234",
+    pin: await Bun.password.hash("123456"), // PIN de 6 dígitos para mostrador físico
+    password: await Bun.password.hash("Admin1234!"), // Contraseña robusta para acceso remoto
     activo: 1,
   });
 
   const tecnico = await db.orm.Usuario.create({
     nombre: "Daniel (Técnico)",
     rol: "TECNICO",
-    pin: "2222",
+    pin: await Bun.password.hash("2222"),
     activo: 1,
   });
 
   const mostrador = await db.orm.Usuario.create({
     nombre: "Mariana (Mostrador)",
     rol: "MOSTRADOR",
-    pin: "3333",
+    pin: await Bun.password.hash("3333"),
     activo: 1,
   });
 

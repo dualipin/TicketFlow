@@ -1,6 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { useProductos, useCategorias } from '../../queries/inventario/queries.ts';
+import { useReactivarProducto } from '../../queries/inventario/mutations.ts';
 import { CreateProductoModal } from './CreateProductoModal.tsx';
+import { EditProductoModal } from './EditProductoModal.tsx';
+import { ConfirmDeleteDialog } from './ConfirmDeleteDialog.tsx';
 import { Input } from '../ui/input.tsx';
 import { Button } from '../ui/button.tsx';
 import { Badge } from '../ui/badge.tsx';
@@ -21,6 +24,7 @@ import {
   SelectValue,
 } from '../ui/select.tsx';
 import { Skeleton } from '../ui/skeleton.tsx';
+import { toast } from 'sonner';
 import {
   Package,
   Wrench,
@@ -31,32 +35,48 @@ import {
   Layers,
   Archive,
   AlertTriangle,
+  Pencil,
+  Trash2,
+  RotateCcw,
 } from 'lucide-react';
+import type { ProductoWithDetails } from '../../api/types.ts';
 
 export const InventarioView: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [editingProducto, setEditingProducto] = useState<ProductoWithDetails | null>(null);
+  const [deletingProducto, setDeletingProducto] = useState<ProductoWithDetails | null>(null);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [tipoFilter, setTipoFilter] = useState<'ALL' | '0' | '1'>('ALL');
   const [categoriaIdFilter, setCategoriaIdFilter] = useState<string>('ALL');
+  const [estadoFilter, setEstadoFilter] = useState<'ACTIVOS' | 'ARCHIVADOS'>('ACTIVOS');
 
   const { data: categorias = [] } = useCategorias();
+  const reactivarProducto = useReactivarProducto();
 
   const esServicioQuery = tipoFilter === 'ALL' ? undefined : Number(tipoFilter);
   const categoriaIdQuery = categoriaIdFilter === 'ALL' ? undefined : Number(categoriaIdFilter);
+  const activoQuery = estadoFilter === 'ACTIVOS' ? 1 : 0;
+
   const { data: productos = [], isLoading } = useProductos({
     esServicio: esServicioQuery,
     categoriaId: categoriaIdQuery,
+    activo: activoQuery,
     q: searchQuery.trim() || undefined,
   });
 
-  // Métricas rápidas
+  // Métricas rápidas calculadas siempre sobre el catálogo activo real
+  const { data: productosActivos = [] } = useProductos({
+    activo: 1,
+  });
+
   const stats = useMemo(() => {
-    const totalProductos = productos.filter((p) => p.esServicio === 0).length;
-    const totalServicios = productos.filter((p) => p.esServicio === 1).length;
-    const totalStock = productos
+    const totalProductos = productosActivos.filter((p) => p.esServicio === 0).length;
+    const totalServicios = productosActivos.filter((p) => p.esServicio === 1).length;
+    const totalStock = productosActivos
       .filter((p) => p.esServicio === 0)
       .reduce((acc, p) => acc + (p.variaciones?.reduce((s, v) => s + v.stock, 0) ?? 0), 0);
-    const bajoStock = productos
+    const bajoStock = productosActivos
       .filter((p) => p.esServicio === 0)
       .reduce(
         (acc, p) =>
@@ -66,7 +86,16 @@ export const InventarioView: React.FC = () => {
       );
 
     return { totalProductos, totalServicios, totalStock, bajoStock };
-  }, [productos]);
+  }, [productosActivos]);
+
+  const handleReactivar = async (prod: ProductoWithDetails) => {
+    try {
+      await reactivarProducto.mutateAsync(prod.id);
+      toast.success(`Producto "${prod.nombre}" reactivado en el catálogo`);
+    } catch (err: any) {
+      toast.error(err.message || 'Error al reactivar el producto');
+    }
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -139,6 +168,28 @@ export const InventarioView: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
+          {/* Filtro por Estado (Activos vs Archivados) */}
+          <div className="flex items-center rounded-lg border border-border bg-muted/40 p-0.5">
+            <Button
+              type="button"
+              variant={estadoFilter === 'ACTIVOS' ? 'default' : 'ghost'}
+              size="xs"
+              onClick={() => setEstadoFilter('ACTIVOS')}
+              className="text-xs h-7 px-2.5"
+            >
+              Activos
+            </Button>
+            <Button
+              type="button"
+              variant={estadoFilter === 'ARCHIVADOS' ? 'default' : 'ghost'}
+              size="xs"
+              onClick={() => setEstadoFilter('ARCHIVADOS')}
+              className="text-xs h-7 px-2.5"
+            >
+              Archivados
+            </Button>
+          </div>
+
           {/* Filtro por Tipo */}
           <div className="flex items-center rounded-lg border border-border bg-muted/40 p-0.5">
             <Button
@@ -205,28 +256,36 @@ export const InventarioView: React.FC = () => {
             <EmptyMedia variant="icon">
               <Package className="size-6 text-muted-foreground" />
             </EmptyMedia>
-            <EmptyTitle>No hay artículos que coincidan</EmptyTitle>
+            <EmptyTitle>
+              {estadoFilter === 'ARCHIVADOS'
+                ? 'No hay productos archivados'
+                : 'No hay artículos que coincidan'}
+            </EmptyTitle>
             <EmptyDescription>
-              {searchQuery || categoriaIdFilter !== 'ALL' || tipoFilter !== 'ALL'
+              {estadoFilter === 'ARCHIVADOS'
+                ? 'Los productos retirados que tengan historial contable aparecerán aquí.'
+                : searchQuery || categoriaIdFilter !== 'ALL' || tipoFilter !== 'ALL'
                 ? 'Intenta ajustar tus criterios de búsqueda o filtros.'
                 : 'Aún no has registrado ningún producto o servicio en el inventario.'}
             </EmptyDescription>
           </EmptyHeader>
-          <EmptyContent>
-            <Button
-              onClick={() => {
-                setSearchQuery('');
-                setTipoFilter('ALL');
-                setCategoriaIdFilter('ALL');
-                setIsCreateModalOpen(true);
-              }}
-              size="sm"
-              className="flex items-center gap-1.5"
-            >
-              <Plus data-icon="inline-start" />
-              Crear primer artículo
-            </Button>
-          </EmptyContent>
+          {estadoFilter === 'ACTIVOS' && (
+            <EmptyContent>
+              <Button
+                onClick={() => {
+                  setSearchQuery('');
+                  setTipoFilter('ALL');
+                  setCategoriaIdFilter('ALL');
+                  setIsCreateModalOpen(true);
+                }}
+                size="sm"
+                className="flex items-center gap-1.5"
+              >
+                <Plus data-icon="inline-start" />
+                Crear primer artículo
+              </Button>
+            </EmptyContent>
+          )}
         </Empty>
       ) : (
         <div className="rounded-xl border border-border bg-card overflow-hidden">
@@ -240,6 +299,7 @@ export const InventarioView: React.FC = () => {
                   <th className="py-3 px-4">Variantes (SKU, Precio y Stock)</th>
                   <th className="py-3 px-4 text-right">Rango Precios</th>
                   <th className="py-3 px-4 text-right">Stock Total</th>
+                  <th className="py-3 px-4 text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -354,6 +414,49 @@ export const InventarioView: React.FC = () => {
                           </Badge>
                         )}
                       </td>
+
+                      {/* Acciones */}
+                      <td className="py-3 px-4 text-center">
+                        <div className="flex items-center justify-center gap-1">
+                          {estadoFilter === 'ARCHIVADOS' ? (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="xs"
+                              disabled={reactivarProducto.isPending}
+                              onClick={() => handleReactivar(prod)}
+                              title="Reactivar producto en catálogo"
+                              className="h-7 px-2 text-xs flex items-center gap-1"
+                            >
+                              <RotateCcw data-icon="inline-start" />
+                              Reactivar
+                            </Button>
+                          ) : (
+                            <>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon-xs"
+                                onClick={() => setEditingProducto(prod)}
+                                title="Editar producto"
+                                className="size-7 text-muted-foreground hover:text-foreground"
+                              >
+                                <Pencil className="size-3.5" />
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon-xs"
+                                onClick={() => setDeletingProducto(prod)}
+                                title="Eliminar o archivar"
+                                className="size-7 text-muted-foreground hover:text-destructive"
+                              >
+                                <Trash2 className="size-3.5" />
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      </td>
                     </tr>
                   );
                 })}
@@ -367,6 +470,20 @@ export const InventarioView: React.FC = () => {
       <CreateProductoModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
+      />
+
+      {/* Modal de Edición */}
+      <EditProductoModal
+        isOpen={Boolean(editingProducto)}
+        onClose={() => setEditingProducto(null)}
+        producto={editingProducto}
+      />
+
+      {/* Diálogo de Confirmación Destructivo */}
+      <ConfirmDeleteDialog
+        isOpen={Boolean(deletingProducto)}
+        onClose={() => setDeletingProducto(null)}
+        producto={deletingProducto}
       />
     </div>
   );

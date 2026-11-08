@@ -94,26 +94,26 @@ export const VentasHistorial: React.FC = () => {
     switch (metodo) {
       case 'EFECTIVO':
         return (
-          <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/30 text-[10px] font-semibold">
+          <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/30 text-xs font-medium">
             Efectivo
           </Badge>
         );
       case 'TARJETA':
         return (
-          <Badge variant="outline" className="bg-sky-500/10 text-sky-600 border-sky-500/30 text-[10px] font-semibold">
+          <Badge variant="outline" className="bg-sky-500/10 text-sky-600 border-sky-500/30 text-xs font-medium">
             Tarjeta
           </Badge>
         );
       case 'TRANSFERENCIA':
         return (
-          <Badge variant="outline" className="bg-purple-500/10 text-purple-600 border-purple-500/30 text-[10px] font-semibold">
+          <Badge variant="outline" className="bg-purple-500/10 text-purple-600 border-purple-500/30 text-xs font-medium">
             Transferencia
           </Badge>
         );
       case 'MIXTO':
       default:
         return (
-          <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30 text-[10px] font-semibold">
+          <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30 text-xs font-medium">
             Mixto
           </Badge>
         );
@@ -195,16 +195,16 @@ export const VentasHistorial: React.FC = () => {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             {/* Buscador */}
             <div className="flex-1 max-w-md">
-              <InputGroup className="h-8">
+              <InputGroup className="h-9">
                 <InputGroupAddon align="inline-start">
-                  <Search className="size-3.5 text-muted-foreground" />
+                  <Search className="size-4 text-muted-foreground" />
                 </InputGroupAddon>
                 <InputGroupInput
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Buscar por # folio, cliente o cajero..."
-                  className="text-xs"
+                  className="text-sm"
                 />
               </InputGroup>
             </div>
@@ -217,7 +217,7 @@ export const VentasHistorial: React.FC = () => {
                 size="sm"
                 onClick={() => setOnlyTurnoActivo(!onlyTurnoActivo)}
                 disabled={!activeCorteId}
-                className={`h-8 gap-1.5 text-xs font-medium ${
+                className={`h-9 gap-1.5 text-xs font-medium ${
                   onlyTurnoActivo
                     ? 'bg-primary text-primary-foreground'
                     : 'border-border/60 bg-muted/30 text-muted-foreground'
@@ -236,20 +236,20 @@ export const VentasHistorial: React.FC = () => {
               value={selectedMetodo}
               onValueChange={(val) => setSelectedMetodo(val as MetodoPagoVenta | 'ALL')}
             >
-              <TabsList className="h-8">
-                <TabsTrigger value="ALL" className="text-xs px-2.5 py-1">
+              <TabsList className="h-9">
+                <TabsTrigger value="ALL" className="text-xs px-3 py-1.5">
                   Todos
                 </TabsTrigger>
-                <TabsTrigger value="EFECTIVO" className="text-xs px-2.5 py-1">
+                <TabsTrigger value="EFECTIVO" className="text-xs px-3 py-1.5">
                   Efectivo
                 </TabsTrigger>
-                <TabsTrigger value="TARJETA" className="text-xs px-2.5 py-1">
+                <TabsTrigger value="TARJETA" className="text-xs px-3 py-1.5">
                   Tarjeta
                 </TabsTrigger>
-                <TabsTrigger value="TRANSFERENCIA" className="text-xs px-2.5 py-1">
+                <TabsTrigger value="TRANSFERENCIA" className="text-xs px-3 py-1.5">
                   Transferencia
                 </TabsTrigger>
-                <TabsTrigger value="MIXTO" className="text-xs px-2.5 py-1">
+                <TabsTrigger value="MIXTO" className="text-xs px-3 py-1.5">
                   Mixto
                 </TabsTrigger>
               </TabsList>
@@ -261,8 +261,8 @@ export const VentasHistorial: React.FC = () => {
       {/* Tabla de Ventas */}
       <Card className="overflow-hidden rounded-xl border border-border bg-card">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-muted/50 border-b border-border/60 text-muted-foreground font-semibold">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-muted/50 border-b border-border/60 text-muted-foreground font-semibold text-xs uppercase tracking-wider">
               <tr>
                 <th className="px-4 py-2.5">Folio</th>
                 <th className="px-4 py-2.5">Fecha & Hora</th>

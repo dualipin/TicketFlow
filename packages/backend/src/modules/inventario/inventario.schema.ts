@@ -53,6 +53,9 @@ export const searchProductosQuerySchema = z.object({
     .regex(/^\d+$/, "categoriaId debe ser numérico")
     .transform(Number)
     .optional(),
+  activo: z
+    .union([z.literal("ALL"), z.literal("0"), z.literal("1")])
+    .optional(),
   q: z.string().trim().optional(),
 });
 
@@ -73,9 +76,34 @@ export const createProductoSchema = z.object({
   variaciones: z.array(createProductoVariacionSchema).optional(),
 });
 
+export const updateProductoVariacionSchema = z.object({
+  id: z.number().int().optional(),
+  codigo: z.string().trim().min(1, "El código SKU es obligatorio"),
+  nombre: z.string().trim().min(1, "El nombre de la variante es obligatorio").default("Estándar"),
+  precioBase: z.number().min(0, "El precio no puede ser negativo").default(0),
+  stock: z.number().int().min(0, "El stock no puede ser negativo").default(0),
+});
+
+export const updateProductoSchema = z.object({
+  nombre: z.string().trim().min(1, "El nombre no puede estar vacío").optional(),
+  categoriaId: z.number().int().positive("La categoría es inválida").optional(),
+  descripcion: z.string().trim().optional().nullable(),
+  esServicio: z
+    .union([z.boolean(), z.number().int().min(0).max(1)])
+    .transform((val) => (val ? 1 : 0))
+    .optional(),
+  codigo: z.string().trim().optional(),
+  nombreVariacion: z.string().trim().optional(),
+  precioBase: z.number().min(0, "El precio no puede ser negativo").optional(),
+  stock: z.number().int().min(0, "El stock no puede ser negativo").optional(),
+  variaciones: z.array(updateProductoVariacionSchema).optional(),
+});
+
 export type CreateCategoriaInput = z.infer<typeof createCategoriaSchema>;
 export type SearchCategoriasQuery = z.infer<typeof searchCategoriasQuerySchema>;
 export type CreateProductoInput = z.infer<typeof createProductoSchema>;
+export type UpdateProductoInput = z.infer<typeof updateProductoSchema>;
+export type UpdateProductoVariacionInput = z.infer<typeof updateProductoVariacionSchema>;
 export type CreateProductoVariacionInput = z.infer<typeof createProductoVariacionSchema>;
 export type SearchProductosQuery = z.infer<typeof searchProductosQuerySchema>;
 export type AddVariacionInput = z.infer<typeof addVariacionSchema>;

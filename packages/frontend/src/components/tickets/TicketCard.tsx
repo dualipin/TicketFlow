@@ -12,7 +12,16 @@ import {
   CardContent,
   CardFooter,
 } from '../ui/card.tsx';
-import { Phone, Smartphone, AlertCircle, ChevronRight, DollarSign } from 'lucide-react';
+import {
+  Phone,
+  Smartphone,
+  AlertCircle,
+  ChevronRight,
+  DollarSign,
+  Image as ImageIcon,
+  Mic,
+  Video,
+} from 'lucide-react';
 import { cn } from '../../lib/utils.ts';
 
 interface TicketCardProps {
@@ -27,6 +36,10 @@ export const TicketCard: React.FC<TicketCardProps> = ({
   isSelected = false,
 }) => {
   const hasPendingBalance = ticket.saldoPendiente > 0;
+  const adjuntos = ticket.adjuntos ?? [];
+  const imgCount = adjuntos.filter((a) => a.tipo === 'IMAGEN').length;
+  const audCount = adjuntos.filter((a) => a.tipo === 'AUDIO').length;
+  const vidCount = adjuntos.filter((a) => a.tipo === 'VIDEO').length;
 
   return (
     <BorderBeam
@@ -54,9 +67,9 @@ export const TicketCard: React.FC<TicketCardProps> = ({
           {hasPendingBalance && ticket.estado === 'ENTREGADO' && (
             <Badge
               variant="outline"
-              className="gap-1 bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20 text-[10px] font-normal"
+              className="gap-1 bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20 text-xs font-normal"
             >
-              <AlertCircle className="size-2.5" />
+              <AlertCircle className="size-3" />
               Deudor
             </Badge>
           )}
@@ -64,7 +77,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
 
         <Button
           variant="ghost"
-          size="xs"
+          size="sm"
           onClick={() => onSelectTicket(ticket.id)}
           className="gap-1 text-xs text-primary hover:bg-primary/10 rounded-full"
         >
@@ -77,25 +90,47 @@ export const TicketCard: React.FC<TicketCardProps> = ({
 
       {/* Body: Device & Issue description */}
       <CardContent className="px-4 py-0 flex flex-col gap-2">
-        <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-          <Smartphone className="size-3.5 text-primary shrink-0" />
+        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+          <Smartphone className="size-4 text-primary shrink-0" />
           <span>{ticket.dispositivo}</span>
         </div>
 
-        <p className="text-xs text-muted-foreground line-clamp-2 pl-5 font-normal">
+        <p className="text-sm text-muted-foreground line-clamp-2 pl-6 font-normal">
           {ticket.falla}
         </p>
 
         {/* Customer info */}
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pl-5 text-[11px] text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pl-6 text-xs text-muted-foreground">
           <span className="font-medium text-foreground">
             {ticket.cliente?.nombre ?? 'Cliente sin nombre'}
           </span>
           {ticket.cliente?.telefono && (
             <span className="inline-flex items-center gap-1 text-muted-foreground">
-              <Phone className="size-2.5" />
+              <Phone className="size-3" />
               {ticket.cliente.telefono}
             </span>
+          )}
+          {adjuntos.length > 0 && (
+            <div className="inline-flex items-center gap-1.5">
+              {imgCount > 0 && (
+                <Badge variant="secondary" className="gap-1 px-2 py-0.5 h-5 text-xs font-mono">
+                  <ImageIcon className="size-3" />
+                  {imgCount}
+                </Badge>
+              )}
+              {audCount > 0 && (
+                <Badge variant="secondary" className="gap-1 px-2 py-0.5 h-5 text-xs font-mono">
+                  <Mic className="size-3" />
+                  {audCount}
+                </Badge>
+              )}
+              {vidCount > 0 && (
+                <Badge variant="secondary" className="gap-1 px-2 py-0.5 h-5 text-xs font-mono">
+                  <Video className="size-3" />
+                  {vidCount}
+                </Badge>
+              )}
+            </div>
           )}
         </div>
       </CardContent>
@@ -105,9 +140,9 @@ export const TicketCard: React.FC<TicketCardProps> = ({
       {/* Footer: Financials and Optimistic Status Changer */}
       <CardFooter className="px-4 py-0 flex-col sm:flex-row sm:items-center justify-between gap-3">
         {/* Balances */}
-        <div className="flex items-center gap-3 text-xs">
+        <div className="flex items-center gap-3 text-sm">
           <div className="flex items-center gap-1 text-muted-foreground">
-            <DollarSign className="size-3 text-muted-foreground" />
+            <DollarSign className="size-3.5 text-muted-foreground" />
             <span>Total:</span>
             <span className="font-semibold text-foreground">
               ${ticket.costoTotal.toFixed(2)}

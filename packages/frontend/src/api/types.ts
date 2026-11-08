@@ -76,6 +76,20 @@ export interface HistorialPago {
   fecha: string;
 }
 
+export type TipoAdjunto = 'IMAGEN' | 'AUDIO' | 'VIDEO';
+
+export interface TicketAdjunto {
+  id: number;
+  ticketId: number | null;
+  tipo: TipoAdjunto;
+  url: string;
+  nombreOriginal: string;
+  mimeType: string;
+  tamanoBytes: number;
+  duracionSegundos: number | null;
+  createdAt: string;
+}
+
 export interface Ticket {
   id: number;
   folio: string;
@@ -94,6 +108,7 @@ export interface Ticket {
   updatedAt: string;
   cliente: Cliente;
   tecnico: Usuario | null;
+  adjuntos?: TicketAdjunto[];
   bitacora: Bitacora[];
   historialPagos: HistorialPago[];
 }
@@ -121,6 +136,7 @@ export interface CreateTicketInput {
   notaInicial?: string;
   notaEsPrivada?: boolean;
   tecnicoId?: number;
+  adjuntoIds?: number[];
 }
 
 export interface UpdateTicketStatusInput {
@@ -175,6 +191,7 @@ export interface Producto {
   nombre: string;
   descripcion: string | null;
   esServicio: number; // 0 = Físico con inventario, 1 = Servicio/Mano de obra
+  activo?: number; // 1 = Activo, 0 = Archivado/Inactivo
   createdAt?: string;
   updatedAt?: string;
   categoria?: Categoria;
@@ -222,6 +239,31 @@ export interface CreateProductoInput {
   precioBase?: number;
   stock?: number;
   variaciones?: CreateProductoVariacionInput[];
+}
+
+export interface UpdateProductoInput {
+  nombre?: string;
+  categoriaId?: number;
+  descripcion?: string | null;
+  esServicio?: number | boolean;
+  codigo?: string;
+  nombreVariacion?: string;
+  precioBase?: number;
+  stock?: number;
+  variaciones?: Array<{
+    id?: number;
+    codigo: string;
+    nombre: string;
+    precioBase: number;
+    stock: number;
+  }>;
+}
+
+export interface DeleteProductoResult {
+  id: number;
+  eliminado: boolean;
+  archivado: boolean;
+  mensaje: string;
 }
 
 // ============================================================================

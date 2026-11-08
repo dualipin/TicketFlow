@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
-import { useCreateTicket } from '../../queries/tickets/mutations.ts';
+import {
+  useCreateTicket,
+  useDeleteTicketAdjunto,
+} from '../../queries/tickets/mutations.ts';
 import { useClientes } from '../../queries/clientes/queries.ts';
 import { useAuth } from '../../lib/auth-context.tsx';
+import { TicketMediaCapture } from './TicketMediaCapture.tsx';
 import { Button } from '../ui/button.tsx';
 import { Input } from '../ui/input.tsx';
 import { Textarea } from '../ui/textarea.tsx';
@@ -30,8 +34,8 @@ import {
 import { Alert, AlertDescription } from '../ui/alert.tsx';
 import { Spinner } from '../ui/spinner.tsx';
 import { toast } from '../ui/sonner.tsx';
-import { Smartphone, User, DollarSign, Plus, Check } from 'lucide-react';
-import type { MetodoPago } from '../../api/types.ts';
+import { Smartphone, User, DollarSign, Plus, Check, Camera } from 'lucide-react';
+import type { MetodoPago, TicketAdjunto } from '../../api/types.ts';
 
 interface CreateTicketModalProps {
   isOpen: boolean;
@@ -46,6 +50,7 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
 }) => {
   const { currentUser } = useAuth();
   const createTicket = useCreateTicket();
+  const deleteAdjunto = useDeleteTicketAdjunto();
   const { data: existingClientes } = useClientes();
 
   const [useExistingClient, setUseExistingClient] = useState(false);
@@ -60,6 +65,17 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
   const [anticipo, setAnticipo] = useState('300');
   const [metodoPago, setMetodoPago] = useState<MetodoPago>('EFECTIVO');
   const [notaInicial, setNotaInicial] = useState('Equipo recibido en mostrador para revisión general');
+  const [adjuntos, setAdjuntos] = useState<TicketAdjunto[]>([]);
+
+  const handleCloseWithCleanup = () => {
+    if (adjuntos.length > 0) {
+      for (const item of adjuntos) {
+        deleteAdjunto.mutate({ id: item.id });
+      }
+      setAdjuntos([]);
+    }
+    onClose();
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,12 +95,14 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
         metodoPago,
         usuarioId: currentUser?.id ?? 3,
         notaInicial: notaInicial.trim() || undefined,
+        adjuntoIds: adjuntos.map((a) => a.id),
       },
       {
         onSuccess: (newTicket) => {
           toast.success(`Orden creada con éxito`, {
             description: `Folio ${newTicket.folio} - ${newTicket.dispositivo}`,
           });
+          setAdjuntos([]);
           onClose();
           onCreated?.(newTicket.id);
         },
@@ -98,7 +116,7 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && handleCloseWithCleanup()}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-hidden flex flex-col p-6">
         <DialogHeader>
           <div className="flex items-center gap-2">
@@ -253,6 +271,18 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
             </div>
           </FieldSet>
 
+          {/* Evidencias Multimedia (Fotos, Audio y Video) */}
+          <FieldSet className="rounded-lg bg-muted/20 p-3 border border-border/60 gap-3">
+            <FieldLegend className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-0">
+              <Camera className="size-3.5 text-primary" />
+              Evidencias Multimedia (Imágenes, Audio y Video)
+            </FieldLegend>
+            <TicketMediaCapture
+              adjuntos={adjuntos}
+              onChange={setAdjuntos}
+            />
+          </FieldSet>
+
           {/* Pricing and Advance Payment */}
           <FieldSet className="rounded-lg bg-muted/20 p-3 border border-border/60 gap-3">
             <FieldLegend className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-0">
@@ -338,7 +368,7 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
           )}
 
           <DialogFooter className="pt-2">
-            <Button type="button" variant="ghost" size="sm" onClick={onClose}>
+            <Button type="button" variant="ghost" size="sm" onClick={handleCloseWithCleanup}>
               Cancelar
             </Button>
             <Button

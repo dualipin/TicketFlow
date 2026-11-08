@@ -660,6 +660,13 @@
           },
           "Producto": {
             "fields": {
+              "activo": {
+                "nullable": false,
+                "type": {
+                  "codecId": "sqlite/integer@1",
+                  "kind": "scalar"
+                }
+              },
               "categoriaId": {
                 "nullable": false,
                 "type": {
@@ -745,6 +752,9 @@
             },
             "storage": {
               "fields": {
+                "activo": {
+                  "column": "activo"
+                },
                 "categoriaId": {
                   "column": "categoriaId"
                 },
@@ -2009,6 +2019,15 @@
             },
             "Producto": {
               "columns": {
+                "activo": {
+                  "codecId": "sqlite/integer@1",
+                  "dataType": "sqlite/integer",
+                  "default": {
+                    "kind": "literal",
+                    "value": "1"
+                  },
+                  "nullable": false
+                },
                 "categoriaId": {
                   "codecId": "sqlite/integer@1",
                   "dataType": "sqlite/integer",
@@ -2517,7 +2536,7 @@
         "id": "__unbound__"
       }
     },
-    "storageHash": "71d59419cac3d418adfce94b89a350bf13b6092c4a8be9ce79c58c6587d43138"
+    "storageHash": "ad4807a28cf82a904210b7f713323c7e9bab84c947109f852b77065f10800509"
   },
   "execution": {
     "executionHash": "75750483d1c964618da781936fefe7dd2d473c8cc06fa107288d362219299334",

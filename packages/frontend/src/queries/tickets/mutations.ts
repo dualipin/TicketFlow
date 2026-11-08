@@ -272,3 +272,67 @@ export function useCreateTicket() {
     },
   });
 }
+
+
+export interface UploadTicketAdjuntoVariables {
+  file: File;
+  ticketId?: number;
+  duracionSegundos?: number;
+}
+
+/**
+ * Mutation para subir una evidencia multimedia (Imagen, Audio o Video) a /api/upload/ticket-adjuntos
+ */
+export function useUploadTicketAdjunto() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ file, ticketId, duracionSegundos }: UploadTicketAdjuntoVariables) => {
+      const formData = new FormData();
+      formData.append('archivo', file);
+      if (ticketId !== undefined) {
+        formData.append('ticketId', String(ticketId));
+      }
+      if (duracionSegundos !== undefined) {
+        formData.append('duracionSegundos', String(duracionSegundos));
+      }
+
+      return apiFetch<import('../../api/types.ts').TicketAdjunto>('/upload/ticket-adjuntos', {
+        method: 'POST',
+        body: formData,
+      });
+    },
+    onSettled: (_data, _error, variables) => {
+      if (variables.ticketId) {
+        queryClient.invalidateQueries({ queryKey: ticketsKeys.detail(variables.ticketId) });
+        queryClient.invalidateQueries({ queryKey: ticketsKeys.lists() });
+      }
+    },
+  });
+}
+
+export interface DeleteTicketAdjuntoVariables {
+  id: number;
+  ticketId?: number | null;
+}
+
+/**
+ * Mutation para eliminar un adjunto multimedia de un ticket o en estado pre-subido
+ */
+export function useDeleteTicketAdjunto() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id }: DeleteTicketAdjuntoVariables) => {
+      return apiFetch<{ deleted: boolean; id: number }>(`/upload/adjuntos/${id}`, {
+        method: 'DELETE',
+      });
+    },
+    onSettled: (_data, _error, variables) => {
+      if (variables.ticketId) {
+        queryClient.invalidateQueries({ queryKey: ticketsKeys.detail(variables.ticketId) });
+        queryClient.invalidateQueries({ queryKey: ticketsKeys.lists() });
+      }
+    },
+  });
+}

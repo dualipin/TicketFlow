@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { adjuntosService } from "../modules/adjuntos/index.ts";
 import { db } from "../prisma/db.ts";
 
 export const tallerRoutes = new Hono();
@@ -32,6 +33,7 @@ tallerRoutes.get("/tickets", async (c) => {
   const tickets = await db.orm.Ticket
     .include("cliente")
     .include("tecnico")
+    .include("adjuntos")
     .include("bitacora")
     .include("historialPagos")
     .all();
@@ -77,6 +79,7 @@ tallerRoutes.get("/tickets/:id", async (c) => {
     .where({ id })
     .include("cliente")
     .include("tecnico")
+    .include("adjuntos")
     .include("bitacora")
     .include("historialPagos")
     .first();
@@ -163,10 +166,19 @@ tallerRoutes.post("/tickets", async (c) => {
     });
   }
 
+  // Si se enviaron IDs de evidencias multimedia pre-subidas, vincularlas al ticket recién creado
+  if (Array.isArray(body.adjuntoIds) && body.adjuntoIds.length > 0) {
+    const validIds = body.adjuntoIds
+      .map((id: unknown) => Number(id))
+      .filter((id: number) => !Number.isNaN(id) && id > 0);
+    await adjuntosService.vincularATicket(ticket.id, validIds);
+  }
+
   const createdFull = await db.orm.Ticket
     .where({ id: ticket.id })
     .include("cliente")
     .include("tecnico")
+    .include("adjuntos")
     .include("bitacora")
     .include("historialPagos")
     .first();
@@ -215,6 +227,7 @@ tallerRoutes.patch("/tickets/:id/estado", async (c) => {
     .where({ id })
     .include("cliente")
     .include("tecnico")
+    .include("adjuntos")
     .include("bitacora")
     .include("historialPagos")
     .first();

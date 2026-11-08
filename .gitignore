@@ -1,3 +1,6 @@
+# Binaries
+cloudflared.exe
+
 # Dependencies
 node_modules/
 
@@ -5,6 +8,7 @@ node_modules/
 dist/
 build/
 out/
+dev-dist/
 
 # Environment variables
 .env

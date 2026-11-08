@@ -7,6 +7,7 @@ import {
 } from '../../queries/tickets/mutations.ts';
 import { TicketStatusBadge } from './TicketStatusBadge.tsx';
 import { TicketStatusChanger } from './TicketStatusChanger.tsx';
+import { TicketMediaCapture } from './TicketMediaCapture.tsx';
 import { Button } from '../ui/button.tsx';
 import { Input } from '../ui/input.tsx';
 import { Textarea } from '../ui/textarea.tsx';
@@ -42,6 +43,7 @@ import {
   Lock,
   Send,
   DollarSign,
+  Camera,
 } from 'lucide-react';
 
 interface TicketDetailDrawerProps {
@@ -235,6 +237,27 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                       {ticket.cliente?.telefono}
                     </span>
                   </div>
+                </CardContent>
+              </Card>
+
+              {/* Multimedia Evidence Card (Fotos, Audio y Video) */}
+              <Card className="p-4 rounded-xl border border-border bg-card gap-3">
+                <CardHeader className="p-0 flex-row items-center justify-between">
+                  <CardTitle className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                    <Camera className="size-3.5 text-primary" />
+                    Evidencias Multimedia
+                  </CardTitle>
+                  <Badge variant="outline" className="text-[10px] rounded-full">
+                    {ticket.adjuntos?.length || 0} archivos
+                  </Badge>
+                </CardHeader>
+
+                <CardContent className="p-0">
+                  <TicketMediaCapture
+                    adjuntos={ticket.adjuntos ?? []}
+                    ticketId={ticket.id}
+                    compact
+                  />
                 </CardContent>
               </Card>
 

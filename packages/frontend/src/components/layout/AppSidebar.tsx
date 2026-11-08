@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router';
 import { MetalBadge } from 'metal-fx';
 import { useAuth } from '../../lib/auth-context.tsx';
+import { usePwaInstall } from '../../hooks/usePwaInstall.ts';
 import { useCorteActivo } from '../../queries/corte-caja/queries.ts';
 import { useTickets } from '../../queries/tickets/queries.ts';
 import {
@@ -33,6 +34,7 @@ import {
   Shield,
   CheckCircle2,
   AlertCircle,
+  Download,
 } from 'lucide-react';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
@@ -48,6 +50,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
   const location = useLocation();
   const navigate = useNavigate();
   const { currentUser, lock, setIsLocked } = useAuth();
+  const { isInstallable, installApp } = usePwaInstall();
   const { data: corteData } = useCorteActivo();
   const { data: tickets = [] } = useTickets();
 
@@ -220,6 +223,18 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
       {/* 3. Footer con NavUser / Operador */}
       <SidebarFooter>
         <SidebarMenu>
+          {isInstallable && (
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                tooltip="Instalar TicketFlow en este equipo"
+                onClick={installApp}
+                className="bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary font-medium transition-colors cursor-pointer"
+              >
+                <Download className="size-4 shrink-0" />
+                <span>Instalar Aplicación</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
           <SidebarMenuItem>
             {currentUser ? (
               <div className="flex items-center gap-2 p-1.5 rounded-lg bg-secondary/60 border border-border/80 group-data-[collapsible=icon]:p-1 group-data-[collapsible=icon]:justify-center">

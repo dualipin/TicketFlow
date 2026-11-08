@@ -8,6 +8,7 @@ import {
   searchCategoriasQuerySchema,
   searchProductosQuerySchema,
   searchVariacionesQuerySchema,
+  updateProductoSchema,
   updateStockSchema,
   variacionIdParamSchema,
 } from "./inventario.schema.ts";
@@ -64,6 +65,38 @@ inventarioRoutes.post(
     const body = c.req.valid("json");
     const producto = await inventarioService.createProducto(body);
     return c.json(producto, 201);
+  }
+);
+
+inventarioRoutes.put(
+  "/productos/:id",
+  zValidator("param", productoIdParamSchema),
+  zValidator("json", updateProductoSchema),
+  async (c) => {
+    const { id } = c.req.valid("param");
+    const body = c.req.valid("json");
+    const updated = await inventarioService.updateProducto(id, body);
+    return c.json(updated);
+  }
+);
+
+inventarioRoutes.delete(
+  "/productos/:id",
+  zValidator("param", productoIdParamSchema),
+  async (c) => {
+    const { id } = c.req.valid("param");
+    const result = await inventarioService.deleteProducto(id);
+    return c.json(result);
+  }
+);
+
+inventarioRoutes.patch(
+  "/productos/:id/reactivar",
+  zValidator("param", productoIdParamSchema),
+  async (c) => {
+    const { id } = c.req.valid("param");
+    const reactivado = await inventarioService.reactivarProducto(id);
+    return c.json(reactivado);
   }
 );
 

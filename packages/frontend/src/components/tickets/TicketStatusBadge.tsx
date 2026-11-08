@@ -82,13 +82,13 @@ export const TicketStatusBadge: React.FC<TicketStatusBadgeProps> = ({
     <Badge
       variant={config.variant}
       className={cn(
-        'font-normal gap-1 rounded-full',
-        size === 'sm' ? 'px-2 py-0 text-[10px] h-4.5' : 'px-2.5 py-0.5 text-xs h-5',
+        'font-normal gap-1.5 rounded-full',
+        size === 'sm' ? 'px-2.5 py-0.5 text-xs h-5.5' : 'px-3 py-1 text-xs font-medium h-6.5',
         config.className,
         className
       )}
     >
-      <Icon className="size-3 shrink-0" />
+      <Icon className="size-3.5 shrink-0" />
       <span>{config.label}</span>
     </Badge>
   );

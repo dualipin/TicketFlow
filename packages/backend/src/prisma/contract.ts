@@ -61,6 +61,7 @@ export const contract = defineContract({}, ({ field, model, rel, gen, type }) =>
       nombre: field.column(type.String()),
       descripcion: field.column(type.String()).optional(),
       esServicio: field.column(type.Int()).default(0), // 1 = servicio (no descuenta stock), 0 = producto físico
+      activo: field.column(type.Int()).default(1), // 1 = activo en catálogo, 0 = archivado/soft delete
       createdAt: field.column(type.DateTime()).default(now()).onCreate(gen.now()),
       updatedAt: field.column(type.temporal.UpdatedAt()),
     },

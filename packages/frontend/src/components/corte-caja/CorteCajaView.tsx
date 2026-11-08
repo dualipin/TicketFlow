@@ -370,8 +370,8 @@ export const CorteCajaView: React.FC = () => {
 
         <Card className="overflow-hidden rounded-xl border-border bg-card">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-muted/50 border-b border-border/60 text-muted-foreground font-semibold">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-muted/50 border-b border-border/60 text-muted-foreground font-semibold text-xs uppercase tracking-wider">
                 <tr>
                   <th className="px-4 py-2.5">Turno</th>
                   <th className="px-4 py-2.5">Operador</th>

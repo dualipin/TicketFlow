@@ -2,6 +2,7 @@ import { describe, expect, it } from "bun:test";
 import { Hono } from "hono";
 import { inventarioRoutes } from "./inventario.routes.ts";
 import { AppError } from "../../lib/errors.ts";
+import { db } from "../../prisma/db.ts";
 
 const app = new Hono();
 app.onError((err, c) => {
@@ -230,5 +231,179 @@ describe("Inventario Module - Categorías", () => {
     expect(res.status).toBe(409);
     const err = await res.json();
     expect(err.error).toContain("duplicados");
+  });
+
+  it("PUT /api/inventario/productos/:id updates product information and variations", async () => {
+    const catRes = await app.request("/api/inventario/categorias", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nombre: `Cat Edit ${Date.now()}` }),
+    });
+    const cat = await catRes.json();
+
+    const createRes = await app.request("/api/inventario/productos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        categoriaId: cat.id,
+        nombre: "Producto Original",
+        codigo: `SKU-ORIG-${Date.now()}`,
+        precioBase: 100,
+        stock: 5,
+      }),
+    });
+    const created = await createRes.json();
+    const varId = created.variaciones[0].id;
+
+    // Update product
+    const updatedSku = `SKU-UPD-${Date.now()}`;
+    const updateRes = await app.request(`/api/inventario/productos/${created.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nombre: "Producto Renombrado",
+        descripcion: "Nueva descripción",
+        variaciones: [
+          {
+            id: varId,
+            nombre: "Variante Modificada",
+            codigo: updatedSku,
+            precioBase: 150,
+            stock: 12,
+          },
+        ],
+      }),
+    });
+
+    expect(updateRes.status).toBe(200);
+    const updated = await updateRes.json();
+    expect(updated.nombre).toBe("Producto Renombrado");
+    expect(updated.descripcion).toBe("Nueva descripción");
+    expect(updated.variaciones[0].codigo).toBe(updatedSku);
+    expect(updated.variaciones[0].precioBase).toBe(150);
+    expect(updated.variaciones[0].stock).toBe(12);
+  });
+
+  it("DELETE /api/inventario/productos/:id hard-deletes when product has never been sold", async () => {
+    const catRes = await app.request("/api/inventario/categorias", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nombre: `Cat DelHard ${Date.now()}` }),
+    });
+    const cat = await catRes.json();
+
+    const createRes = await app.request("/api/inventario/productos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        categoriaId: cat.id,
+        nombre: "Producto Sin Ventas",
+        codigo: `SKU-DEL-${Date.now()}`,
+        precioBase: 50,
+        stock: 10,
+      }),
+    });
+    const created = await createRes.json();
+
+    const delRes = await app.request(`/api/inventario/productos/${created.id}`, {
+      method: "DELETE",
+    });
+
+    expect(delRes.status).toBe(200);
+    const delResult = await delRes.json();
+    expect(delResult.eliminado).toBe(true);
+    expect(delResult.archivado).toBe(false);
+
+    // Verify it no longer exists
+    const getRes = await app.request(`/api/inventario/productos/${created.id}`);
+    expect(getRes.status).toBe(404);
+  });
+
+  it("DELETE /api/inventario/productos/:id soft-deletes (archives) when product has sales history", async () => {
+    const catRes = await app.request("/api/inventario/categorias", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nombre: `Cat SoftDel ${Date.now()}` }),
+    });
+    const cat = await catRes.json();
+
+    const sku = `SKU-SOLD-${Date.now()}`;
+    const createRes = await app.request("/api/inventario/productos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        categoriaId: cat.id,
+        nombre: "Producto Con Ventas",
+        codigo: sku,
+        precioBase: 250,
+        stock: 20,
+      }),
+    });
+    const created = await createRes.json();
+    const varId = created.variaciones[0].id;
+
+    // Simulate a sale in POS
+    const venta = await db.orm.Venta.create({
+      total: 250,
+      metodoPago: "EFECTIVO",
+      usuarioId: 1,
+    });
+    await db.orm.VentaDetalle.create({
+      ventaId: venta.id,
+      variacionId: varId,
+      cantidad: 1,
+      precioUnit: 250,
+      subtotal: 250,
+    });
+
+    // Attempt delete -> should soft-delete
+    const delRes = await app.request(`/api/inventario/productos/${created.id}`, {
+      method: "DELETE",
+    });
+
+    expect(delRes.status).toBe(200);
+    const delResult = await delRes.json();
+    expect(delResult.eliminado).toBe(false);
+    expect(delResult.archivado).toBe(true);
+
+    // Verify product still exists in db but activo = 0
+    const inDb = await db.orm.Producto.where({ id: created.id }).first();
+    expect(inDb?.activo).toBe(0);
+
+    // Verify it is excluded from default POS / variaciones list
+    const varRes = await app.request(`/api/inventario/variaciones?codigo=${sku}`);
+    const varData = await varRes.json();
+    expect(varData.length).toBe(0);
+  });
+
+  it("PATCH /api/inventario/productos/:id/reactivar reactivates an archived product", async () => {
+    const catRes = await app.request("/api/inventario/categorias", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nombre: `Cat Reactivar ${Date.now()}` }),
+    });
+    const cat = await catRes.json();
+
+    const createRes = await app.request("/api/inventario/productos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        categoriaId: cat.id,
+        nombre: "Producto Para Reactivar",
+        codigo: `SKU-REACT-${Date.now()}`,
+        precioBase: 70,
+        stock: 3,
+      }),
+    });
+    const created = await createRes.json();
+
+    // Reactivate
+    const reactRes = await app.request(`/api/inventario/productos/${created.id}/reactivar`, {
+      method: "PATCH",
+    });
+
+    expect(reactRes.status).toBe(200);
+    const reactivated = await reactRes.json();
+    expect(reactivated.activo).toBe(1);
   });
 });

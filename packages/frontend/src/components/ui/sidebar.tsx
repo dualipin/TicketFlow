@@ -473,7 +473,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center gap-2.5 overflow-hidden rounded-lg p-2 text-left text-xs outline-hidden transition-[width,height,padding,background-color,color] duration-150 ease-linear hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/30 active:bg-secondary disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-active:bg-secondary data-active:font-medium data-active:text-foreground data-[state=open]:hover:bg-secondary data-[state=open]:hover:text-foreground group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
+  "peer/menu-button flex w-full items-center gap-2.5 overflow-hidden rounded-lg p-2 text-left text-sm outline-hidden transition-[width,height,padding,background-color,color] duration-150 ease-linear hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/30 active:bg-secondary disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-active:bg-secondary data-active:font-medium data-active:text-foreground data-[state=open]:hover:bg-secondary data-[state=open]:hover:text-foreground group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -482,9 +482,9 @@ const sidebarMenuButtonVariants = cva(
           "bg-background shadow-xs hover:bg-secondary hover:text-foreground hover:shadow-xs border border-border",
       },
       size: {
-        default: "h-8.5 text-xs",
-        sm: "h-7 text-xs",
-        lg: "h-11 text-xs group-data-[collapsible=icon]:p-0!",
+        default: "h-9 text-sm",
+        sm: "h-8 text-xs",
+        lg: "h-11 text-sm group-data-[collapsible=icon]:p-0!",
       },
     },
     defaultVariants: {

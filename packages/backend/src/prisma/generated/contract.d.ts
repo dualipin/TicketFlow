@@ -19,7 +19,7 @@ import type {
 } from '@prisma/orm-sqlite/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'71d59419cac3d418adfce94b89a350bf13b6092c4a8be9ce79c58c6587d43138'>;
+  StorageHashBase<'ad4807a28cf82a904210b7f713323c7e9bab84c947109f852b77065f10800509'>;
 export type ExecutionHash =
   ExecutionHashBase<'75750483d1c964618da781936fefe7dd2d473c8cc06fa107288d362219299334'>;
 export type ProfileHash =
@@ -280,6 +280,7 @@ export namespace Models {
     readonly [RelationKeys]?: 'corteCaja' | 'ticket' | 'usuario';
   };
   export type Producto = {
+    activo: FieldOutputTypes['__unbound__']['Producto']['activo'];
     categoriaId: FieldOutputTypes['__unbound__']['Producto']['categoriaId'];
     createdAt: FieldOutputTypes['__unbound__']['Producto']['createdAt'];
     descripcion: FieldOutputTypes['__unbound__']['Producto']['descripcion'];
@@ -728,6 +729,16 @@ type ContractBase = Omit<
             };
             readonly Producto: {
               columns: {
+                readonly activo: {
+                  readonly dataType: 'sqlite/integer';
+                  readonly codecId: 'sqlite/integer@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'sqlite/integer@1', '1'>;
+                  };
+                  readonly many: false;
+                };
                 readonly categoriaId: {
                   readonly dataType: 'sqlite/integer';
                   readonly codecId: 'sqlite/integer@1';
@@ -1666,6 +1677,10 @@ type ContractBase = Omit<
           };
           readonly Producto: {
             readonly fields: {
+              readonly activo: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'sqlite/integer@1' };
+              };
               readonly categoriaId: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'sqlite/integer@1' };
@@ -1724,6 +1739,7 @@ type ContractBase = Omit<
               readonly table: 'Producto';
               readonly namespaceId: '__unbound__';
               readonly fields: {
+                readonly activo: { readonly column: 'activo' };
                 readonly categoriaId: { readonly column: 'categoriaId' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly descripcion: { readonly column: 'descripcion' };

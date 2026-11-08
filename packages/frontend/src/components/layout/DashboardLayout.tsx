@@ -35,7 +35,7 @@ export const DashboardLayout: React.FC = () => {
 
         {/* Main Workspace Viewport with Container Queries */}
         <div className="flex flex-1 flex-col overflow-y-auto">
-          <div className="@container/main flex flex-1 flex-col gap-4 md:gap-6 p-4 lg:p-6 max-w-7xl w-full mx-auto">
+          <div className="@container/main flex flex-1 flex-col gap-4 md:gap-6 p-4 md:p-6 lg:p-8 max-w-[1680px] w-full mx-auto">
             <Outlet />
           </div>
         </div>

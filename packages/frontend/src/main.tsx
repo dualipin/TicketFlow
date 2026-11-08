@@ -8,6 +8,20 @@ import { ThemeProvider } from './lib/theme-context.tsx'
 import './index.css'
 import App from './App.tsx'
 
+// Registrar Service Worker para soporte PWA, instalación y cache offline
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then((reg) => {
+        console.info('TicketFlow PWA activo en scope:', reg.scope);
+      })
+      .catch((error) => {
+        console.warn('Error al registrar Service Worker:', error);
+      });
+  });
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>

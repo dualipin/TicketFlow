@@ -342,9 +342,9 @@ export const PosTerminal: React.FC = () => {
             <CardContent className="p-0 flex flex-col gap-3">
               {/* Buscador con soporte de escáner de código de barras */}
               <div className="flex items-center gap-2">
-                <InputGroup className="h-9 flex-1">
+                <InputGroup className="h-10 flex-1">
                   <InputGroupAddon align="inline-start">
-                    <Barcode className="size-4 text-muted-foreground" />
+                    <Barcode className="size-4.5 text-muted-foreground" />
                   </InputGroupAddon>
                   <InputGroupInput
                     ref={searchInputRef}
@@ -353,7 +353,7 @@ export const PosTerminal: React.FC = () => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={handleBarcodeKeyDown}
                     placeholder="Escanear código SKU o buscar por nombre (presiona Enter para agregar)..."
-                    className="text-xs"
+                    className="text-sm"
                     autoFocus
                   />
                   {searchQuery && (
@@ -363,7 +363,7 @@ export const PosTerminal: React.FC = () => {
                         variant="ghost"
                         size="xs"
                         onClick={() => setSearchQuery('')}
-                        className="size-5 p-0 text-muted-foreground hover:text-foreground"
+                        className="size-6 p-0 text-muted-foreground hover:text-foreground"
                       >
                         ✕
                       </Button>
@@ -377,36 +377,36 @@ export const PosTerminal: React.FC = () => {
                 <div className="flex items-center gap-1.5">
                   <Button
                     type="button"
-                    size="xs"
+                    size="sm"
                     variant={tipoFilter === 'ALL' ? 'default' : 'outline'}
                     onClick={() => setTipoFilter('ALL')}
-                    className="text-[11px] h-7"
+                    className="text-xs h-7.5 px-3"
                   >
                     Todos
                   </Button>
                   <Button
                     type="button"
-                    size="xs"
+                    size="sm"
                     variant={tipoFilter === 'FISICOS' ? 'default' : 'outline'}
                     onClick={() => setTipoFilter('FISICOS')}
-                    className="text-[11px] h-7 gap-1"
+                    className="text-xs h-7.5 px-3 gap-1.5"
                   >
-                    <Store className="size-3" data-icon="inline-start" />
+                    <Store className="size-3.5" data-icon="inline-start" />
                     <span>Productos Físicos</span>
                   </Button>
                   <Button
                     type="button"
-                    size="xs"
+                    size="sm"
                     variant={tipoFilter === 'SERVICIOS' ? 'default' : 'outline'}
                     onClick={() => setTipoFilter('SERVICIOS')}
-                    className="text-[11px] h-7 gap-1"
+                    className="text-xs h-7.5 px-3 gap-1.5"
                   >
-                    <Wrench className="size-3" data-icon="inline-start" />
+                    <Wrench className="size-3.5" data-icon="inline-start" />
                     <span>Servicios de Taller</span>
                   </Button>
                 </div>
 
-                <span className="text-[11px] text-muted-foreground">
+                <span className="text-xs text-muted-foreground">
                   {filteredVariaciones.length} artículos
                 </span>
               </div>
@@ -416,10 +416,10 @@ export const PosTerminal: React.FC = () => {
                 <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
                   <Button
                     type="button"
-                    size="xs"
+                    size="sm"
                     variant={selectedCategoriaId === 'ALL' ? 'secondary' : 'ghost'}
                     onClick={() => setSelectedCategoriaId('ALL')}
-                    className="text-[11px] h-6 shrink-0"
+                    className="text-xs h-7.5 px-3 shrink-0"
                   >
                     Todas las Categorías
                   </Button>
@@ -427,10 +427,10 @@ export const PosTerminal: React.FC = () => {
                     <Button
                       key={cat.id}
                       type="button"
-                      size="xs"
+                      size="sm"
                       variant={selectedCategoriaId === cat.id ? 'secondary' : 'ghost'}
                       onClick={() => setSelectedCategoriaId(cat.id)}
-                      className="text-[11px] h-6 shrink-0"
+                      className="text-xs h-7.5 px-3 shrink-0"
                     >
                       {cat.nombre}
                     </Button>
@@ -469,45 +469,45 @@ export const PosTerminal: React.FC = () => {
                     }`}
                   >
                     <div>
-                      <div className="flex items-center justify-between gap-1 mb-1">
-                        <span className="text-[10px] font-mono text-muted-foreground truncate">
+                      <div className="flex items-center justify-between gap-1.5 mb-1.5">
+                        <span className="text-xs font-mono text-muted-foreground truncate">
                           {v.codigo}
                         </span>
                         {esServicio ? (
                           <Badge
                             variant="outline"
-                            className="text-[9px] px-1.5 py-0 bg-primary/10 text-primary border-primary/20 shrink-0 font-semibold"
+                            className="text-xs px-2 py-0 bg-primary/10 text-primary border-primary/20 shrink-0 font-semibold h-5"
                           >
                             Servicio
                           </Badge>
                         ) : agotado ? (
-                          <Badge variant="destructive" className="text-[9px] px-1.5 py-0 shrink-0">
+                          <Badge variant="destructive" className="text-xs px-2 py-0 shrink-0 h-5">
                             Agotado
                           </Badge>
                         ) : (
                           <Badge
                             variant="secondary"
-                            className="text-[9px] px-1.5 py-0 text-muted-foreground shrink-0"
+                            className="text-xs px-2 py-0 text-muted-foreground shrink-0 h-5"
                           >
                             {v.stock} disp.
                           </Badge>
                         )}
                       </div>
 
-                      <div className="font-semibold text-xs text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+                      <div className="font-semibold text-sm text-foreground line-clamp-1 group-hover:text-primary transition-colors">
                         {v.producto.nombre}
                       </div>
-                      <div className="text-[11px] text-muted-foreground line-clamp-1">
+                      <div className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
                         {v.nombre}
                       </div>
                     </div>
 
-                    <div className="mt-3 pt-2 border-t border-border/40 flex items-center justify-between">
-                      <span className="text-sm font-black text-foreground">
+                    <div className="mt-3 pt-2.5 border-t border-border/40 flex items-center justify-between">
+                      <span className="text-base font-black text-foreground">
                         ${v.precioBase.toFixed(2)}
                       </span>
-                      <div className="size-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center opacity-80 group-hover:opacity-100 group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                        <Plus className="size-3.5" />
+                      <div className="size-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center opacity-80 group-hover:opacity-100 group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                        <Plus className="size-4" />
                       </div>
                     </div>
                   </button>
@@ -529,8 +529,8 @@ export const PosTerminal: React.FC = () => {
                     <ShoppingCart className="size-4" />
                   </div>
                   <div>
-                    <CardTitle className="text-sm font-semibold tracking-tight">Carrito de Venta</CardTitle>
-                    <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                    <CardTitle className="text-base font-semibold tracking-tight">Carrito de Venta</CardTitle>
+                    <span className="text-xs text-muted-foreground flex items-center gap-1">
                       <NumberFlow value={totalItemsCount} /> {totalItemsCount === 1 ? 'artículo' : 'artículos'}
                     </span>
                   </div>
@@ -540,9 +540,9 @@ export const PosTerminal: React.FC = () => {
                   <Button
                     type="button"
                     variant="ghost"
-                    size="xs"
+                    size="sm"
                     onClick={handleClearCart}
-                    className="text-[11px] text-destructive hover:bg-destructive/10"
+                    className="text-xs text-destructive hover:bg-destructive/10"
                   >
                     Vaciar
                   </Button>
@@ -554,18 +554,18 @@ export const PosTerminal: React.FC = () => {
               {/* Selector de Cliente */}
               <div className="flex flex-col gap-1.5 p-3 rounded-xl bg-muted/30 border border-border/50">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                    <User className="size-3.5 text-primary" />
+                  <span className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                    <User className="size-4 text-primary" />
                     Cliente
                   </span>
                   <Button
                     type="button"
                     variant="ghost"
-                    size="xs"
+                    size="sm"
                     onClick={() => setIsCreateClienteOpen(true)}
-                    className="h-6 text-[11px] text-primary hover:bg-primary/10 gap-1 p-1"
+                    className="h-7 text-xs text-primary hover:bg-primary/10 gap-1 px-2"
                   >
-                    <UserPlus className="size-3" data-icon="inline-start" />
+                    <UserPlus className="size-3.5" data-icon="inline-start" />
                     <span>+ Nuevo</span>
                   </Button>
                 </div>
@@ -582,7 +582,7 @@ export const PosTerminal: React.FC = () => {
                         setSelectedCliente(found || null);
                       }
                     }}
-                    className="w-full text-xs rounded-lg border border-border/70 bg-background px-2.5 py-1.5 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="w-full text-sm rounded-lg border border-border/70 bg-background px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                   >
                     <option value="">Público en General</option>
                     {clientes?.map((cl) => (
@@ -596,12 +596,12 @@ export const PosTerminal: React.FC = () => {
 
               {/* Lista de Ítems del Carrito */}
               {cart.length === 0 ? (
-                <div className="p-8 text-center text-xs text-muted-foreground flex flex-col items-center justify-center gap-2">
+                <div className="p-8 text-center text-sm text-muted-foreground flex flex-col items-center justify-center gap-2">
                   <ShoppingCart className="size-8 opacity-30 text-muted-foreground" />
                   <span>El carrito está vacío. Agrega productos o servicios del catálogo.</span>
                 </div>
               ) : (
-                <div className="flex flex-col gap-2 max-h-64 overflow-y-auto pr-1">
+                <div className="flex flex-col gap-2 max-h-[380px] overflow-y-auto pr-1">
                   {cart.map((item) => (
                     <div
                       key={item.variacionId}
@@ -610,15 +610,15 @@ export const PosTerminal: React.FC = () => {
                       {/* Fila 1: Título, SKU y eliminar */}
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex-1 min-w-0">
-                          <div className="text-xs font-bold text-foreground truncate">
+                          <div className="text-sm font-bold text-foreground truncate">
                             {item.productoNombre}
                           </div>
-                          <div className="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
+                          <div className="text-xs text-muted-foreground flex items-center gap-1.5 mt-0.5">
                             <span>{item.variacionNombre}</span>
                             <span>•</span>
-                            <span className="font-mono text-[10px]">{item.codigo}</span>
+                            <span className="font-mono text-xs">{item.codigo}</span>
                             {item.esServicio && (
-                              <Badge variant="outline" className="text-[9px] px-1 py-0 bg-primary/10 text-primary border-primary/20">
+                              <Badge variant="outline" className="text-xs px-1.5 py-0 bg-primary/10 text-primary border-primary/20 h-5">
                                 Servicio
                               </Badge>
                             )}
@@ -630,10 +630,10 @@ export const PosTerminal: React.FC = () => {
                           variant="ghost"
                           size="xs"
                           onClick={() => handleRemoveItem(item.variacionId)}
-                          className="size-6 p-0 text-muted-foreground hover:text-destructive shrink-0"
+                          className="size-7 p-0 text-muted-foreground hover:text-destructive shrink-0"
                           title="Eliminar del carrito"
                         >
-                          <Trash2 className="size-3.5" />
+                          <Trash2 className="size-4" />
                         </Button>
                       </div>
 
@@ -646,11 +646,11 @@ export const PosTerminal: React.FC = () => {
                             variant="ghost"
                             size="xs"
                             onClick={() => handleUpdateQuantity(item.variacionId, -1)}
-                            className="size-5 p-0 text-muted-foreground hover:text-foreground"
+                            className="size-6 p-0 text-muted-foreground hover:text-foreground"
                           >
-                            <Minus className="size-3" />
+                            <Minus className="size-3.5" />
                           </Button>
-                          <span className="w-6 text-center text-xs font-bold text-foreground">
+                          <span className="w-7 text-center text-sm font-bold text-foreground">
                             {item.cantidad}
                           </span>
                           <Button
@@ -659,9 +659,9 @@ export const PosTerminal: React.FC = () => {
                             size="xs"
                             onClick={() => handleUpdateQuantity(item.variacionId, 1)}
                             disabled={!item.esServicio && item.cantidad >= item.stockActual}
-                            className="size-5 p-0 text-muted-foreground hover:text-foreground"
+                            className="size-6 p-0 text-muted-foreground hover:text-foreground"
                           >
-                            <Plus className="size-3" />
+                            <Plus className="size-3.5" />
                           </Button>
                         </div>
 
@@ -751,17 +751,17 @@ export const PosTerminal: React.FC = () => {
               {/* Totales y Métodos de Pago */}
               <div className="pt-3 border-t border-border/50 flex flex-col gap-3">
                 {/* Total */}
-                <div className="p-3.5 rounded-[14px] bg-card border border-border flex items-center justify-between">
-                  <span className="text-xs font-semibold text-foreground">Total a Cobrar</span>
-                  <span className="text-xl font-semibold tracking-tight text-primary">
+                <div className="p-4 rounded-[14px] bg-card border border-border flex items-center justify-between">
+                  <span className="text-sm font-semibold text-foreground">Total a Cobrar</span>
+                  <span className="text-2xl font-bold tracking-tight text-primary">
                     <NumberFlow value={totalCart} format={{ style: 'currency', currency: 'USD' }} />
                   </span>
                 </div>
 
                 {/* Selector de Método de Pago */}
                 <div className="flex flex-col gap-1.5">
-                  <span className="text-xs font-semibold text-foreground">Método de Pago</span>
-                  <div className="grid grid-cols-4 gap-1">
+                  <span className="text-sm font-semibold text-foreground">Método de Pago</span>
+                  <div className="grid grid-cols-4 gap-1.5">
                     {(['EFECTIVO', 'TARJETA', 'TRANSFERENCIA', 'MIXTO'] as MetodoPagoVenta[]).map(
                       (m) => (
                         <button
@@ -773,7 +773,7 @@ export const PosTerminal: React.FC = () => {
                               setMontoRecibido(String(totalCart));
                             }
                           }}
-                          className={`py-1.5 px-1 rounded-lg border text-[11px] font-semibold transition-all ${
+                          className={`py-2 px-1 rounded-lg border text-xs font-semibold transition-all ${
                             metodoPago === m
                               ? 'bg-primary text-primary-foreground border-primary'
                               : 'bg-muted/30 border-border/60 text-muted-foreground hover:text-foreground'
@@ -794,17 +794,17 @@ export const PosTerminal: React.FC = () => {
 
                 {/* Calculadora de Efectivo */}
                 {metodoPago === 'EFECTIVO' && totalCart > 0 && (
-                  <div className="p-3 rounded-xl bg-muted/40 border border-border/60 flex flex-col gap-2.5">
+                  <div className="p-3.5 rounded-xl bg-muted/40 border border-border/60 flex flex-col gap-2.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-foreground">
+                      <span className="text-sm font-semibold text-foreground">
                         Efectivo Recibido
                       </span>
                       {cambio >= 0 ? (
-                        <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                        <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                           Cambio: <NumberFlow value={cambio} format={{ style: 'currency', currency: 'USD' }} />
                         </span>
                       ) : (
-                        <span className="text-xs font-semibold text-destructive flex items-center gap-1">
+                        <span className="text-sm font-semibold text-destructive flex items-center gap-1">
                           Faltan: <NumberFlow value={Math.abs(cambio)} format={{ style: 'currency', currency: 'USD' }} />
                         </span>
                       )}
@@ -818,9 +818,9 @@ export const PosTerminal: React.FC = () => {
                         value={montoRecibido}
                         onChange={(e) => setMontoRecibido(e.target.value)}
                         placeholder="Monto entregado por cliente..."
-                        className="pl-8 text-sm font-bold h-9"
+                        className="pl-8 text-base font-bold h-10"
                       />
-                      <DollarSign className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
+                      <DollarSign className="absolute left-2.5 top-3 size-4.5 text-muted-foreground" />
                     </div>
 
                     {/* Botones de denominaciones rápidas */}
@@ -828,9 +828,9 @@ export const PosTerminal: React.FC = () => {
                       <Button
                         type="button"
                         variant="outline"
-                        size="xs"
+                        size="sm"
                         onClick={() => handleSetQuickCash(totalCart)}
-                        className="text-[10px] h-6 flex-1 border-border/70"
+                        className="text-xs h-7.5 flex-1 border-border/70"
                       >
                         Exacto
                       </Button>
@@ -839,9 +839,9 @@ export const PosTerminal: React.FC = () => {
                           key={amt}
                           type="button"
                           variant="outline"
-                          size="xs"
+                          size="sm"
                           onClick={() => handleSetQuickCash(amt)}
-                          className="text-[10px] h-6 flex-1 border-border/70"
+                          className="text-xs h-7.5 flex-1 border-border/70"
                         >
                           ${amt}
                         </Button>

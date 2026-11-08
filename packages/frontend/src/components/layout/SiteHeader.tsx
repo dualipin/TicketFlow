@@ -16,6 +16,7 @@ import {
   Store,
   Receipt,
   Coins,
+  Boxes,
   Sun,
   Moon,
   Monitor,
@@ -44,6 +45,11 @@ const titles: Record<
     title: 'Historial de Ventas',
     subtitle: 'Auditoría de tickets y transacciones',
     icon: Receipt,
+  },
+  '/inventario': {
+    title: 'Inventario & Catálogo',
+    subtitle: 'Control de productos, stock y servicios',
+    icon: Boxes,
   },
   '/corte-caja': {
     title: 'Corte de Caja',

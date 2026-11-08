@@ -2,7 +2,7 @@ import React from 'react';
 import { BorderBeam } from 'border-beam';
 import type { Ticket } from '../../api/types.ts';
 import { TicketStatusBadge } from './TicketStatusBadge.tsx';
-import { TicketStatusChanger } from './TicketStatusChanger.tsx';
+import { TicketStatusWorkflow } from './TicketStatusWorkflow.tsx';
 import { Button } from '../ui/button.tsx';
 import { Badge } from '../ui/badge.tsx';
 import { Separator } from '../ui/separator.tsx';
@@ -27,12 +27,14 @@ import { cn } from '../../lib/utils.ts';
 interface TicketCardProps {
   ticket: Ticket;
   onSelectTicket: (id: number) => void;
+  onRequestEntregaGuard?: (ticket: Ticket) => void;
   isSelected?: boolean;
 }
 
-export const TicketCard: React.FC<TicketCardProps> = ({
+const TicketCardComponent: React.FC<TicketCardProps> = ({
   ticket,
   onSelectTicket,
+  onRequestEntregaGuard,
   isSelected = false,
 }) => {
   const hasPendingBalance = ticket.saldoPendiente > 0;
@@ -50,8 +52,18 @@ export const TicketCard: React.FC<TicketCardProps> = ({
       className="rounded-xl w-full"
     >
       <Card
+        role="article"
+        tabIndex={0}
+        aria-label={`Orden de servicio ${ticket.folio}, ${ticket.dispositivo}`}
+        onClick={() => onSelectTicket(ticket.id)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onSelectTicket(ticket.id);
+          }
+        }}
         className={cn(
-          'group relative transition-all py-4 gap-3 rounded-xl bg-card w-full',
+          'group relative transition-all py-4 gap-3 rounded-xl bg-card w-full cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary',
           isSelected
             ? 'border-foreground/80 ring-2 ring-foreground/20 bg-foreground/[0.04]'
             : 'border-border hover:border-foreground/30'
@@ -78,7 +90,12 @@ export const TicketCard: React.FC<TicketCardProps> = ({
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => onSelectTicket(ticket.id)}
+          tabIndex={-1}
+          aria-hidden="true"
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelectTicket(ticket.id);
+          }}
           className="gap-1 text-xs text-primary hover:bg-primary/10 rounded-full"
         >
           <span>Ver detalle</span>
@@ -162,13 +179,17 @@ export const TicketCard: React.FC<TicketCardProps> = ({
           </div>
         </div>
 
-        {/* Quick status update button group */}
-        <TicketStatusChanger
+        {/* Contextual Status Workflow Action (Linear Forward-Step + Overflow Menu) */}
+        <TicketStatusWorkflow
           ticketId={ticket.id}
           currentStatus={ticket.estado}
+          saldoPendiente={ticket.saldoPendiente}
+          onRequestEntregaGuard={() => onRequestEntregaGuard?.(ticket)}
         />
       </CardFooter>
     </Card>
   </BorderBeam>
   );
 };
+
+export const TicketCard = React.memo(TicketCardComponent);

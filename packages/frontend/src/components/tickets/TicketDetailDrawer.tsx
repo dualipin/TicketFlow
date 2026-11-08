@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useId } from 'react';
+import { cn } from '../../lib/utils.ts';
 import { useTicket } from '../../queries/tickets/queries.ts';
 import {
   useAddBitacoraNota,
@@ -8,6 +9,7 @@ import {
 import { TicketStatusBadge } from './TicketStatusBadge.tsx';
 import { TicketStatusChanger } from './TicketStatusChanger.tsx';
 import { TicketMediaCapture } from './TicketMediaCapture.tsx';
+import { ConfirmEntregaDialog } from './ConfirmEntregaDialog.tsx';
 import { Button } from '../ui/button.tsx';
 import { Input } from '../ui/input.tsx';
 import { Textarea } from '../ui/textarea.tsx';
@@ -69,6 +71,8 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
   const [isNotaPrivada, setIsNotaPrivada] = useState(false);
   const [isEditingCosto, setIsEditingCosto] = useState(false);
   const [costoInput, setCostoInput] = useState('');
+  const [isEntregaGuardOpen, setIsEntregaGuardOpen] = useState(false);
+  const notaPrivadaId = useId();
 
   const { data: ticket, isPending, isError, error, isFetching, isStale, dataUpdatedAt, refetch } =
     ticketQuery;
@@ -166,15 +170,17 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
             <>
               {/* Quick Actions Bar */}
               <Card className="p-3.5 rounded-xl border border-border bg-card gap-2">
-                <span className="text-[11px] font-normal uppercase tracking-wider text-muted-foreground">
+                <span className="text-xs font-normal uppercase tracking-wider text-muted-foreground">
                   Transición rápida de estado
                 </span>
                 <TicketStatusChanger
                   ticketId={ticket.id}
                   currentStatus={ticket.estado}
+                  saldoPendiente={ticket.saldoPendiente}
+                  onRequestEntregaGuard={() => setIsEntregaGuardOpen(true)}
                 />
                 {updateStatusMutation.isPending && (
-                  <p className="text-[10px] text-primary animate-pulse">
+                  <p className="text-xs text-primary animate-pulse">
                     Aplicando cambio de estado optimista en segundo plano...
                   </p>
                 )}
@@ -191,7 +197,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
 
                 <CardContent className="p-0 flex flex-col gap-3">
                   <div>
-                    <span className="text-[11px] font-medium text-muted-foreground">
+                    <span className="text-xs font-medium text-muted-foreground">
                       Falla reportada por el cliente:
                     </span>
                     <p className="mt-0.5 text-xs text-foreground bg-muted/40 p-2.5 rounded-lg border border-border/30">
@@ -203,7 +209,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                     <div className="flex items-start gap-2">
                       <KeyRound className="size-3.5 text-muted-foreground mt-0.5 shrink-0" />
                       <div>
-                        <span className="text-[10px] text-muted-foreground block">
+                        <span className="text-xs text-muted-foreground block">
                           Contraseña / Patrón:
                         </span>
                         <span className="font-mono font-medium">
@@ -215,7 +221,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                     <div className="flex items-start gap-2">
                       <Package className="size-3.5 text-muted-foreground mt-0.5 shrink-0" />
                       <div>
-                        <span className="text-[10px] text-muted-foreground block">
+                        <span className="text-xs text-muted-foreground block">
                           Accesorios dejados:
                         </span>
                         <span className="font-medium">
@@ -230,10 +236,10 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                   {/* Customer summary */}
                   <div className="text-xs flex justify-between items-center">
                     <div>
-                      <span className="text-[10px] text-muted-foreground block">Cliente:</span>
+                      <span className="text-xs text-muted-foreground block">Cliente:</span>
                       <span className="font-medium text-foreground">{ticket.cliente?.nombre}</span>
                     </div>
-                    <span className="font-mono text-muted-foreground text-[11px]">
+                    <span className="font-mono text-muted-foreground text-xs">
                       {ticket.cliente?.telefono}
                     </span>
                   </div>
@@ -247,7 +253,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                     <Camera className="size-3.5 text-primary" />
                     Evidencias Multimedia
                   </CardTitle>
-                  <Badge variant="outline" className="text-[10px] rounded-full">
+                  <Badge variant="outline" className="text-xs rounded-full">
                     {ticket.adjuntos?.length || 0} archivos
                   </Badge>
                 </CardHeader>
@@ -276,7 +282,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                         setCostoInput(String(ticket.costoTotal));
                         setIsEditingCosto(true);
                       }}
-                      className="text-[11px] h-6 px-2.5 text-primary rounded-full hover:bg-primary/10"
+                      className="text-xs h-6 px-2.5 text-primary rounded-full hover:bg-primary/10"
                     >
                       Ajustar presupuesto
                     </Button>
@@ -292,6 +298,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                         min="0"
                         value={costoInput}
                         onChange={(e) => setCostoInput(e.target.value)}
+                        aria-label="Costo total de cotización"
                         className="h-7 w-28 text-xs font-medium"
                         placeholder="Total $"
                         autoFocus
@@ -300,7 +307,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                         type="submit"
                         size="xs"
                         disabled={updateCostoMutation.isPending}
-                        className="text-[11px] h-7"
+                        className="text-xs h-7"
                       >
                         {updateCostoMutation.isPending && (
                           <Spinner className="size-3" data-icon="inline-start" />
@@ -312,7 +319,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                         variant="ghost"
                         size="xs"
                         onClick={() => setIsEditingCosto(false)}
-                        className="text-[11px] h-7"
+                        className="text-xs h-7"
                       >
                         Cancelar
                       </Button>
@@ -320,7 +327,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                   ) : (
                     <div className="grid grid-cols-2 gap-3 text-xs">
                       <div className="rounded-lg bg-muted/30 p-2.5 border border-border/30">
-                        <span className="text-[10px] text-muted-foreground block">
+                        <span className="text-xs text-muted-foreground block">
                           Costo Total Cotizado:
                         </span>
                         <span className="text-base font-bold text-foreground">
@@ -329,13 +336,14 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                       </div>
 
                       <div
-                        className={`rounded-lg p-2.5 border ${
+                        className={cn(
+                          'rounded-lg p-2.5 border',
                           ticket.saldoPendiente > 0
-                            ? 'bg-amber-500/10 border-amber-500/30 text-amber-900 dark:text-amber-200'
-                            : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-900 dark:text-emerald-200'
-                        }`}
+                            ? 'bg-destructive/10 border-destructive/20 text-destructive'
+                            : 'bg-primary/10 border-primary/20 text-primary'
+                        )}
                       >
-                        <span className="text-[10px] block opacity-80">
+                        <span className="text-xs block opacity-80">
                           Saldo Pendiente:
                         </span>
                         <span className="text-base font-bold">
@@ -348,11 +356,11 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                   {/* Payments History */}
                   <div className="pt-2">
                     <Separator className="mb-2" />
-                    <span className="text-[11px] font-medium text-muted-foreground block mb-1.5">
+                    <span className="text-xs font-medium text-muted-foreground block mb-1.5">
                       Historial de pagos / anticipos:
                     </span>
                     {(!ticket.historialPagos || ticket.historialPagos.length === 0) ? (
-                      <p className="text-[11px] text-muted-foreground italic">
+                      <p className="text-xs text-muted-foreground italic">
                         Sin pagos registrados en recepción.
                       </p>
                     ) : (
@@ -360,22 +368,22 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                         {ticket.historialPagos.map((pago) => (
                           <div
                             key={pago.id}
-                            className="flex items-center justify-between text-[11px] bg-muted/20 px-2 py-1.5 rounded"
+                            className="flex items-center justify-between text-xs bg-muted/20 px-2 py-1.5 rounded"
                           >
                             <div className="flex items-center gap-1.5">
                               <span className="font-bold text-emerald-600 dark:text-emerald-400">
                                 +${pago.monto.toFixed(2)}
                               </span>
-                              <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4">
+                              <Badge variant="secondary" className="text-xs px-1 py-0 h-4">
                                 {pago.metodoPago}
                               </Badge>
                               {pago.notas && (
-                                <span className="text-muted-foreground text-[10px]">
+                                <span className="text-muted-foreground text-xs">
                                   - {pago.notas}
                                 </span>
                               )}
                             </div>
-                            <span className="text-[10px] text-muted-foreground">
+                            <span className="text-xs text-muted-foreground">
                               {new Date(pago.fecha).toLocaleDateString()}
                             </span>
                           </div>
@@ -393,7 +401,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                     <Clock className="size-3.5 text-primary" />
                     Bitácora de Seguimiento
                   </CardTitle>
-                  <Badge variant="outline" className="text-[10px] rounded-full">
+                  <Badge variant="outline" className="text-xs rounded-full">
                     {ticket.bitacora?.length || 0} notas
                   </Badge>
                 </CardHeader>
@@ -405,6 +413,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                       <Textarea
                         value={newNotaText}
                         onChange={(e) => setNewNotaText(e.target.value)}
+                        aria-label="Escribir nota técnica o actualización"
                         placeholder="Escribir nota técnica o actualización para el cliente..."
                         rows={2}
                         className="resize-none"
@@ -414,11 +423,11 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
                         <Checkbox
-                          id="nota-privada"
+                          id={notaPrivadaId}
                           checked={isNotaPrivada}
                           onCheckedChange={(checked) => setIsNotaPrivada(Boolean(checked))}
                         />
-                        <FieldLabel htmlFor="nota-privada" className="text-xs cursor-pointer flex items-center gap-1">
+                        <FieldLabel htmlFor={notaPrivadaId} className="text-xs cursor-pointer flex items-center gap-1">
                           <Lock className="size-3 text-muted-foreground" />
                           <span>Nota privada interna</span>
                         </FieldLabel>
@@ -459,16 +468,16 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                               isOptimistic
                                 ? 'border-primary/40 bg-primary/5 animate-pulse'
                                 : item.esPrivada === 1
-                                ? 'border-purple-500/20 bg-purple-500/5 text-purple-950 dark:text-purple-200'
+                                ? 'border-primary/20 bg-primary/5 text-foreground'
                                 : 'border-border/60 bg-muted/20 text-foreground'
                             }`}
                           >
-                            <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-1">
+                            <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
                               <div className="flex items-center gap-1.5">
                                 {item.esPrivada === 1 ? (
                                   <Badge
-                                    variant="outline"
-                                    className="gap-1 text-purple-700 dark:text-purple-400 bg-purple-500/10 border-purple-500/30 text-[10px]"
+                                    variant="secondary"
+                                    className="gap-1 text-xs font-normal"
                                   >
                                     <Lock className="size-2.5" />
                                     Nota Técnica Privada
@@ -509,13 +518,25 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
 
         {/* Footer */}
         <SheetFooter className="border-t border-border/80 px-5 py-3 bg-muted/10 flex-row items-center justify-between">
-          <span className="text-[11px] text-muted-foreground font-mono">
+          <span className="text-xs text-muted-foreground font-mono">
             Ticket ID: {ticketId}
           </span>
           <Button variant="outline" size="sm" onClick={onClose} className="text-xs">
             Cerrar
           </Button>
         </SheetFooter>
+
+        {/* Financial Guard Dialog for Delivery with Pending Debt */}
+        {isEntregaGuardOpen && ticket && (
+          <ConfirmEntregaDialog
+            isOpen={true}
+            onClose={() => setIsEntregaGuardOpen(false)}
+            ticketId={ticket.id}
+            folio={ticket.folio}
+            dispositivo={ticket.dispositivo}
+            saldoPendiente={ticket.saldoPendiente}
+          />
+        )}
       </SheetContent>
     </Sheet>
   );

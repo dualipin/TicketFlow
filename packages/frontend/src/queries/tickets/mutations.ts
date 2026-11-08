@@ -6,6 +6,7 @@ import type {
   CreateTicketInput,
   RegisterPagoInput,
   Ticket,
+  TicketFilters,
   UpdateTicketCostoInput,
   UpdateTicketStatusInput,
 } from '../../api/types.ts';
@@ -74,11 +75,15 @@ export function useUpdateTicketStatus() {
         });
       }
 
-      // Optimistically update every list query that contains this ticket
-      queryClient.setQueriesData<Ticket[]>(
-        { queryKey: ticketsKeys.lists() },
-        (oldList) => {
+      // Optimistically update every list query that contains this ticket (filter-aware)
+      for (const [key] of previousLists) {
+        const filters = (key[2] || {}) as TicketFilters;
+        queryClient.setQueryData<Ticket[]>(key, (oldList) => {
           if (!oldList) return oldList;
+          // If the query filters by a specific estado and the new status no longer matches, evict optimistically
+          if (filters.estado && filters.estado !== newStatusInput.estado) {
+            return oldList.filter((t) => t.id !== ticketId);
+          }
           return oldList.map((ticket) =>
             ticket.id === ticketId
               ? {
@@ -88,8 +93,8 @@ export function useUpdateTicketStatus() {
                 }
               : ticket
           );
-        }
-      );
+        });
+      }
 
       // Return context with snapshots for potential rollback
       return { previousDetail, previousLists };

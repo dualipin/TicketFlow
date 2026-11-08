@@ -9,7 +9,9 @@ import { cn } from '../../lib/utils.ts';
 interface TicketStatusChangerProps {
   ticketId: number;
   currentStatus: TicketEstado;
+  saldoPendiente?: number;
   className?: string;
+  onRequestEntregaGuard?: () => void;
   onSuccess?: () => void;
 }
 
@@ -25,12 +27,20 @@ const statusOptions: { value: TicketEstado; label: string }[] = [
 export const TicketStatusChanger: React.FC<TicketStatusChangerProps> = ({
   ticketId,
   currentStatus,
+  saldoPendiente = 0,
   className,
+  onRequestEntregaGuard,
   onSuccess,
 }) => {
   const updateStatus = useUpdateTicketStatus();
 
   const handleSelect = (newStatus: TicketEstado) => {
+    // Intercept delivery if there is a pending balance
+    if (newStatus === 'ENTREGADO' && saldoPendiente > 0 && onRequestEntregaGuard) {
+      onRequestEntregaGuard();
+      return;
+    }
+
     if (newStatus === currentStatus || updateStatus.isPending) return;
 
     updateStatus.mutate(
@@ -56,8 +66,12 @@ export const TicketStatusChanger: React.FC<TicketStatusChangerProps> = ({
   };
 
   return (
-    <div className={cn('flex flex-wrap items-center gap-1.5', className)}>
-      <span className="text-[11px] font-normal text-muted-foreground mr-1">
+    <div
+      role="radiogroup"
+      aria-label="Estado del ticket"
+      className={cn('flex flex-wrap items-center gap-1.5', className)}
+    >
+      <span className="text-xs font-normal text-muted-foreground mr-1">
         Estado:
       </span>
       {statusOptions.map((opt) => {
@@ -71,12 +85,14 @@ export const TicketStatusChanger: React.FC<TicketStatusChangerProps> = ({
           <Button
             key={opt.value}
             type="button"
+            role="radio"
+            aria-checked={isCurrent}
             variant={isCurrent ? 'default' : 'outline'}
             size="xs"
             disabled={isCurrent || updateStatus.isPending}
             onClick={() => handleSelect(opt.value)}
             className={cn(
-              'h-5.5 px-2 text-[11px] select-none rounded-full',
+              'h-7 px-2.5 text-xs select-none rounded-full',
               isCurrent
                 ? 'bg-primary text-primary-foreground cursor-default font-normal'
                 : 'text-muted-foreground hover:text-foreground border-border/80'

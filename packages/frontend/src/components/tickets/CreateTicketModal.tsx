@@ -61,8 +61,8 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
   const [falla, setFalla] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [accesorios, setAccesorios] = useState('');
-  const [costoTotal, setCostoTotal] = useState('800');
-  const [anticipo, setAnticipo] = useState('300');
+  const [costoTotal, setCostoTotal] = useState('');
+  const [anticipo, setAnticipo] = useState('');
   const [metodoPago, setMetodoPago] = useState<MetodoPago>('EFECTIVO');
   const [notaInicial, setNotaInicial] = useState('Equipo recibido en mostrador para revisión general');
   const [adjuntos, setAdjuntos] = useState<TicketAdjunto[]>([]);
@@ -149,7 +149,7 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
                   variant="link"
                   size="xs"
                   onClick={() => setUseExistingClient(!useExistingClient)}
-                  className="h-auto p-0 text-[11px]"
+                  className="h-auto p-0 text-xs font-medium"
                 >
                   {useExistingClient ? '+ Registrar cliente nuevo' : 'Seleccionar cliente existente'}
                 </Button>
@@ -300,7 +300,7 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
                   type="number"
                   min="0"
                   step="0.5"
-                  required
+                  placeholder="0.00"
                   value={costoTotal}
                   onChange={(e) => setCostoTotal(e.target.value)}
                   className="font-semibold"
@@ -316,6 +316,7 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
                   type="number"
                   min="0"
                   step="0.5"
+                  placeholder="0.00"
                   value={anticipo}
                   onChange={(e) => setAnticipo(e.target.value)}
                   className="font-semibold text-emerald-600 dark:text-emerald-400"

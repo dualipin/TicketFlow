@@ -1,12 +1,13 @@
-import React, { useState, useDeferredValue } from 'react';
+import React, { useState, useCallback } from 'react';
 import { BorderBeam } from 'border-beam';
-import type { TicketEstado, TicketFilters } from '../../api/types.ts';
+import type { Ticket, TicketEstado, TicketFilters } from '../../api/types.ts';
 import { useTickets } from '../../queries/tickets/queries.ts';
+import { useDebounce } from '../../hooks/useDebounce.ts';
 import { TicketCard } from './TicketCard.tsx';
 import { TicketDetailDrawer } from './TicketDetailDrawer.tsx';
 import { CreateTicketModal } from './CreateTicketModal.tsx';
+import { ConfirmEntregaDialog } from './ConfirmEntregaDialog.tsx';
 import { QueryStateWrapper } from '../query-states/QueryStateWrapper.tsx';
-import { ServerStateInspector } from '../dev-tools/ServerStateInspector.tsx';
 import { SectionCards } from '../layout/SectionCards.tsx';
 import { Button } from '../ui/button.tsx';
 import { Badge } from '../ui/badge.tsx';
@@ -34,16 +35,26 @@ const STATUS_TABS: { label: string; value: TicketEstado | 'ALL' }[] = [
 export const TallerView: React.FC = () => {
   // Client state
   const [searchInput, setSearchInput] = useState('');
-  const deferredSearch = useDeferredValue(searchInput);
+  const debouncedSearch = useDebounce(searchInput, 300);
   const [selectedEstado, setSelectedEstado] = useState<TicketEstado | 'ALL'>('ALL');
   const [onlyConSaldo, setOnlyConSaldo] = useState(false);
   const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [ticketForEntregaGuard, setTicketForEntregaGuard] = useState<Ticket | null>(null);
+
+  // Memoized selection handler for stable card callbacks
+  const handleSelectTicket = useCallback((id: number) => {
+    setSelectedTicketId(id);
+  }, []);
+
+  const handleRequestEntregaGuard = useCallback((ticket: Ticket) => {
+    setTicketForEntregaGuard(ticket);
+  }, []);
 
   // Derived filter object passed to domain query key
   const activeFilters: TicketFilters = {
     estado: selectedEstado === 'ALL' ? undefined : selectedEstado,
-    q: deferredSearch.trim() || undefined,
+    q: debouncedSearch.trim() || undefined,
     conSaldo: onlyConSaldo || undefined,
   };
 
@@ -59,17 +70,17 @@ export const TallerView: React.FC = () => {
   const activeFiltersCount =
     (selectedEstado !== 'ALL' ? 1 : 0) +
     (onlyConSaldo ? 1 : 0) +
-    (deferredSearch.trim() ? 1 : 0);
+    (debouncedSearch.trim() ? 1 : 0);
 
   return (
     <div className="flex flex-col gap-6">
       {/* Top Banner / Actions Bar */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-1">
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground flex items-center gap-2.5">
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground flex items-center gap-2.5">
             <Wrench className="size-5 text-primary" />
             <span>Cola Técnica de Reparaciones</span>
-          </h2>
+          </h1>
           <p className="text-xs text-muted-foreground font-normal">
             Gestión de folios, estados, diagnósticos, bitácoras y liquidaciones.
           </p>
@@ -87,16 +98,6 @@ export const TallerView: React.FC = () => {
 
       {/* KPI Summary Cards (bundui/shadcn-ui-kit architecture) */}
       <SectionCards />
-
-      {/* Interactive Server-State Inspector & Playground */}
-      <ServerStateInspector
-        currentFiltersSummary={JSON.stringify({
-          estado: selectedEstado,
-          q: deferredSearch || undefined,
-          conSaldo: onlyConSaldo || undefined,
-        })}
-        selectedTicketId={selectedTicketId}
-      />
 
       {/* Filter Toolbar */}
       <Card className="p-4 rounded-xl gap-3">
@@ -119,6 +120,7 @@ export const TallerView: React.FC = () => {
                     type="text"
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
+                    aria-label="Buscar folio, cliente, teléfono o falla"
                     placeholder="Buscar folio (TK-1001), cliente, teléfono o falla..."
                     className="text-xs"
                   />
@@ -132,6 +134,7 @@ export const TallerView: React.FC = () => {
                 type="button"
                 variant={onlyConSaldo ? 'default' : 'outline'}
                 size="sm"
+                aria-pressed={onlyConSaldo}
                 onClick={() => setOnlyConSaldo(!onlyConSaldo)}
                 className={onlyConSaldo ? 'rounded-full' : 'rounded-full text-muted-foreground hover:text-foreground'}
               >
@@ -144,7 +147,7 @@ export const TallerView: React.FC = () => {
                   variant="ghost"
                   size="xs"
                   onClick={handleResetFilters}
-                  className="text-[11px] text-muted-foreground hover:text-foreground rounded-full"
+                  className="text-xs text-muted-foreground hover:text-foreground rounded-full"
                 >
                   Limpiar ({activeFiltersCount})
                 </Button>
@@ -178,12 +181,12 @@ export const TallerView: React.FC = () => {
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold tracking-tight text-foreground flex items-center gap-1.5">
+            <h2 className="text-sm font-semibold tracking-tight text-foreground flex items-center gap-1.5">
               <Layers className="size-4 text-primary" />
               <span>Cola de Equipos en Servicio</span>
-            </h3>
+            </h2>
             {ticketsQuery.data && (
-              <Badge variant="secondary" className="text-[11px] font-normal">
+              <Badge variant="secondary" className="text-xs font-normal">
                 {ticketsQuery.data.length} órdenes
               </Badge>
             )}
@@ -209,7 +212,8 @@ export const TallerView: React.FC = () => {
                   key={ticket.id}
                   ticket={ticket}
                   isSelected={selectedTicketId === ticket.id}
-                  onSelectTicket={(id) => setSelectedTicketId(id)}
+                  onSelectTicket={handleSelectTicket}
+                  onRequestEntregaGuard={handleRequestEntregaGuard}
                 />
               ))}
             </div>
@@ -233,6 +237,18 @@ export const TallerView: React.FC = () => {
           setSelectedTicketId(newId);
         }}
       />
+
+      {/* Financial Guard Modal for Delivery with Pending Debt */}
+      {ticketForEntregaGuard && (
+        <ConfirmEntregaDialog
+          isOpen={true}
+          onClose={() => setTicketForEntregaGuard(null)}
+          ticketId={ticketForEntregaGuard.id}
+          folio={ticketForEntregaGuard.folio}
+          dispositivo={ticketForEntregaGuard.dispositivo}
+          saldoPendiente={ticketForEntregaGuard.saldoPendiente}
+        />
+      )}
     </div>
   );
 };

@@ -545,7 +545,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
           </TabsList>
 
           {isProcessingFiles && (
-            <Badge variant="secondary" className="gap-1.5 text-[11px]">
+            <Badge variant="secondary" className="gap-1.5 text-xs">
               <Spinner className="size-3" />
               <span>Optimizando y subiendo...</span>
             </Badge>
@@ -588,7 +588,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
               </Button>
             )}
 
-            <span className="text-[11px] text-muted-foreground">
+            <span className="text-xs text-muted-foreground">
               Compresión automática WebP (máx. 1920px)
             </span>
           </div>
@@ -649,7 +649,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
                 <Upload data-icon="inline-start" />
                 Subir archivo de audio
               </Button>
-              <span className="text-[11px] text-muted-foreground">
+              <span className="text-xs text-muted-foreground">
                 Máx. 2 min · Compresión Opus 96 kbps
               </span>
             </div>
@@ -660,7 +660,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
                 <span className="font-mono text-xs font-semibold text-foreground">
                   {formatDuration(audioSeconds)} / {formatDuration(MEDIA_LIMITS.MAX_AUDIO_SECONDS)}
                 </span>
-                <Badge variant="outline" className="text-[10px]">
+                <Badge variant="outline" className="text-xs">
                   {audioStatus === 'PAUSED' ? 'En pausa' : 'Grabando voz...'}
                 </Badge>
               </div>
@@ -717,7 +717,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
                 <Upload data-icon="inline-start" />
                 Subir video
               </Button>
-              <span className="text-[11px] text-muted-foreground">
+              <span className="text-xs text-muted-foreground">
                 Máx. 60s · Compresión 720p (~1.2 Mbps en cliente)
               </span>
             </div>
@@ -733,14 +733,14 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
                 <div className="absolute top-2 left-2 flex items-center gap-1.5">
                   <Badge
                     variant={cameraMode === 'RECORDING_VIDEO' ? 'destructive' : 'secondary'}
-                    className="gap-1.5 font-mono text-[10px]"
+                    className="gap-1.5 font-mono text-xs"
                   >
                     {cameraMode === 'RECORDING_VIDEO' && (
                       <span className="size-2 rounded-full bg-background animate-pulse" />
                     )}
                     {formatDuration(recordingSeconds)} / {formatDuration(MEDIA_LIMITS.MAX_VIDEO_SECONDS)}
                   </Badge>
-                  <Badge variant="outline" className="bg-background/80 text-[10px]">
+                  <Badge variant="outline" className="bg-background/80 text-xs">
                     720p · 1.2 Mbps
                   </Badge>
                 </div>
@@ -821,7 +821,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
                       onClick={() => setLightboxItem(img)}
                     />
                     <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-background/85 px-1.5 py-1 backdrop-blur-xs">
-                      <span className="text-[10px] font-mono text-muted-foreground truncate">
+                      <span className="text-xs font-mono text-muted-foreground truncate">
                         {formatBytes(img.tamanoBytes)}
                       </span>
                       <div className="flex items-center gap-1">
@@ -864,11 +864,11 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
                   <audio controls src={aud.url} className="h-8 w-full max-w-xs" preload="metadata" />
                   <div className="hidden sm:flex items-center gap-1.5 shrink-0">
                     {aud.duracionSegundos !== null && (
-                      <Badge variant="outline" className="text-[10px] font-mono">
+                      <Badge variant="outline" className="text-xs font-mono">
                         {formatDuration(aud.duracionSegundos)}
                       </Badge>
                     )}
-                    <span className="text-[10px] font-mono text-muted-foreground">
+                    <span className="text-xs font-mono text-muted-foreground">
                       {formatBytes(aud.tamanoBytes)}
                     </span>
                   </div>
@@ -902,15 +902,15 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
                 <div className="flex items-center justify-between gap-2 px-1">
                   <div className="flex items-center gap-1.5">
                     <Film className="size-3.5 text-primary" />
-                    <span className="text-[11px] font-medium text-foreground truncate max-w-44">
+                    <span className="text-xs font-medium text-foreground truncate max-w-44">
                       {vid.nombreOriginal}
                     </span>
                     {vid.duracionSegundos !== null && (
-                      <Badge variant="secondary" className="text-[10px] font-mono">
+                      <Badge variant="secondary" className="text-xs font-mono">
                         {formatDuration(vid.duracionSegundos)}
                       </Badge>
                     )}
-                    <Badge variant="outline" className="text-[10px] font-mono">
+                    <Badge variant="outline" className="text-xs font-mono">
                       {formatBytes(vid.tamanoBytes)}
                     </Badge>
                   </div>
@@ -939,7 +939,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
             <DialogTitle className="text-xs font-semibold truncate">
               {lightboxItem?.nombreOriginal}
             </DialogTitle>
-            <DialogDescription className="text-[11px] font-mono">
+            <DialogDescription className="text-xs font-mono">
               {lightboxItem ? formatBytes(lightboxItem.tamanoBytes) : ''}
             </DialogDescription>
           </DialogHeader>

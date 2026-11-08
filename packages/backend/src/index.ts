@@ -7,7 +7,7 @@ import { seed } from "./prisma/seed.ts";
 import { authRoutes } from "./routes/auth.ts";
 import { clientesRoutes } from "./modules/clientes/index.ts";
 import { AppError } from "./lib/errors.ts";
-import { inventarioRoutes } from "./routes/inventario.ts";
+import { inventarioRoutes } from "./modules/inventario/index.ts";
 import { tallerRoutes } from "./routes/taller.ts";
 import { posRoutes } from "./routes/pos.ts";
 import { corteCajaRoutes } from "./routes/corte-caja.ts";

@@ -40,8 +40,8 @@ export const TicketCard: React.FC<TicketCardProps> = ({
         className={cn(
           'group relative transition-all py-4 gap-3 rounded-xl bg-card w-full',
           isSelected
-            ? 'border-white ring-2 ring-white/20 bg-white/[0.04]'
-            : 'border-border hover:border-white/30'
+            ? 'border-foreground/80 ring-2 ring-foreground/20 bg-foreground/[0.04]'
+            : 'border-border hover:border-foreground/30'
         )}
       >
       {/* Header row: Folio, Status Badge & View Detail Button */}

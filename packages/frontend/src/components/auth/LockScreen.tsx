@@ -243,7 +243,7 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
                     <button
                       key={user.id}
                       onClick={() => handleSelectUser(user)}
-                      className="flex items-center gap-3.5 p-3.5 rounded-xl border border-border bg-card hover:border-white/40 text-left transition-all group focus:outline-none focus:ring-2 focus:ring-white/20"
+                      className="flex items-center gap-3.5 p-3.5 rounded-xl border border-border bg-card hover:border-foreground/40 text-left transition-all group focus:outline-none focus:ring-2 focus:ring-foreground/20"
                     >
                       <Avatar
                         className="size-11 rounded-full flex items-center justify-center font-semibold text-sm border border-border bg-muted/60 text-foreground shrink-0 group-hover:scale-105 transition-transform"

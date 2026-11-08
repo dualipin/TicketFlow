@@ -100,6 +100,20 @@ export const contract = defineContract({}, ({ field, model, rel, gen, type }) =>
     },
   });
 
+  const TicketAdjunto = model('TicketAdjunto', {
+    fields: {
+      id: field.column(type.Int()).id().default(autoincrement()),
+      ticketId: field.column(type.Int()).optional(), // Nullable durante pre-subida en modal
+      tipo: field.column(type.String()), // 'IMAGEN' | 'AUDIO' | 'VIDEO'
+      url: field.column(type.String()), // Ruta en disco local (/uploads/tickets/...)
+      nombreOriginal: field.column(type.String()),
+      mimeType: field.column(type.String()),
+      tamanoBytes: field.column(type.Int()),
+      duracionSegundos: field.column(type.Float()).optional(),
+      createdAt: field.column(type.DateTime()).default(now()).onCreate(gen.now()),
+    },
+  });
+
   const Bitacora = model('Bitacora', {
     fields: {
       id: field.column(type.Int()).id().default(autoincrement()),
@@ -182,8 +196,12 @@ export const contract = defineContract({}, ({ field, model, rel, gen, type }) =>
       Ticket: Ticket.relations({
         cliente: rel.belongsTo(Cliente, { from: 'clienteId', to: 'id' }),
         tecnico: rel.belongsTo(Usuario, { from: 'tecnicoId', to: 'id', optional: true }),
+        adjuntos: rel.hasMany(TicketAdjunto, { by: 'ticketId' }),
         bitacora: rel.hasMany(Bitacora, { by: 'ticketId' }),
         historialPagos: rel.hasMany(HistorialPago, { by: 'ticketId' }),
+      }),
+      TicketAdjunto: TicketAdjunto.relations({
+        ticket: rel.belongsTo(Ticket, { from: 'ticketId', to: 'id', optional: true }),
       }),
       Bitacora: Bitacora.relations({
         ticket: rel.belongsTo(Ticket, { from: 'ticketId', to: 'id' }),

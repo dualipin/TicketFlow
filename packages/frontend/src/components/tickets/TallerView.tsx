@@ -7,6 +7,7 @@ import { TicketDetailDrawer } from './TicketDetailDrawer.tsx';
 import { CreateTicketModal } from './CreateTicketModal.tsx';
 import { QueryStateWrapper } from '../query-states/QueryStateWrapper.tsx';
 import { ServerStateInspector } from '../dev-tools/ServerStateInspector.tsx';
+import { SectionCards } from '../layout/SectionCards.tsx';
 import { Button } from '../ui/button.tsx';
 import { Badge } from '../ui/badge.tsx';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '../ui/input-group.tsx';
@@ -83,6 +84,9 @@ export const TallerView: React.FC = () => {
           <span>Nuevo Ticket</span>
         </Button>
       </div>
+
+      {/* KPI Summary Cards (bundui/shadcn-ui-kit architecture) */}
+      <SectionCards />
 
       {/* Interactive Server-State Inspector & Playground */}
       <ServerStateInspector

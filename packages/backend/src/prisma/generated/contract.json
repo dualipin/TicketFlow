@@ -32,6 +32,10 @@
       "model": "Ticket",
       "namespace": "__unbound__"
     },
+    "TicketAdjunto": {
+      "model": "TicketAdjunto",
+      "namespace": "__unbound__"
+    },
     "Usuario": {
       "model": "Usuario",
       "namespace": "__unbound__"
@@ -876,6 +880,21 @@
               }
             },
             "relations": {
+              "adjuntos": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "ticketId"
+                  ]
+                },
+                "to": {
+                  "model": "TicketAdjunto",
+                  "namespace": "__unbound__"
+                }
+              },
               "bitacora": {
                 "cardinality": "1:N",
                 "on": {
@@ -989,6 +1008,124 @@
               },
               "namespaceId": "__unbound__",
               "table": "Ticket"
+            }
+          },
+          "TicketAdjunto": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "sqlite/datetime@1",
+                  "kind": "scalar"
+                }
+              },
+              "duracionSegundos": {
+                "nullable": true,
+                "type": {
+                  "codecId": "sqlite/real@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "sqlite/integer@1",
+                  "kind": "scalar"
+                }
+              },
+              "mimeType": {
+                "nullable": false,
+                "type": {
+                  "codecId": "sqlite/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "nombreOriginal": {
+                "nullable": false,
+                "type": {
+                  "codecId": "sqlite/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "tamanoBytes": {
+                "nullable": false,
+                "type": {
+                  "codecId": "sqlite/integer@1",
+                  "kind": "scalar"
+                }
+              },
+              "ticketId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "sqlite/integer@1",
+                  "kind": "scalar"
+                }
+              },
+              "tipo": {
+                "nullable": false,
+                "type": {
+                  "codecId": "sqlite/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "url": {
+                "nullable": false,
+                "type": {
+                  "codecId": "sqlite/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "ticket": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "ticketId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Ticket",
+                  "namespace": "__unbound__"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "duracionSegundos": {
+                  "column": "duracionSegundos"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "mimeType": {
+                  "column": "mimeType"
+                },
+                "nombreOriginal": {
+                  "column": "nombreOriginal"
+                },
+                "tamanoBytes": {
+                  "column": "tamanoBytes"
+                },
+                "ticketId": {
+                  "column": "ticketId"
+                },
+                "tipo": {
+                  "column": "tipo"
+                },
+                "url": {
+                  "column": "url"
+                }
+              },
+              "namespaceId": "__unbound__",
+              "table": "TicketAdjunto"
             }
           },
           "Usuario": {
@@ -2042,6 +2179,71 @@
                 }
               ]
             },
+            "TicketAdjunto": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "sqlite/datetime@1",
+                  "dataType": "sqlite/datetime",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "duracionSegundos": {
+                  "codecId": "sqlite/real@1",
+                  "dataType": "sqlite/real",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "sqlite/integer@1",
+                  "dataType": "sqlite/integer",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "mimeType": {
+                  "codecId": "sqlite/text@1",
+                  "dataType": "sqlite/text",
+                  "nullable": false
+                },
+                "nombreOriginal": {
+                  "codecId": "sqlite/text@1",
+                  "dataType": "sqlite/text",
+                  "nullable": false
+                },
+                "tamanoBytes": {
+                  "codecId": "sqlite/integer@1",
+                  "dataType": "sqlite/integer",
+                  "nullable": false
+                },
+                "ticketId": {
+                  "codecId": "sqlite/integer@1",
+                  "dataType": "sqlite/integer",
+                  "nullable": true
+                },
+                "tipo": {
+                  "codecId": "sqlite/text@1",
+                  "dataType": "sqlite/text",
+                  "nullable": false
+                },
+                "url": {
+                  "codecId": "sqlite/text@1",
+                  "dataType": "sqlite/text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "Usuario": {
               "columns": {
                 "activo": {
@@ -2315,10 +2517,10 @@
         "id": "__unbound__"
       }
     },
-    "storageHash": "40bbfd6228e7bbee6cb4000790b7d1b01aadb662a0ff0ab9e6b977057a981237"
+    "storageHash": "71d59419cac3d418adfce94b89a350bf13b6092c4a8be9ce79c58c6587d43138"
   },
   "execution": {
-    "executionHash": "1cdf30796432175d07cec3b9d77241a5643b89231686ec77b90abad1d1d1bbd9",
+    "executionHash": "75750483d1c964618da781936fefe7dd2d473c8cc06fa107288d362219299334",
     "mutations": {
       "defaults": [
         {
@@ -2496,6 +2698,17 @@
           "ref": {
             "entry": "Ticket",
             "field": "updatedAt",
+            "namespace": "__unbound__"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "TicketAdjunto",
+            "field": "createdAt",
             "namespace": "__unbound__"
           }
         },

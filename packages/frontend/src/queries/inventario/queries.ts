@@ -16,12 +16,15 @@ export async function fetchCategorias(init?: {
 }
 
 export async function fetchProductos(
-  filters?: { esServicio?: number; q?: string },
+  filters?: { esServicio?: number; categoriaId?: number; q?: string },
   init?: { signal?: AbortSignal }
 ): Promise<ProductoWithDetails[]> {
   const params = new URLSearchParams();
   if (filters?.esServicio !== undefined) {
     params.set('esServicio', String(filters.esServicio));
+  }
+  if (filters?.categoriaId !== undefined) {
+    params.set('categoriaId', String(filters.categoriaId));
   }
   if (filters?.q?.trim()) {
     params.set('q', filters.q.trim());
@@ -56,7 +59,7 @@ export const inventarioQueries = {
       queryFn: ({ signal }) => fetchCategorias({ signal }),
       staleTime: 1000 * 60 * 5, // 5 min for categories
     }),
-  productos: (filters?: { esServicio?: number; q?: string }) =>
+  productos: (filters?: { esServicio?: number; categoriaId?: number; q?: string }) =>
     queryOptions({
       queryKey: inventarioKeys.productosList(filters),
       queryFn: ({ signal }) => fetchProductos(filters, { signal }),
@@ -74,7 +77,7 @@ export function useCategorias() {
   return useQuery(inventarioQueries.categorias());
 }
 
-export function useProductos(filters?: { esServicio?: number; q?: string }) {
+export function useProductos(filters?: { esServicio?: number; categoriaId?: number; q?: string }) {
   return useQuery(inventarioQueries.productos(filters));
 }
 

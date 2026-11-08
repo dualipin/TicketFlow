@@ -19,9 +19,9 @@ import type {
 } from '@prisma/orm-sqlite/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'40bbfd6228e7bbee6cb4000790b7d1b01aadb662a0ff0ab9e6b977057a981237'>;
+  StorageHashBase<'71d59419cac3d418adfce94b89a350bf13b6092c4a8be9ce79c58c6587d43138'>;
 export type ExecutionHash =
-  ExecutionHashBase<'1cdf30796432175d07cec3b9d77241a5643b89231686ec77b90abad1d1d1bbd9'>;
+  ExecutionHashBase<'75750483d1c964618da781936fefe7dd2d473c8cc06fa107288d362219299334'>;
 export type ProfileHash =
   ProfileHashBase<'260b8608d1aacaf1f690779a6cff39a12947c599597c5ba464ca75b9e775df53'>;
 
@@ -307,11 +307,25 @@ export namespace Models {
     saldoPendiente: FieldOutputTypes['__unbound__']['Ticket']['saldoPendiente'];
     tecnicoId: FieldOutputTypes['__unbound__']['Ticket']['tecnicoId'];
     updatedAt: FieldOutputTypes['__unbound__']['Ticket']['updatedAt'];
+    adjuntos: TicketAdjunto[];
     bitacora: Bitacora[];
     cliente: Cliente;
     historialPagos: HistorialPago[];
     tecnico: Usuario | null;
-    readonly [RelationKeys]?: 'bitacora' | 'cliente' | 'historialPagos' | 'tecnico';
+    readonly [RelationKeys]?: 'adjuntos' | 'bitacora' | 'cliente' | 'historialPagos' | 'tecnico';
+  };
+  export type TicketAdjunto = {
+    createdAt: FieldOutputTypes['__unbound__']['TicketAdjunto']['createdAt'];
+    duracionSegundos: FieldOutputTypes['__unbound__']['TicketAdjunto']['duracionSegundos'];
+    id: FieldOutputTypes['__unbound__']['TicketAdjunto']['id'];
+    mimeType: FieldOutputTypes['__unbound__']['TicketAdjunto']['mimeType'];
+    nombreOriginal: FieldOutputTypes['__unbound__']['TicketAdjunto']['nombreOriginal'];
+    tamanoBytes: FieldOutputTypes['__unbound__']['TicketAdjunto']['tamanoBytes'];
+    ticketId: FieldOutputTypes['__unbound__']['TicketAdjunto']['ticketId'];
+    tipo: FieldOutputTypes['__unbound__']['TicketAdjunto']['tipo'];
+    url: FieldOutputTypes['__unbound__']['TicketAdjunto']['url'];
+    ticket: Ticket | null;
+    readonly [RelationKeys]?: 'ticket';
   };
   export type Usuario = {
     activo: FieldOutputTypes['__unbound__']['Usuario']['activo'];
@@ -379,6 +393,7 @@ export declare const models: {
   HistorialPago: Models.HistorialPago;
   Producto: Models.Producto;
   Ticket: Models.Ticket;
+  TicketAdjunto: Models.TicketAdjunto;
   Usuario: Models.Usuario;
   Variacion: Models.Variacion;
   Venta: Models.Venta;
@@ -885,6 +900,73 @@ type ContractBase = Omit<
               indexes: readonly [];
               foreignKeys: readonly [];
             };
+            readonly TicketAdjunto: {
+              columns: {
+                readonly createdAt: {
+                  readonly dataType: 'sqlite/datetime';
+                  readonly codecId: 'sqlite/datetime@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly duracionSegundos: {
+                  readonly dataType: 'sqlite/real';
+                  readonly codecId: 'sqlite/real@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'sqlite/integer';
+                  readonly codecId: 'sqlite/integer@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly mimeType: {
+                  readonly dataType: 'sqlite/text';
+                  readonly codecId: 'sqlite/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly nombreOriginal: {
+                  readonly dataType: 'sqlite/text';
+                  readonly codecId: 'sqlite/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly tamanoBytes: {
+                  readonly dataType: 'sqlite/integer';
+                  readonly codecId: 'sqlite/integer@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly ticketId: {
+                  readonly dataType: 'sqlite/integer';
+                  readonly codecId: 'sqlite/integer@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly tipo: {
+                  readonly dataType: 'sqlite/text';
+                  readonly codecId: 'sqlite/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly url: {
+                  readonly dataType: 'sqlite/text';
+                  readonly codecId: 'sqlite/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [];
+              foreignKeys: readonly [];
+            };
             readonly Usuario: {
               columns: {
                 readonly activo: {
@@ -1188,6 +1270,10 @@ type ContractBase = Omit<
       readonly model: 'Producto';
     };
     readonly Ticket: { readonly namespace: '__unbound__' & NamespaceId; readonly model: 'Ticket' };
+    readonly TicketAdjunto: {
+      readonly namespace: '__unbound__' & NamespaceId;
+      readonly model: 'TicketAdjunto';
+    };
     readonly Usuario: {
       readonly namespace: '__unbound__' & NamespaceId;
       readonly model: 'Usuario';
@@ -1712,6 +1798,17 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly adjuntos: {
+                readonly to: {
+                  readonly namespace: '__unbound__' & NamespaceId;
+                  readonly model: 'TicketAdjunto';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['ticketId'];
+                };
+              };
               readonly bitacora: {
                 readonly to: {
                   readonly namespace: '__unbound__' & NamespaceId;
@@ -1778,6 +1875,75 @@ type ContractBase = Omit<
                 readonly saldoPendiente: { readonly column: 'saldoPendiente' };
                 readonly tecnicoId: { readonly column: 'tecnicoId' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly TicketAdjunto: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'sqlite/datetime@1' };
+              };
+              readonly duracionSegundos: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'sqlite/real@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'sqlite/integer@1' };
+              };
+              readonly mimeType: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'sqlite/text@1' };
+              };
+              readonly nombreOriginal: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'sqlite/text@1' };
+              };
+              readonly tamanoBytes: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'sqlite/integer@1' };
+              };
+              readonly ticketId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'sqlite/integer@1' };
+              };
+              readonly tipo: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'sqlite/text@1' };
+              };
+              readonly url: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'sqlite/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly ticket: {
+                readonly to: {
+                  readonly namespace: '__unbound__' & NamespaceId;
+                  readonly model: 'Ticket';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['ticketId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'TicketAdjunto';
+              readonly namespaceId: '__unbound__';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly duracionSegundos: { readonly column: 'duracionSegundos' };
+                readonly id: { readonly column: 'id' };
+                readonly mimeType: { readonly column: 'mimeType' };
+                readonly nombreOriginal: { readonly column: 'nombreOriginal' };
+                readonly tamanoBytes: { readonly column: 'tamanoBytes' };
+                readonly ticketId: { readonly column: 'ticketId' };
+                readonly tipo: { readonly column: 'tipo' };
+                readonly url: { readonly column: 'url' };
               };
             };
           };
@@ -2264,6 +2430,14 @@ type ContractBase = Omit<
           readonly ref: {
             readonly entry: 'Ticket';
             readonly field: 'updatedAt';
+            readonly namespace: '__unbound__';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'TicketAdjunto';
+            readonly field: 'createdAt';
             readonly namespace: '__unbound__';
           };
         },

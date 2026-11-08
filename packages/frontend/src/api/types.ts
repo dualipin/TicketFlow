@@ -201,6 +201,29 @@ export interface ProductoWithDetails extends Producto {
   variaciones: Variacion[];
 }
 
+export interface CreateCategoriaInput {
+  nombre: string;
+}
+
+export interface CreateProductoVariacionInput {
+  codigo: string;
+  nombre?: string;
+  precioBase: number;
+  stock?: number;
+}
+
+export interface CreateProductoInput {
+  nombre: string;
+  categoriaId: number;
+  descripcion?: string | null;
+  esServicio?: number | boolean;
+  codigo?: string;
+  nombreVariacion?: string;
+  precioBase?: number;
+  stock?: number;
+  variaciones?: CreateProductoVariacionInput[];
+}
+
 // ============================================================================
 // Punto de Venta (POS)
 // ============================================================================

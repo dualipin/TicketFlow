@@ -1,0 +1,574 @@
+[
+  {
+    "id": "table.Bitacora",
+    "label": "Create table Bitacora",
+    "summary": "Creates table Bitacora with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "objectType": "table",
+        "name": "Bitacora"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Bitacora\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "Bitacora"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Bitacora\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Bitacora\"",
+        "sql": "CREATE TABLE \"Bitacora\" (\n  \"createdAt\" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),\n  \"esPrivada\" INTEGER NOT NULL DEFAULT 0,\n  \"id\" INTEGER PRIMARY KEY AUTOINCREMENT,\n  \"nota\" TEXT NOT NULL,\n  \"ticketId\" INTEGER NOT NULL,\n  \"updatedAt\" TEXT NOT NULL,\n  \"usuarioId\" INTEGER NOT NULL\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Bitacora\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "Bitacora"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Bitacora\""
+        }
+      },
+      {
+        "description": "verify table \"Bitacora\" has exactly its columns",
+        "sql": "SELECT (SELECT COUNT(*) FROM pragma_table_info('Bitacora')) = 7 AND (SELECT COUNT(*) FROM pragma_table_info('Bitacora') WHERE (name, LOWER(type), \"notnull\", pk) IN (VALUES ('createdAt', 'text', 1, 0), ('esPrivada', 'integer', 1, 0), ('id', 'integer', 0, 1), ('nota', 'text', 1, 0), ('ticketId', 'integer', 1, 0), ('updatedAt', 'text', 1, 0), ('usuarioId', 'integer', 1, 0))) = 7"
+      }
+    ]
+  },
+  {
+    "id": "table.Categoria",
+    "label": "Create table Categoria",
+    "summary": "Creates table Categoria with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "objectType": "table",
+        "name": "Categoria"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Categoria\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "Categoria"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Categoria\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Categoria\"",
+        "sql": "CREATE TABLE \"Categoria\" (\n  \"createdAt\" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),\n  \"id\" INTEGER PRIMARY KEY AUTOINCREMENT,\n  \"nombre\" TEXT NOT NULL,\n  \"updatedAt\" TEXT NOT NULL,\n  UNIQUE (\"nombre\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Categoria\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "Categoria"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Categoria\""
+        }
+      },
+      {
+        "description": "verify table \"Categoria\" has exactly its columns",
+        "sql": "SELECT (SELECT COUNT(*) FROM pragma_table_info('Categoria')) = 4 AND (SELECT COUNT(*) FROM pragma_table_info('Categoria') WHERE (name, LOWER(type), \"notnull\", pk) IN (VALUES ('createdAt', 'text', 1, 0), ('id', 'integer', 0, 1), ('nombre', 'text', 1, 0), ('updatedAt', 'text', 1, 0))) = 4"
+      }
+    ]
+  },
+  {
+    "id": "table.Cliente",
+    "label": "Create table Cliente",
+    "summary": "Creates table Cliente with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "objectType": "table",
+        "name": "Cliente"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Cliente\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "Cliente"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Cliente\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Cliente\"",
+        "sql": "CREATE TABLE \"Cliente\" (\n  \"createdAt\" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),\n  \"id\" INTEGER PRIMARY KEY AUTOINCREMENT,\n  \"nombre\" TEXT NOT NULL,\n  \"notas\" TEXT,\n  \"telefono\" TEXT NOT NULL,\n  \"updatedAt\" TEXT NOT NULL,\n  UNIQUE (\"telefono\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Cliente\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "Cliente"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Cliente\""
+        }
+      },
+      {
+        "description": "verify table \"Cliente\" has exactly its columns",
+        "sql": "SELECT (SELECT COUNT(*) FROM pragma_table_info('Cliente')) = 6 AND (SELECT COUNT(*) FROM pragma_table_info('Cliente') WHERE (name, LOWER(type), \"notnull\", pk) IN (VALUES ('createdAt', 'text', 1, 0), ('id', 'integer', 0, 1), ('nombre', 'text', 1, 0), ('notas', 'text', 0, 0), ('telefono', 'text', 1, 0), ('updatedAt', 'text', 1, 0))) = 6"
+      }
+    ]
+  },
+  {
+    "id": "table.CorteCaja",
+    "label": "Create table CorteCaja",
+    "summary": "Creates table CorteCaja with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "objectType": "table",
+        "name": "CorteCaja"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"CorteCaja\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "CorteCaja"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"CorteCaja\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"CorteCaja\"",
+        "sql": "CREATE TABLE \"CorteCaja\" (\n  \"createdAt\" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),\n  \"diferencia\" REAL,\n  \"estado\" TEXT NOT NULL DEFAULT 'ABIERTO',\n  \"fechaApertura\" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),\n  \"fechaCierre\" TEXT,\n  \"id\" INTEGER PRIMARY KEY AUTOINCREMENT,\n  \"montoCalculado\" REAL NOT NULL DEFAULT 0,\n  \"montoInicial\" REAL NOT NULL DEFAULT 0,\n  \"montoReal\" REAL,\n  \"notas\" TEXT,\n  \"updatedAt\" TEXT NOT NULL,\n  \"usuarioId\" INTEGER NOT NULL\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"CorteCaja\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "CorteCaja"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"CorteCaja\""
+        }
+      },
+      {
+        "description": "verify table \"CorteCaja\" has exactly its columns",
+        "sql": "SELECT (SELECT COUNT(*) FROM pragma_table_info('CorteCaja')) = 12 AND (SELECT COUNT(*) FROM pragma_table_info('CorteCaja') WHERE (name, LOWER(type), \"notnull\", pk) IN (VALUES ('createdAt', 'text', 1, 0), ('diferencia', 'real', 0, 0), ('estado', 'text', 1, 0), ('fechaApertura', 'text', 1, 0), ('fechaCierre', 'text', 0, 0), ('id', 'integer', 0, 1), ('montoCalculado', 'real', 1, 0), ('montoInicial', 'real', 1, 0), ('montoReal', 'real', 0, 0), ('notas', 'text', 0, 0), ('updatedAt', 'text', 1, 0), ('usuarioId', 'integer', 1, 0))) = 12"
+      }
+    ]
+  },
+  {
+    "id": "table.HistorialPago",
+    "label": "Create table HistorialPago",
+    "summary": "Creates table HistorialPago with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "objectType": "table",
+        "name": "HistorialPago"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"HistorialPago\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "HistorialPago"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"HistorialPago\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"HistorialPago\"",
+        "sql": "CREATE TABLE \"HistorialPago\" (\n  \"corteCajaId\" INTEGER,\n  \"fecha\" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),\n  \"id\" INTEGER PRIMARY KEY AUTOINCREMENT,\n  \"metodoPago\" TEXT NOT NULL DEFAULT 'EFECTIVO',\n  \"monto\" REAL NOT NULL,\n  \"notas\" TEXT,\n  \"ticketId\" INTEGER NOT NULL,\n  \"usuarioId\" INTEGER NOT NULL\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"HistorialPago\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "HistorialPago"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"HistorialPago\""
+        }
+      },
+      {
+        "description": "verify table \"HistorialPago\" has exactly its columns",
+        "sql": "SELECT (SELECT COUNT(*) FROM pragma_table_info('HistorialPago')) = 8 AND (SELECT COUNT(*) FROM pragma_table_info('HistorialPago') WHERE (name, LOWER(type), \"notnull\", pk) IN (VALUES ('corteCajaId', 'integer', 0, 0), ('fecha', 'text', 1, 0), ('id', 'integer', 0, 1), ('metodoPago', 'text', 1, 0), ('monto', 'real', 1, 0), ('notas', 'text', 0, 0), ('ticketId', 'integer', 1, 0), ('usuarioId', 'integer', 1, 0))) = 8"
+      }
+    ]
+  },
+  {
+    "id": "table.Producto",
+    "label": "Create table Producto",
+    "summary": "Creates table Producto with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "objectType": "table",
+        "name": "Producto"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Producto\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "Producto"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Producto\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Producto\"",
+        "sql": "CREATE TABLE \"Producto\" (\n  \"categoriaId\" INTEGER NOT NULL,\n  \"createdAt\" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),\n  \"descripcion\" TEXT,\n  \"esServicio\" INTEGER NOT NULL DEFAULT 0,\n  \"id\" INTEGER PRIMARY KEY AUTOINCREMENT,\n  \"nombre\" TEXT NOT NULL,\n  \"updatedAt\" TEXT NOT NULL\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Producto\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "Producto"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Producto\""
+        }
+      },
+      {
+        "description": "verify table \"Producto\" has exactly its columns",
+        "sql": "SELECT (SELECT COUNT(*) FROM pragma_table_info('Producto')) = 7 AND (SELECT COUNT(*) FROM pragma_table_info('Producto') WHERE (name, LOWER(type), \"notnull\", pk) IN (VALUES ('categoriaId', 'integer', 1, 0), ('createdAt', 'text', 1, 0), ('descripcion', 'text', 0, 0), ('esServicio', 'integer', 1, 0), ('id', 'integer', 0, 1), ('nombre', 'text', 1, 0), ('updatedAt', 'text', 1, 0))) = 7"
+      }
+    ]
+  },
+  {
+    "id": "table.Ticket",
+    "label": "Create table Ticket",
+    "summary": "Creates table Ticket with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "objectType": "table",
+        "name": "Ticket"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Ticket\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "Ticket"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Ticket\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Ticket\"",
+        "sql": "CREATE TABLE \"Ticket\" (\n  \"accesorios\" TEXT,\n  \"clienteId\" INTEGER NOT NULL,\n  \"contrasena\" TEXT,\n  \"costoTotal\" REAL NOT NULL DEFAULT 0,\n  \"createdAt\" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),\n  \"dispositivo\" TEXT NOT NULL,\n  \"estado\" TEXT NOT NULL DEFAULT 'RECIBIDO',\n  \"falla\" TEXT NOT NULL,\n  \"folio\" TEXT NOT NULL,\n  \"fotoAccesorios\" TEXT,\n  \"fotoRecepcion\" TEXT,\n  \"id\" INTEGER PRIMARY KEY AUTOINCREMENT,\n  \"saldoPendiente\" REAL NOT NULL DEFAULT 0,\n  \"tecnicoId\" INTEGER,\n  \"updatedAt\" TEXT NOT NULL,\n  UNIQUE (\"folio\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Ticket\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "Ticket"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Ticket\""
+        }
+      },
+      {
+        "description": "verify table \"Ticket\" has exactly its columns",
+        "sql": "SELECT (SELECT COUNT(*) FROM pragma_table_info('Ticket')) = 15 AND (SELECT COUNT(*) FROM pragma_table_info('Ticket') WHERE (name, LOWER(type), \"notnull\", pk) IN (VALUES ('accesorios', 'text', 0, 0), ('clienteId', 'integer', 1, 0), ('contrasena', 'text', 0, 0), ('costoTotal', 'real', 1, 0), ('createdAt', 'text', 1, 0), ('dispositivo', 'text', 1, 0), ('estado', 'text', 1, 0), ('falla', 'text', 1, 0), ('folio', 'text', 1, 0), ('fotoAccesorios', 'text', 0, 0), ('fotoRecepcion', 'text', 0, 0), ('id', 'integer', 0, 1), ('saldoPendiente', 'real', 1, 0), ('tecnicoId', 'integer', 0, 0), ('updatedAt', 'text', 1, 0))) = 15"
+      }
+    ]
+  },
+  {
+    "id": "table.Usuario",
+    "label": "Create table Usuario",
+    "summary": "Creates table Usuario with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "objectType": "table",
+        "name": "Usuario"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Usuario\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "Usuario"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Usuario\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Usuario\"",
+        "sql": "CREATE TABLE \"Usuario\" (\n  \"activo\" INTEGER NOT NULL DEFAULT 1,\n  \"createdAt\" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),\n  \"id\" INTEGER PRIMARY KEY AUTOINCREMENT,\n  \"nombre\" TEXT NOT NULL,\n  \"pin\" TEXT NOT NULL,\n  \"rol\" TEXT NOT NULL DEFAULT 'TECNICO',\n  \"updatedAt\" TEXT NOT NULL\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Usuario\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "Usuario"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Usuario\""
+        }
+      },
+      {
+        "description": "verify table \"Usuario\" has exactly its columns",
+        "sql": "SELECT (SELECT COUNT(*) FROM pragma_table_info('Usuario')) = 7 AND (SELECT COUNT(*) FROM pragma_table_info('Usuario') WHERE (name, LOWER(type), \"notnull\", pk) IN (VALUES ('activo', 'integer', 1, 0), ('createdAt', 'text', 1, 0), ('id', 'integer', 0, 1), ('nombre', 'text', 1, 0), ('pin', 'text', 1, 0), ('rol', 'text', 1, 0), ('updatedAt', 'text', 1, 0))) = 7"
+      }
+    ]
+  },
+  {
+    "id": "table.Variacion",
+    "label": "Create table Variacion",
+    "summary": "Creates table Variacion with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "objectType": "table",
+        "name": "Variacion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Variacion\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "Variacion"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Variacion\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Variacion\"",
+        "sql": "CREATE TABLE \"Variacion\" (\n  \"codigo\" TEXT NOT NULL,\n  \"createdAt\" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),\n  \"id\" INTEGER PRIMARY KEY AUTOINCREMENT,\n  \"nombre\" TEXT NOT NULL,\n  \"precioBase\" REAL NOT NULL DEFAULT 0,\n  \"productoId\" INTEGER NOT NULL,\n  \"stock\" INTEGER NOT NULL DEFAULT 0,\n  \"updatedAt\" TEXT NOT NULL,\n  UNIQUE (\"codigo\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Variacion\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "Variacion"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Variacion\""
+        }
+      },
+      {
+        "description": "verify table \"Variacion\" has exactly its columns",
+        "sql": "SELECT (SELECT COUNT(*) FROM pragma_table_info('Variacion')) = 8 AND (SELECT COUNT(*) FROM pragma_table_info('Variacion') WHERE (name, LOWER(type), \"notnull\", pk) IN (VALUES ('codigo', 'text', 1, 0), ('createdAt', 'text', 1, 0), ('id', 'integer', 0, 1), ('nombre', 'text', 1, 0), ('precioBase', 'real', 1, 0), ('productoId', 'integer', 1, 0), ('stock', 'integer', 1, 0), ('updatedAt', 'text', 1, 0))) = 8"
+      }
+    ]
+  },
+  {
+    "id": "table.Venta",
+    "label": "Create table Venta",
+    "summary": "Creates table Venta with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "objectType": "table",
+        "name": "Venta"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Venta\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "Venta"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Venta\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Venta\"",
+        "sql": "CREATE TABLE \"Venta\" (\n  \"clienteId\" INTEGER,\n  \"corteCajaId\" INTEGER,\n  \"fecha\" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),\n  \"id\" INTEGER PRIMARY KEY AUTOINCREMENT,\n  \"metodoPago\" TEXT NOT NULL DEFAULT 'EFECTIVO',\n  \"notas\" TEXT,\n  \"total\" REAL NOT NULL DEFAULT 0,\n  \"usuarioId\" INTEGER NOT NULL\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Venta\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "Venta"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Venta\""
+        }
+      },
+      {
+        "description": "verify table \"Venta\" has exactly its columns",
+        "sql": "SELECT (SELECT COUNT(*) FROM pragma_table_info('Venta')) = 8 AND (SELECT COUNT(*) FROM pragma_table_info('Venta') WHERE (name, LOWER(type), \"notnull\", pk) IN (VALUES ('clienteId', 'integer', 0, 0), ('corteCajaId', 'integer', 0, 0), ('fecha', 'text', 1, 0), ('id', 'integer', 0, 1), ('metodoPago', 'text', 1, 0), ('notas', 'text', 0, 0), ('total', 'real', 1, 0), ('usuarioId', 'integer', 1, 0))) = 8"
+      }
+    ]
+  },
+  {
+    "id": "table.VentaDetalle",
+    "label": "Create table VentaDetalle",
+    "summary": "Creates table VentaDetalle with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "objectType": "table",
+        "name": "VentaDetalle"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"VentaDetalle\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "VentaDetalle"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"VentaDetalle\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"VentaDetalle\"",
+        "sql": "CREATE TABLE \"VentaDetalle\" (\n  \"cantidad\" INTEGER NOT NULL DEFAULT 1,\n  \"id\" INTEGER PRIMARY KEY AUTOINCREMENT,\n  \"precioUnit\" REAL NOT NULL DEFAULT 0,\n  \"subtotal\" REAL NOT NULL DEFAULT 0,\n  \"variacionId\" INTEGER NOT NULL,\n  \"ventaId\" INTEGER NOT NULL\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"VentaDetalle\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ?1 AND \"name\" = ?2)",
+        "params": [
+          "table",
+          "VentaDetalle"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"VentaDetalle\""
+        }
+      },
+      {
+        "description": "verify table \"VentaDetalle\" has exactly its columns",
+        "sql": "SELECT (SELECT COUNT(*) FROM pragma_table_info('VentaDetalle')) = 6 AND (SELECT COUNT(*) FROM pragma_table_info('VentaDetalle') WHERE (name, LOWER(type), \"notnull\", pk) IN (VALUES ('cantidad', 'integer', 1, 0), ('id', 'integer', 0, 1), ('precioUnit', 'real', 1, 0), ('subtotal', 'real', 1, 0), ('variacionId', 'integer', 1, 0), ('ventaId', 'integer', 1, 0))) = 6"
+      }
+    ]
+  }
+]

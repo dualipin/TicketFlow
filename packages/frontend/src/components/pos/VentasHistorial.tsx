@@ -136,46 +136,46 @@ export const VentasHistorial: React.FC = () => {
       {/* Tarjetas de Resumen / KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <Card className="p-4 rounded-xl border border-border bg-card flex flex-col gap-1">
-          <span className="text-[11px] text-muted-foreground font-normal flex items-center gap-1">
+          <span className="text-xs text-muted-foreground font-normal flex items-center gap-1">
             <DollarSign className="size-3.5 text-primary" />
             Total Vendido
           </span>
           <span className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground">
             <NumberFlow value={totalVendido} format={{ style: 'currency', currency: 'USD' }} />
           </span>
-          <span className="text-[10px] text-muted-foreground">
+          <span className="text-xs text-muted-foreground">
             {filteredVentas.length} transacciones
           </span>
         </Card>
 
         <Card className="p-4 rounded-xl border border-border bg-card flex flex-col gap-1">
-          <span className="text-[11px] text-muted-foreground font-normal flex items-center gap-1">
+          <span className="text-xs text-muted-foreground font-normal flex items-center gap-1">
             <DollarSign className="size-3.5 text-emerald-600 dark:text-emerald-400" />
             En Efectivo
           </span>
           <span className="text-xl sm:text-2xl font-semibold tracking-tight text-emerald-600 dark:text-emerald-400">
             <NumberFlow value={totalEfectivo} format={{ style: 'currency', currency: 'USD' }} />
           </span>
-          <span className="text-[10px] text-muted-foreground">
+          <span className="text-xs text-muted-foreground">
             {((totalEfectivo / (totalVendido || 1)) * 100).toFixed(0)}% del total
           </span>
         </Card>
 
         <Card className="p-4 rounded-xl border border-border bg-card flex flex-col gap-1">
-          <span className="text-[11px] text-muted-foreground font-normal flex items-center gap-1">
+          <span className="text-xs text-muted-foreground font-normal flex items-center gap-1">
             <CreditCard className="size-3.5 text-primary" />
             En Tarjeta / Transf.
           </span>
           <span className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground">
             <NumberFlow value={totalElectronico} format={{ style: 'currency', currency: 'USD' }} />
           </span>
-          <span className="text-[10px] text-muted-foreground">
+          <span className="text-xs text-muted-foreground">
             {((totalElectronico / (totalVendido || 1)) * 100).toFixed(0)}% del total
           </span>
         </Card>
 
         <Card className="p-4 rounded-xl border border-border bg-card flex flex-col gap-1">
-          <span className="text-[11px] text-muted-foreground font-normal flex items-center gap-1">
+          <span className="text-xs text-muted-foreground font-normal flex items-center gap-1">
             <Layers className="size-3.5 text-muted-foreground" />
             Ticket Promedio
           </span>
@@ -185,7 +185,7 @@ export const VentasHistorial: React.FC = () => {
               format={{ style: 'currency', currency: 'USD' }}
             />
           </span>
-          <span className="text-[10px] text-muted-foreground">Por venta</span>
+          <span className="text-xs text-muted-foreground">Por venta</span>
         </Card>
       </div>
 
@@ -313,7 +313,7 @@ export const VentasHistorial: React.FC = () => {
                       <Button
                         variant="ghost"
                         size="xs"
-                        className="opacity-70 group-hover:opacity-100 gap-1 text-[11px]"
+                        className="opacity-70 group-hover:opacity-100 gap-1 text-xs"
                       >
                         <span>Detalle</span>
                         <ChevronRight className="size-3" />

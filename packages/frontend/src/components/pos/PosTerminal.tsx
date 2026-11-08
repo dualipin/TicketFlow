@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { toast } from '../ui/sonner.tsx';
 import { useCategorias, useVariaciones } from '../../queries/inventario/queries.ts';
 import { useCorteActivo } from '../../queries/corte-caja/queries.ts';
@@ -18,10 +18,17 @@ import {
   updateItemPrice,
   calculateChange,
   validateSplitPayment,
+  accumulateQuickCash,
+  holdCurrentCart,
+  restoreHeldCart,
+  deleteHeldCart,
+  type HeldCart,
 } from './pos-engine.ts';
 import { PosCatalog } from './PosCatalog.tsx';
 import { PosCart } from './PosCart.tsx';
 import { PosPaymentSection } from './PosPaymentSection.tsx';
+import { PosMobileCartSheet } from './PosMobileCartSheet.tsx';
+import { usePosKeyboardShortcuts } from './usePosKeyboardShortcuts.ts';
 import { PosSaleSuccessModal, type PosSaleSummary } from './PosSaleSuccessModal.tsx';
 import { AbrirCajaModal } from '../corte-caja/AbrirCajaModal.tsx';
 import { CreateClienteModal } from './CreateClienteModal.tsx';
@@ -42,6 +49,8 @@ export const PosTerminal: React.FC = () => {
   const [isAbrirCajaOpen, setIsAbrirCajaOpen] = useState(false);
   const [isCreateClienteOpen, setIsCreateClienteOpen] = useState(false);
   const [isSaleSuccessOpen, setIsSaleSuccessOpen] = useState(false);
+  const [isCustomerComboboxOpen, setIsCustomerComboboxOpen] = useState(false);
+  const [isMobileSheetOpen, setIsMobileSheetOpen] = useState(false);
   const [saleSummary, setSaleSummary] = useState<PosSaleSummary | null>(null);
 
   // Filtros de catálogo
@@ -55,6 +64,24 @@ export const PosTerminal: React.FC = () => {
   const [metodoPago, setMetodoPago] = useState<MetodoPagoVenta>('EFECTIVO');
   const [montoRecibido, setMontoRecibido] = useState<string>('');
   const [notasVenta, setNotasVenta] = useState<string>('');
+
+  // Estados para Cuentas en Espera (Hold Cart) con persistencia de sesión
+  const [heldCarts, setHeldCarts] = useState<HeldCart[]>(() => {
+    try {
+      const stored = sessionStorage.getItem('ticketflow_pos_held_carts');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('ticketflow_pos_held_carts', JSON.stringify(heldCarts));
+    } catch {
+      // Ignorar cuotas de storage
+    }
+  }, [heldCarts]);
 
   // Estados para Pago Mixto
   const [montoEfectivoMixto, setMontoEfectivoMixto] = useState<string>('');
@@ -97,6 +124,12 @@ export const PosTerminal: React.FC = () => {
 
   const efectivoSuficiente =
     metodoPago !== 'EFECTIVO' || (efectivoNum >= totalCart && totalCart > 0);
+
+  const canProceedCheckout =
+    cart.length > 0 &&
+    isCajaAbierta &&
+    !createVenta.isPending &&
+    (metodoPago === 'MIXTO' ? splitValidation.isValid : efectivoSuficiente);
 
   // Catálogo filtrado
   const filteredVariaciones = useMemo(() => {
@@ -164,13 +197,94 @@ export const PosTerminal: React.FC = () => {
     setCart((prev) => prev.filter((item) => item.variacionId !== variacionId));
   }, []);
 
-  // Vaciar carrito
+  // Vaciar carrito con red de seguridad y opción Deshacer
   const handleClearCart = useCallback(() => {
+    if (cart.length === 0) return;
+    const snapshotCart = [...cart];
+    const snapshotCliente = selectedCliente;
+    const snapshotMetodo = metodoPago;
+    const snapshotNotas = notasVenta;
+
     setCart([]);
     setMontoRecibido('');
     setMontoEfectivoMixto('');
     setMontoTarjetaMixto('');
     setNotasVenta('');
+
+    toast('Carrito vaciado', {
+      description: `${snapshotCart.length} artículos removidos`,
+      action: {
+        label: 'Deshacer',
+        onClick: () => {
+          setCart(snapshotCart);
+          setSelectedCliente(snapshotCliente);
+          setMetodoPago(snapshotMetodo);
+          setNotasVenta(snapshotNotas);
+          toast.success('Carrito restaurado');
+        },
+      },
+    });
+  }, [cart, selectedCliente, metodoPago, notasVenta]);
+
+  // Pausar venta actual (Hold Cart)
+  const handleHoldCart = useCallback(() => {
+    if (cart.length === 0) return;
+    const { newHeldCarts, newHeldItem } = holdCurrentCart(
+      heldCarts,
+      cart,
+      selectedCliente,
+      metodoPago,
+      notasVenta
+    );
+    setHeldCarts(newHeldCarts);
+    setCart([]);
+    setSelectedCliente(null);
+    setMontoRecibido('');
+    setMontoEfectivoMixto('');
+    setMontoTarjetaMixto('');
+    setNotasVenta('');
+    toast.info('Venta pausada en espera', {
+      description: newHeldItem.label,
+    });
+  }, [cart, heldCarts, selectedCliente, metodoPago, notasVenta]);
+
+  // Recuperar carrito en espera
+  const handleRestoreHeldCart = useCallback(
+    (holdId: string) => {
+      const { remainingCarts, restored } = restoreHeldCart(heldCarts, holdId);
+      if (!restored) return;
+
+      if (cart.length > 0) {
+        const autoHeld = holdCurrentCart(
+          remainingCarts,
+          cart,
+          selectedCliente,
+          metodoPago,
+          notasVenta
+        );
+        setHeldCarts(autoHeld.newHeldCarts);
+      } else {
+        setHeldCarts(remainingCarts);
+      }
+
+      setCart(restored.items);
+      setSelectedCliente(restored.selectedCliente);
+      setMetodoPago(restored.metodoPago);
+      setNotasVenta(restored.notasVenta || '');
+      setMontoRecibido('');
+      setMontoEfectivoMixto('');
+      setMontoTarjetaMixto('');
+      toast.success('Ticket recuperado a caja', {
+        description: restored.label,
+      });
+    },
+    [cart, heldCarts, selectedCliente, metodoPago, notasVenta]
+  );
+
+  // Descartar carrito en espera
+  const handleDeleteHeldCart = useCallback((holdId: string) => {
+    setHeldCarts((prev) => deleteHeldCart(prev, holdId));
+    toast.info('Ticket en espera descartado');
   }, []);
 
   // Modificar precio unitario
@@ -193,9 +307,20 @@ export const PosTerminal: React.FC = () => {
     );
   }, []);
 
-  // Atajos rápidos de billetes
-  const handleSetQuickCash = useCallback((amount: number) => {
+  // Denominaciones rápidas acumulativas de billetes
+  const handleAddCash = useCallback((amount: number) => {
+    setMontoRecibido((prev) => {
+      const current = prev.trim() !== '' ? Number(prev) : 0;
+      return String(accumulateQuickCash(current, amount));
+    });
+  }, []);
+
+  const handleSetExactCash = useCallback((amount: number) => {
     setMontoRecibido(String(amount));
+  }, []);
+
+  const handleClearCash = useCallback(() => {
+    setMontoRecibido('');
   }, []);
 
   // Cambiar método de pago e inicializar split si es MIXTO
@@ -225,16 +350,20 @@ export const PosTerminal: React.FC = () => {
   const handleCloseSaleSuccess = useCallback(() => {
     setIsSaleSuccessOpen(false);
     setSaleSummary(null);
-    handleClearCart();
+    setCart([]);
+    setMontoRecibido('');
+    setMontoEfectivoMixto('');
+    setMontoTarjetaMixto('');
+    setNotasVenta('');
     setSelectedCliente(null);
     setTimeout(() => {
       searchInputRef.current?.focus();
     }, 100);
-  }, [handleClearCart]);
+  }, []);
 
   // Procesar Cobro
-  const handleCheckout = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleCheckout = (e?: React.FormEvent) => {
+    e?.preventDefault?.();
     if (cart.length === 0 || !isCajaAbierta) return;
     if (metodoPago === 'MIXTO' && !splitValidation.isValid) return;
     if (metodoPago !== 'MIXTO' && !efectivoSuficiente) return;
@@ -281,6 +410,7 @@ export const PosTerminal: React.FC = () => {
 
         setSaleSummary(successSummary);
         setIsSaleSuccessOpen(true);
+        setIsMobileSheetOpen(false);
         setSaleSuccessMessage(
           `Venta #${res.venta.id} por $${res.venta.total.toFixed(2)} registrada exitosamente.`
         );
@@ -296,8 +426,87 @@ export const PosTerminal: React.FC = () => {
     });
   };
 
+  // Atajos de Teclado F-Keys (F2, F4, F8, F9, Esc)
+  usePosKeyboardShortcuts({
+    onFocusSearch: () => {
+      searchInputRef.current?.focus();
+    },
+    onOpenCustomerSearch: () => {
+      setIsCustomerComboboxOpen(true);
+    },
+    onHoldOrRestoreCart: () => {
+      if (cart.length > 0) {
+        handleHoldCart();
+      } else if (heldCarts.length > 0) {
+        handleRestoreHeldCart(heldCarts[0].id);
+      }
+    },
+    onCheckout: () => {
+      if (canProceedCheckout) {
+        handleCheckout();
+      }
+    },
+    onEscape: () => {
+      setSearchQuery('');
+      setIsCustomerComboboxOpen(false);
+      setIsMobileSheetOpen(false);
+    },
+    canCheckout: canProceedCheckout,
+    isModalOpen: isAbrirCajaOpen || isCreateClienteOpen || isSaleSuccessOpen,
+  });
+
+  const cartAndPaymentContent = (
+    <>
+      <PosCart
+        cart={cart}
+        totalItemsCount={totalItemsCount}
+        onClearCart={handleClearCart}
+        onRemoveItem={handleRemoveItem}
+        onUpdateQuantity={handleUpdateQuantity}
+        onUpdatePrice={handleUpdatePrice}
+        onToggleOfferMode={handleToggleOfferMode}
+        heldCarts={heldCarts}
+        onHoldCart={handleHoldCart}
+        onRestoreHeldCart={handleRestoreHeldCart}
+        onDeleteHeldCart={handleDeleteHeldCart}
+      />
+
+      <PosPaymentSection
+        clientes={clientes}
+        selectedCliente={selectedCliente}
+        onSelectCliente={setSelectedCliente}
+        onOpenCreateCliente={() => setIsCreateClienteOpen(true)}
+        isCustomerComboboxOpen={isCustomerComboboxOpen}
+        onCustomerComboboxOpenChange={setIsCustomerComboboxOpen}
+        totalCart={totalCart}
+        metodoPago={metodoPago}
+        onSelectMetodoPago={handleSelectMetodoPago}
+        montoRecibido={montoRecibido}
+        onMontoRecibidoChange={setMontoRecibido}
+        onSetExactCash={handleSetExactCash}
+        onAddCash={handleAddCash}
+        onClearCash={handleClearCash}
+        cambio={cambio}
+        isCajaAbierta={isCajaAbierta}
+        efectivoSuficiente={efectivoSuficiente}
+        isCheckoutPending={createVenta.isPending}
+        onCheckout={handleCheckout}
+        cartLength={cart.length}
+        montoEfectivoMixto={montoEfectivoMixto}
+        onMontoEfectivoMixtoChange={setMontoEfectivoMixto}
+        montoTarjetaMixto={montoTarjetaMixto}
+        onMontoTarjetaMixtoChange={setMontoTarjetaMixto}
+        isSplitValid={splitValidation.isValid}
+        splitDiff={splitValidation.diff}
+        splitChangeOwed={splitValidation.changeOwed}
+        onSplitFiftyFifty={handleSplitFiftyFifty}
+        onFillRemainingCard={handleFillRemainingCard}
+      />
+    </>
+  );
+
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 pb-20 lg:pb-0">
       {/* Guardia de Turno de Caja Cerrada */}
       {!isCajaAbierta && (
         <Alert variant="destructive" className="border-amber-500/40 bg-amber-500/10 text-amber-900 dark:text-amber-200">
@@ -360,49 +569,25 @@ export const PosTerminal: React.FC = () => {
           />
         </div>
 
-        {/* COLUMNA DERECHA: Carrito de Compras & Cobro (5 cols) */}
-        <div className="lg:col-span-5 flex flex-col gap-4">
+        {/* COLUMNA DERECHA: Carrito de Compras & Cobro (5 cols en pantallas grandes) */}
+        <div className="hidden lg:flex lg:col-span-5 flex-col gap-4">
           <Card className="rounded-xl border-border sticky top-28">
-            <PosCart
-              cart={cart}
-              totalItemsCount={totalItemsCount}
-              onClearCart={handleClearCart}
-              onRemoveItem={handleRemoveItem}
-              onUpdateQuantity={handleUpdateQuantity}
-              onUpdatePrice={handleUpdatePrice}
-              onToggleOfferMode={handleToggleOfferMode}
-            />
-
-            <PosPaymentSection
-              clientes={clientes}
-              selectedCliente={selectedCliente}
-              onSelectCliente={setSelectedCliente}
-              onOpenCreateCliente={() => setIsCreateClienteOpen(true)}
-              totalCart={totalCart}
-              metodoPago={metodoPago}
-              onSelectMetodoPago={handleSelectMetodoPago}
-              montoRecibido={montoRecibido}
-              onMontoRecibidoChange={setMontoRecibido}
-              onSetQuickCash={handleSetQuickCash}
-              cambio={cambio}
-              isCajaAbierta={isCajaAbierta}
-              efectivoSuficiente={efectivoSuficiente}
-              isCheckoutPending={createVenta.isPending}
-              onCheckout={handleCheckout}
-              cartLength={cart.length}
-              montoEfectivoMixto={montoEfectivoMixto}
-              onMontoEfectivoMixtoChange={setMontoEfectivoMixto}
-              montoTarjetaMixto={montoTarjetaMixto}
-              onMontoTarjetaMixtoChange={setMontoTarjetaMixto}
-              isSplitValid={splitValidation.isValid}
-              splitDiff={splitValidation.diff}
-              splitChangeOwed={splitValidation.changeOwed}
-              onSplitFiftyFifty={handleSplitFiftyFifty}
-              onFillRemainingCard={handleFillRemainingCard}
-            />
+            {cartAndPaymentContent}
           </Card>
         </div>
       </div>
+
+      {/* Barra Inferior y Drawer Deslizable para Móviles y Tabletas (<1024px) */}
+      <PosMobileCartSheet
+        isOpen={isMobileSheetOpen}
+        onOpenChange={setIsMobileSheetOpen}
+        totalCart={totalCart}
+        totalItemsCount={totalItemsCount}
+      >
+        <Card className="rounded-xl border-border shadow-none">
+          {cartAndPaymentContent}
+        </Card>
+      </PosMobileCartSheet>
 
       {/* Modal para Abrir Caja */}
       <AbrirCajaModal

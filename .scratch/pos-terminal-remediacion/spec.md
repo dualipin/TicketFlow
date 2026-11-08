@@ -1,6 +1,6 @@
 # Spec: Remediación Integral de Arquitectura, Accesibilidad y Ergonomía de Terminal de Punto de Venta (`/pos`)
 
-Status: ready-for-agent
+Status: completed
 
 ## Problem Statement
 

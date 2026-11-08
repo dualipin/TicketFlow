@@ -27,10 +27,10 @@ interface PosCartProps {
   onUpdateQuantity: (variacionId: number, delta: number) => void;
   onUpdatePrice: (variacionId: number, newPrice: number) => void;
   onToggleOfferMode: (variacionId: number) => void;
-  heldCarts?: HeldCart[];
-  onHoldCart?: () => void;
-  onRestoreHeldCart?: (holdId: string) => void;
-  onDeleteHeldCart?: (holdId: string) => void;
+  heldCarts: HeldCart[];
+  onHoldCart: () => void;
+  onRestoreHeldCart: (holdId: string) => void;
+  onDeleteHeldCart: (holdId: string) => void;
 }
 
 export const PosCart: React.FC<PosCartProps> = ({
@@ -41,7 +41,7 @@ export const PosCart: React.FC<PosCartProps> = ({
   onUpdateQuantity,
   onUpdatePrice,
   onToggleOfferMode,
-  heldCarts = [],
+  heldCarts,
   onHoldCart,
   onRestoreHeldCart,
   onDeleteHeldCart,
@@ -74,9 +74,10 @@ export const PosCart: React.FC<PosCartProps> = ({
                     <Button
                       type="button"
                       variant="outline"
-                      size="xs"
-                      className="h-7 text-xs gap-1 border-primary/30 bg-primary/5 text-primary hover:bg-primary/10"
+                      size="sm"
+                      className="h-8 text-xs gap-1 border-primary/30 bg-primary/5 text-primary hover:bg-primary/10"
                       title="Ver tickets en espera"
+                      aria-label={`Ver ${heldCarts.length} tickets en espera`}
                     >
                       <Clock className="size-3.5" data-icon="inline-start" />
                       <span>Espera ({heldCarts.length})</span>
@@ -113,21 +114,23 @@ export const PosCart: React.FC<PosCartProps> = ({
                           <Button
                             type="button"
                             variant="ghost"
-                            size="xs"
-                            onClick={() => onDeleteHeldCart?.(h.id)}
-                            className="size-6 p-0 text-muted-foreground hover:text-destructive"
+                            size="sm"
+                            onClick={() => onDeleteHeldCart(h.id)}
+                            className="size-7 p-0 text-muted-foreground hover:text-destructive"
                             title="Descartar ticket en espera"
+                            aria-label={`Descartar ticket en espera de ${h.selectedCliente?.nombre || 'Público en General'}`}
                           >
-                            <X className="size-3" />
+                            <X className="size-3.5" />
                           </Button>
                         </div>
 
                         <Button
                           type="button"
                           variant="secondary"
-                          size="xs"
-                          onClick={() => onRestoreHeldCart?.(h.id)}
-                          className="h-7 text-xs font-semibold gap-1 text-primary hover:bg-primary/10 w-full"
+                          size="sm"
+                          onClick={() => onRestoreHeldCart(h.id)}
+                          className="h-8 text-xs font-semibold gap-1 text-primary hover:bg-primary/10 w-full"
+                          aria-label={`Recuperar carrito de ${h.selectedCliente?.nombre || 'Público en General'}`}
                         >
                           <Play className="size-3" data-icon="inline-start" />
                           <span>Recuperar a Caja</span>
@@ -144,22 +147,27 @@ export const PosCart: React.FC<PosCartProps> = ({
                 <Button
                   type="button"
                   variant="outline"
-                  size="xs"
+                  size="sm"
                   onClick={onHoldCart}
-                  className="h-7 text-xs gap-1 text-muted-foreground hover:text-foreground"
-                  title="Pausar venta actual para atender a otro cliente"
+                  className="h-8 text-xs gap-1 text-muted-foreground hover:text-foreground"
+                  title="Pausar venta actual para atender a otro cliente [F8]"
+                  aria-label="Poner venta actual en espera"
                 >
                   <Clock className="size-3.5" data-icon="inline-start" />
                   <span className="hidden sm:inline">Pausar</span>
+                  <kbd className="hidden md:inline-block px-1.5 py-0.5 text-xs font-mono rounded bg-muted text-muted-foreground border border-border/60">
+                    F8
+                  </kbd>
                 </Button>
 
                 <Button
                   type="button"
                   variant="ghost"
-                  size="xs"
+                  size="sm"
                   onClick={onClearCart}
-                  className="h-7 text-xs text-destructive hover:bg-destructive/10"
+                  className="h-8 text-xs text-destructive hover:bg-destructive/10"
                   title="Vaciar carrito"
+                  aria-label="Vaciar todos los artículos del carrito"
                 >
                   Vaciar
                 </Button>
@@ -213,9 +221,9 @@ export const PosCart: React.FC<PosCartProps> = ({
                 <Button
                   type="button"
                   variant="ghost"
-                  size="xs"
+                  size="sm"
                   onClick={() => onRemoveItem(item.variacionId)}
-                  className="size-7 p-0 text-muted-foreground hover:text-destructive shrink-0"
+                  className="size-9 p-0 text-muted-foreground hover:text-destructive shrink-0"
                   title="Eliminar del carrito"
                   aria-label={`Eliminar ${item.productoNombre} del carrito`}
                 >
@@ -225,31 +233,31 @@ export const PosCart: React.FC<PosCartProps> = ({
 
               {/* Fila 2: Cantidades, Edición de Precio y Subtotal */}
               <div className="flex items-center justify-between gap-2 pt-1 border-t border-border/40">
-                {/* Control de cantidad */}
+                {/* Control de cantidad con dimensiones táctiles >= 36px */}
                 <div className="flex items-center gap-1 border border-border/60 rounded-lg p-0.5 bg-muted/20">
                   <Button
                     type="button"
                     variant="ghost"
-                    size="xs"
+                    size="sm"
                     onClick={() => onUpdateQuantity(item.variacionId, -1)}
-                    className="size-6 p-0 text-muted-foreground hover:text-foreground"
+                    className="size-9 p-0 text-muted-foreground hover:text-foreground"
                     aria-label={`Disminuir cantidad de ${item.productoNombre}`}
                   >
-                    <Minus className="size-3.5" />
+                    <Minus className="size-4" />
                   </Button>
-                  <span className="w-7 text-center text-sm font-bold text-foreground">
+                  <span className="w-8 text-center text-sm font-bold text-foreground">
                     {item.cantidad}
                   </span>
                   <Button
                     type="button"
                     variant="ghost"
-                    size="xs"
+                    size="sm"
                     onClick={() => onUpdateQuantity(item.variacionId, 1)}
                     disabled={!item.esServicio && item.cantidad >= item.stockActual}
-                    className="size-6 p-0 text-muted-foreground hover:text-foreground"
+                    className="size-9 p-0 text-muted-foreground hover:text-foreground"
                     aria-label={`Aumentar cantidad de ${item.productoNombre}`}
                   >
-                    <Plus className="size-3.5" />
+                    <Plus className="size-4" />
                   </Button>
                 </div>
 
@@ -267,7 +275,7 @@ export const PosCart: React.FC<PosCartProps> = ({
                         onChange={(e) =>
                           onUpdatePrice(item.variacionId, Number(e.target.value))
                         }
-                        className="w-16 h-7 text-xs font-semibold px-1.5 rounded-md border border-border/70 bg-background text-right"
+                        className="w-20 h-9 text-xs font-semibold px-2 rounded-md border border-border/70 bg-background text-right"
                         title="Precio de servicio editable"
                         aria-label={`Precio unitario para servicio ${item.productoNombre}`}
                       />
@@ -285,16 +293,16 @@ export const PosCart: React.FC<PosCartProps> = ({
                             onChange={(e) =>
                               onUpdatePrice(item.variacionId, Number(e.target.value))
                             }
-                            className="w-16 h-7 text-xs font-semibold px-1.5 rounded-md border border-amber-500/60 bg-amber-500/10 text-foreground text-right"
+                            className="w-20 h-9 text-xs font-semibold px-2 rounded-md border border-amber-500/60 bg-amber-500/10 text-foreground text-right"
                             title="Precio especial de oferta"
                             aria-label={`Precio especial para ${item.productoNombre}`}
                           />
                           <Button
                             type="button"
                             variant="ghost"
-                            size="xs"
+                            size="sm"
                             onClick={() => onToggleOfferMode(item.variacionId)}
-                            className="size-6 p-0 text-amber-600"
+                            className="size-9 p-0 text-amber-600"
                             title="Cerrar ajuste de precio"
                             aria-label="Cerrar ajuste de precio"
                           >
@@ -309,13 +317,13 @@ export const PosCart: React.FC<PosCartProps> = ({
                           <Button
                             type="button"
                             variant="ghost"
-                            size="xs"
+                            size="sm"
                             onClick={() => onToggleOfferMode(item.variacionId)}
-                            className="size-6 p-0 text-muted-foreground hover:text-amber-500"
+                            className="size-9 p-0 text-muted-foreground hover:text-amber-500"
                             title="Aplicar precio especial u oferta"
                             aria-label={`Aplicar precio especial u oferta para ${item.productoNombre}`}
                           >
-                            <Tag className="size-3" />
+                            <Tag className="size-3.5" />
                           </Button>
                         </div>
                       )}

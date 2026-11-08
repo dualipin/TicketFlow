@@ -38,26 +38,26 @@ export const VentaDetailDrawer: React.FC<VentaDetailDrawerProps> = ({
     switch (metodo) {
       case 'EFECTIVO':
         return (
-          <Badge variant="outline" className="border-border bg-card text-foreground text-[11px] font-normal rounded-full">
+          <Badge variant="outline" className="border-border bg-card text-foreground text-xs font-normal rounded-full">
             Efectivo
           </Badge>
         );
       case 'TARJETA':
         return (
-          <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary text-[11px] font-normal rounded-full">
+          <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary text-xs font-normal rounded-full">
             Tarjeta
           </Badge>
         );
       case 'TRANSFERENCIA':
         return (
-          <Badge variant="secondary" className="text-[11px] font-normal rounded-full">
+          <Badge variant="secondary" className="text-xs font-normal rounded-full">
             Transferencia
           </Badge>
         );
       case 'MIXTO':
       default:
         return (
-          <Badge variant="outline" className="border-border text-muted-foreground text-[11px] font-normal rounded-full">
+          <Badge variant="outline" className="border-border text-muted-foreground text-xs font-normal rounded-full">
             Mixto
           </Badge>
         );
@@ -95,7 +95,7 @@ export const VentaDetailDrawer: React.FC<VentaDetailDrawerProps> = ({
             {/* Metadatos de la venta */}
             <div className="grid grid-cols-2 gap-3 p-3.5 rounded-[14px] bg-card border border-border text-xs">
               <div>
-                <span className="text-muted-foreground flex items-center gap-1 font-medium text-[11px]">
+                <span className="text-muted-foreground flex items-center gap-1 font-medium text-xs">
                   <Clock className="size-3" />
                   Fecha & Hora
                 </span>
@@ -105,7 +105,7 @@ export const VentaDetailDrawer: React.FC<VentaDetailDrawerProps> = ({
               </div>
 
               <div>
-                <span className="text-muted-foreground flex items-center gap-1 font-medium text-[11px]">
+                <span className="text-muted-foreground flex items-center gap-1 font-medium text-xs">
                   <CreditCard className="size-3" />
                   Método de Pago
                 </span>
@@ -113,7 +113,7 @@ export const VentaDetailDrawer: React.FC<VentaDetailDrawerProps> = ({
               </div>
 
               <div>
-                <span className="text-muted-foreground flex items-center gap-1 font-medium text-[11px]">
+                <span className="text-muted-foreground flex items-center gap-1 font-medium text-xs">
                   <User className="size-3" />
                   Cliente
                 </span>
@@ -121,14 +121,14 @@ export const VentaDetailDrawer: React.FC<VentaDetailDrawerProps> = ({
                   {venta.cliente?.nombre || 'Público en General'}
                 </span>
                 {venta.cliente?.telefono && (
-                  <span className="text-[10px] text-muted-foreground block">
+                  <span className="text-xs text-muted-foreground block">
                     Tel: {venta.cliente.telefono}
                   </span>
                 )}
               </div>
 
               <div>
-                <span className="text-muted-foreground flex items-center gap-1 font-medium text-[11px]">
+                <span className="text-muted-foreground flex items-center gap-1 font-medium text-xs">
                   <User className="size-3" />
                   Cajero
                 </span>
@@ -136,7 +136,7 @@ export const VentaDetailDrawer: React.FC<VentaDetailDrawerProps> = ({
                   {venta.usuario?.nombre || `Usuario #${venta.usuarioId}`}
                 </span>
                 {venta.corteCajaId && (
-                  <span className="text-[10px] text-muted-foreground block">
+                  <span className="text-xs text-muted-foreground block">
                     Turno de Caja #{venta.corteCajaId}
                   </span>
                 )}
@@ -167,7 +167,7 @@ export const VentaDetailDrawer: React.FC<VentaDetailDrawerProps> = ({
                           <div className="font-semibold text-foreground truncate">
                             {prodNombre}
                           </div>
-                          <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                          <div className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
                             {varNombre && <span>{varNombre}</span>}
                             {codigo && <span>• SKU: {codigo}</span>}
                           </div>
@@ -177,7 +177,7 @@ export const VentaDetailDrawer: React.FC<VentaDetailDrawerProps> = ({
                           <div className="font-bold text-foreground">
                             ${d.subtotal.toFixed(2)}
                           </div>
-                          <div className="text-[10px] text-muted-foreground">
+                          <div className="text-xs text-muted-foreground">
                             {d.cantidad} x ${d.precioUnit.toFixed(2)}
                           </div>
                         </div>
@@ -198,7 +198,7 @@ export const VentaDetailDrawer: React.FC<VentaDetailDrawerProps> = ({
                 <span className="text-xs font-semibold text-primary block">
                   Total Cobrado
                 </span>
-                <span className="text-[11px] text-muted-foreground font-normal">
+                <span className="text-xs text-muted-foreground font-normal">
                   {venta.metodoPago}
                 </span>
               </div>

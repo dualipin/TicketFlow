@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import NumberFlow from '@number-flow/react';
 import { BorderBeam } from 'border-beam';
 import type { Cliente, MetodoPagoVenta } from '../../api/types.ts';
@@ -6,24 +6,29 @@ import { CardContent } from '../ui/card.tsx';
 import { Button } from '../ui/button.tsx';
 import { Input } from '../ui/input.tsx';
 import { Spinner } from '../ui/spinner.tsx';
-import { User, UserPlus, DollarSign, CreditCard, Banknote, Split, CheckCircle2, AlertCircle } from 'lucide-react';
+import { PosCustomerCombobox } from './PosCustomerCombobox.tsx';
+import { DollarSign, CreditCard, Banknote, Split, CheckCircle2, AlertCircle } from 'lucide-react';
 
 interface PosPaymentSectionProps {
   clientes: Cliente[] | undefined;
   selectedCliente: Cliente | null;
   onSelectCliente: (cliente: Cliente | null) => void;
   onOpenCreateCliente: () => void;
+  isCustomerComboboxOpen?: boolean;
+  onCustomerComboboxOpenChange?: (open: boolean) => void;
   totalCart: number;
   metodoPago: MetodoPagoVenta;
   onSelectMetodoPago: (m: MetodoPagoVenta) => void;
   montoRecibido: string;
   onMontoRecibidoChange: (val: string) => void;
-  onSetQuickCash: (amount: number) => void;
+  onSetExactCash: (amount: number) => void;
+  onAddCash: (amount: number) => void;
+  onClearCash: () => void;
   cambio: number;
   isCajaAbierta: boolean;
   efectivoSuficiente: boolean;
   isCheckoutPending: boolean;
-  onCheckout: (e: React.FormEvent) => void;
+  onCheckout: (e?: React.FormEvent) => void;
   cartLength: number;
   // Campos de Pago Mixto
   montoEfectivoMixto: string;
@@ -37,17 +42,28 @@ interface PosPaymentSectionProps {
   onFillRemainingCard: () => void;
 }
 
+const PAYMENT_METHODS: Array<{ id: MetodoPagoVenta; label: string }> = [
+  { id: 'EFECTIVO', label: 'Efectivo' },
+  { id: 'TARJETA', label: 'Tarjeta' },
+  { id: 'TRANSFERENCIA', label: 'Transf.' },
+  { id: 'MIXTO', label: 'Mixto' },
+];
+
 export const PosPaymentSection: React.FC<PosPaymentSectionProps> = ({
   clientes,
   selectedCliente,
   onSelectCliente,
   onOpenCreateCliente,
+  isCustomerComboboxOpen,
+  onCustomerComboboxOpenChange,
   totalCart,
   metodoPago,
   onSelectMetodoPago,
   montoRecibido,
   onMontoRecibidoChange,
-  onSetQuickCash,
+  onSetExactCash,
+  onAddCash,
+  onClearCash,
   cambio,
   isCajaAbierta,
   efectivoSuficiente,
@@ -71,51 +87,44 @@ export const PosPaymentSection: React.FC<PosPaymentSectionProps> = ({
     !isCheckoutPending &&
     (isMixto ? isSplitValid : efectivoSuficiente);
 
+  const radioGroupRef = useRef<HTMLDivElement>(null);
+
+  const handleRadioKeyDown = (
+    e: React.KeyboardEvent<HTMLButtonElement>,
+    currentIndex: number
+  ) => {
+    let nextIndex = currentIndex;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      nextIndex = (currentIndex + 1) % PAYMENT_METHODS.length;
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      nextIndex = (currentIndex - 1 + PAYMENT_METHODS.length) % PAYMENT_METHODS.length;
+    } else {
+      return;
+    }
+
+    const nextMethod = PAYMENT_METHODS[nextIndex].id;
+    onSelectMetodoPago(nextMethod);
+    if (nextMethod === 'EFECTIVO' && !montoRecibido) {
+      onMontoRecibidoChange(String(totalCart));
+    }
+
+    const buttons = radioGroupRef.current?.querySelectorAll<HTMLButtonElement>('button[role="radio"]');
+    buttons?.[nextIndex]?.focus();
+  };
+
   return (
     <CardContent className="pt-4 flex flex-col gap-4">
-      {/* Selector de Cliente */}
-      <div className="flex flex-col gap-1.5 p-3 rounded-xl bg-muted/30 border border-border/50">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-            <User className="size-4 text-primary" />
-            Cliente
-          </span>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={onOpenCreateCliente}
-            className="h-7 text-xs text-primary hover:bg-primary/10 gap-1 px-2"
-          >
-            <UserPlus className="size-3.5" data-icon="inline-start" />
-            <span>+ Nuevo</span>
-          </Button>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <select
-            value={selectedCliente ? String(selectedCliente.id) : ''}
-            onChange={(e) => {
-              const val = e.target.value;
-              if (!val) {
-                onSelectCliente(null);
-              } else {
-                const found = clientes?.find((c) => c.id === Number(val));
-                onSelectCliente(found || null);
-              }
-            }}
-            aria-label="Seleccionar cliente para la venta"
-            className="w-full text-sm rounded-lg border border-border/70 bg-background px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-          >
-            <option value="">Público en General</option>
-            {clientes?.map((cl) => (
-              <option key={cl.id} value={cl.id}>
-                {cl.nombre} {cl.telefono ? `(${cl.telefono})` : ''}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+      {/* Combobox Accesible de Cliente */}
+      <PosCustomerCombobox
+        clientes={clientes}
+        selectedCliente={selectedCliente}
+        onSelectCliente={onSelectCliente}
+        onOpenCreateCliente={onOpenCreateCliente}
+        isOpen={isCustomerComboboxOpen}
+        onOpenChange={onCustomerComboboxOpenChange}
+      />
 
       {/* Totales y Métodos de Pago */}
       <div className="pt-3 border-t border-border/50 flex flex-col gap-3">
@@ -127,39 +136,43 @@ export const PosPaymentSection: React.FC<PosPaymentSectionProps> = ({
           </span>
         </div>
 
-        {/* Selector de Método de Pago */}
+        {/* Selector de Método de Pago Accesible */}
         <div className="flex flex-col gap-1.5">
-          <span className="text-sm font-semibold text-foreground">Método de Pago</span>
-          <div className="grid grid-cols-4 gap-1.5" role="radiogroup" aria-label="Método de pago">
-            {(['EFECTIVO', 'TARJETA', 'TRANSFERENCIA', 'MIXTO'] as MetodoPagoVenta[]).map(
-              (m) => (
+          <span className="text-sm font-semibold text-foreground" id="payment-method-label">
+            Método de Pago
+          </span>
+          <div
+            ref={radioGroupRef}
+            className="grid grid-cols-4 gap-1.5"
+            role="radiogroup"
+            aria-labelledby="payment-method-label"
+          >
+            {PAYMENT_METHODS.map((pm, idx) => {
+              const isSelected = metodoPago === pm.id;
+              return (
                 <button
-                  key={m}
+                  key={pm.id}
                   type="button"
                   role="radio"
-                  aria-checked={metodoPago === m}
+                  aria-checked={isSelected}
+                  tabIndex={isSelected ? 0 : -1}
+                  onKeyDown={(e) => handleRadioKeyDown(e, idx)}
                   onClick={() => {
-                    onSelectMetodoPago(m);
-                    if (m === 'EFECTIVO' && !montoRecibido) {
+                    onSelectMetodoPago(pm.id);
+                    if (pm.id === 'EFECTIVO' && !montoRecibido) {
                       onMontoRecibidoChange(String(totalCart));
                     }
                   }}
-                  className={`py-2 px-1 rounded-lg border text-xs font-semibold transition-all ${
-                    metodoPago === m
-                      ? 'bg-primary text-primary-foreground border-primary'
+                  className={`h-10 px-2 rounded-lg border text-xs font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-primary/40 ${
+                    isSelected
+                      ? 'bg-primary text-primary-foreground border-primary shadow-xs'
                       : 'bg-muted/30 border-border/60 text-muted-foreground hover:text-foreground'
                   }`}
                 >
-                  {m === 'EFECTIVO'
-                    ? 'Efectivo'
-                    : m === 'TARJETA'
-                    ? 'Tarjeta'
-                    : m === 'TRANSFERENCIA'
-                    ? 'Transf.'
-                    : 'Mixto'}
+                  {pm.label}
                 </button>
-              )
-            )}
+              );
+            })}
           </div>
         </div>
 
@@ -192,19 +205,32 @@ export const PosPaymentSection: React.FC<PosPaymentSectionProps> = ({
                 className="pl-8 text-base font-bold h-10"
                 aria-label="Monto de efectivo entregado por el cliente"
               />
-              <DollarSign className="absolute left-2.5 top-3 size-4.5 text-muted-foreground" />
+              <DollarSign className="absolute left-2.5 top-3 size-4 text-muted-foreground" />
             </div>
 
-            {/* Botones de denominaciones rápidas */}
-            <div className="flex items-center gap-1.5">
+            {/* Botones de denominaciones rápidas y acumulativas */}
+            <div className="flex items-center gap-1.5 flex-wrap sm:flex-nowrap">
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => onSetQuickCash(totalCart)}
-                className="text-xs h-7.5 flex-1 border-border/70"
+                onClick={() => onSetExactCash(totalCart)}
+                className="text-xs h-9 flex-1 min-w-[54px] border-border/70"
+                title="Pagar con monto exacto"
+                aria-label="Asignar monto exacto"
               >
                 Exacto
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onClearCash}
+                className="text-xs h-9 px-2.5 border-border/70 text-muted-foreground hover:text-foreground font-mono"
+                title="Limpiar efectivo recibido a cero"
+                aria-label="Limpiar efectivo recibido"
+              >
+                C
               </Button>
               {[100, 200, 500, 1000].map((amt) => (
                 <Button
@@ -212,10 +238,12 @@ export const PosPaymentSection: React.FC<PosPaymentSectionProps> = ({
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => onSetQuickCash(amt)}
-                  className="text-xs h-7.5 flex-1 border-border/70"
+                  onClick={() => onAddCash(amt)}
+                  className="text-xs h-9 flex-1 min-w-[48px] border-border/70 font-mono"
+                  title={`Sumar billete de $${amt} al efectivo recibido`}
+                  aria-label={`Sumar billete de ${amt} pesos`}
                 >
-                  ${amt}
+                  +${amt}
                 </Button>
               ))}
             </div>
@@ -303,7 +331,8 @@ export const PosPaymentSection: React.FC<PosPaymentSectionProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={onSplitFiftyFifty}
-                className="text-xs h-7 flex-1 border-border/70"
+                className="text-xs h-9 flex-1 border-border/70"
+                aria-label="Dividir 50% en efectivo y 50% en tarjeta"
               >
                 50% / 50%
               </Button>
@@ -312,7 +341,8 @@ export const PosPaymentSection: React.FC<PosPaymentSectionProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={onFillRemainingCard}
-                className="text-xs h-7 flex-1 border-border/70"
+                className="text-xs h-9 flex-1 border-border/70"
+                aria-label="Asignar monto restante a tarjeta o transferencia"
               >
                 Restante en Tarjeta
               </Button>
@@ -343,6 +373,7 @@ export const PosPaymentSection: React.FC<PosPaymentSectionProps> = ({
             onClick={onCheckout}
             disabled={!canProceedCheckout}
             className="w-full gap-2 font-semibold rounded-full h-11 text-sm shadow-none"
+            aria-label={`Cobrar venta por ${totalCart} pesos`}
           >
             {isCheckoutPending && (
               <Spinner className="size-4" data-icon="inline-start" />
@@ -361,6 +392,9 @@ export const PosPaymentSection: React.FC<PosPaymentSectionProps> = ({
                 </span>
               )}
             </span>
+            <kbd className="hidden sm:inline-block ml-auto px-1.5 py-0.5 text-xs font-mono font-medium rounded bg-primary-foreground/20 text-primary-foreground">
+              F9
+            </kbd>
           </Button>
         </BorderBeam>
       </div>

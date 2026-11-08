@@ -132,7 +132,7 @@ export const PosCatalog: React.FC<PosCatalogProps> = ({
                 className="text-sm"
                 autoFocus
               />
-              {searchQuery && (
+              {searchQuery ? (
                 <InputGroupAddon align="inline-end">
                   <Button
                     type="button"
@@ -141,9 +141,16 @@ export const PosCatalog: React.FC<PosCatalogProps> = ({
                     onClick={() => onSearchChange('')}
                     className="size-6 p-0 text-muted-foreground hover:text-foreground"
                     title="Limpiar búsqueda"
+                    aria-label="Limpiar búsqueda"
                   >
                     ✕
                   </Button>
+                </InputGroupAddon>
+              ) : (
+                <InputGroupAddon align="inline-end">
+                  <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-xs font-mono font-medium rounded bg-muted text-muted-foreground border border-border/60">
+                    F2
+                  </kbd>
                 </InputGroupAddon>
               )}
             </InputGroup>

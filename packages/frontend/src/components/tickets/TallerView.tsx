@@ -220,6 +220,7 @@ export const TallerView: React.FC = () => {
         <TicketDetailDrawer
           ticketId={selectedTicketId}
           onClose={() => setSelectedTicketId(null)}
+          onRequestEntregaGuard={handleRequestEntregaGuard}
         />
       )}
 

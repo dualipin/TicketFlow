@@ -1,15 +1,14 @@
 import React, { useState, useId } from 'react';
+import type { Ticket } from '../../api/types.ts';
 import { cn, formatCurrency } from '../../lib/utils.ts';
 import { useTicket } from '../../queries/tickets/queries.ts';
 import {
   useAddBitacoraNota,
   useUpdateTicketCosto,
-  useUpdateTicketStatus,
 } from '../../queries/tickets/mutations.ts';
 import { TicketStatusBadge } from './TicketStatusBadge.tsx';
-import { TicketStatusChanger } from './TicketStatusChanger.tsx';
+import { TicketStatusWorkflow } from './TicketStatusWorkflow.tsx';
 import { TicketMediaCapture } from './TicketMediaCapture.tsx';
-import { ConfirmEntregaDialog } from './ConfirmEntregaDialog.tsx';
 import { Button } from '../ui/button.tsx';
 import { Input } from '../ui/input.tsx';
 import { Textarea } from '../ui/textarea.tsx';
@@ -45,24 +44,24 @@ import {
 interface TicketDetailDrawerProps {
   ticketId: number;
   onClose: () => void;
+  onRequestEntregaGuard?: (ticket: Ticket) => void;
 }
 
 export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
   ticketId,
   onClose,
+  onRequestEntregaGuard,
 }) => {
   const { currentUser } = useAuth();
   const ticketQuery = useTicket(ticketId);
 
   const addNotaMutation = useAddBitacoraNota();
   const updateCostoMutation = useUpdateTicketCosto();
-  const updateStatusMutation = useUpdateTicketStatus();
 
   const [newNotaText, setNewNotaText] = useState('');
   const [isNotaPrivada, setIsNotaPrivada] = useState(false);
   const [isEditingCosto, setIsEditingCosto] = useState(false);
   const [costoInput, setCostoInput] = useState('');
-  const [isEntregaGuardOpen, setIsEntregaGuardOpen] = useState(false);
   const notaPrivadaId = useId();
 
   const { data: ticket, isPending, isError, error, isFetching, isStale, dataUpdatedAt, refetch } =
@@ -159,24 +158,22 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
 
           {ticket && (
             <>
-              {/* Quick State Transition Bar */}
-              <div className="rounded-xl border border-border bg-muted/25 p-3.5 flex flex-col gap-2.5 shadow-2xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-muted-foreground">
-                    Estado de la Orden
+              {/* Guided Service Transition Bar */}
+              <div className="rounded-xl border border-border bg-card p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-2xs">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-xs font-semibold text-foreground">
+                    Ciclo de Servicio
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    Avance de estado guiado según diagnóstico
                   </span>
                 </div>
-                <TicketStatusChanger
+                <TicketStatusWorkflow
                   ticketId={ticket.id}
                   currentStatus={ticket.estado}
                   saldoPendiente={ticket.saldoPendiente}
-                  onRequestEntregaGuard={() => setIsEntregaGuardOpen(true)}
+                  onRequestEntregaGuard={() => onRequestEntregaGuard?.(ticket)}
                 />
-                {updateStatusMutation.isPending && (
-                  <p className="text-xs text-primary">
-                    Actualizando estado en segundo plano...
-                  </p>
-                )}
               </div>
 
               {/* General Information Section */}
@@ -506,18 +503,6 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
             Cerrar
           </Button>
         </SheetFooter>
-
-        {/* Financial Guard Dialog for Delivery with Pending Debt */}
-        {isEntregaGuardOpen && ticket && (
-          <ConfirmEntregaDialog
-            isOpen={true}
-            onClose={() => setIsEntregaGuardOpen(false)}
-            ticketId={ticket.id}
-            folio={ticket.folio}
-            dispositivo={ticket.dispositivo}
-            saldoPendiente={ticket.saldoPendiente}
-          />
-        )}
       </SheetContent>
     </Sheet>
   );

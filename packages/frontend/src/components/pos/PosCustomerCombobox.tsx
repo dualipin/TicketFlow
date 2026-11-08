@@ -179,7 +179,7 @@ export const PosCustomerCombobox: React.FC<PosCustomerComboboxProps> = ({
                   <div className="flex flex-col truncate pr-2">
                     <span className="truncate text-foreground font-semibold">{c.nombre}</span>
                     <span className="text-xs text-muted-foreground">
-                      {c.telefono || c.email || 'Sin teléfono'}
+                      {c.telefono || 'Sin teléfono'}
                     </span>
                   </div>
                   {isSelected && <Check className="size-4 shrink-0 text-primary" />}

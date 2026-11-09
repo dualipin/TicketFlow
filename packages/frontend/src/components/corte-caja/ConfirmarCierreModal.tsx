@@ -125,7 +125,7 @@ export const ConfirmarCierreModal: React.FC<ConfirmarCierreModalProps> = ({
                 Diferencia
               </span>
               <span
-                className={`font-mono text-sm font-black tabular-nums ${
+                className={`font-mono text-sm font-bold tabular-nums ${
                   isCuadrado
                     ? 'text-emerald-600 dark:text-emerald-400'
                     : isSobrante
@@ -140,7 +140,7 @@ export const ConfirmarCierreModal: React.FC<ConfirmarCierreModalProps> = ({
 
           {/* Estado de la Banda de Tolerancia */}
           {evalResult.banda === 'CUADRADO_O_TOLERANCIA' && (
-            <Alert className="border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300">
+            <Alert className="border-emerald-500/20 bg-emerald-500/5 text-emerald-800 dark:text-emerald-300">
               <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />
               <AlertTitle className="text-xs font-semibold">
                 {isCuadrado ? 'Cuadre Exacto de Gaveta' : 'Tolerancia Operativa Aceptable'}
@@ -154,7 +154,7 @@ export const ConfirmarCierreModal: React.FC<ConfirmarCierreModalProps> = ({
           )}
 
           {evalResult.banda === 'DESCUADRE_MODERADO' && (
-            <Alert className="border-amber-500/30 bg-amber-500/10 text-amber-900 dark:text-amber-200">
+            <Alert className="border-amber-500/20 bg-amber-500/5 text-amber-900 dark:text-amber-200">
               <AlertTriangle className="size-4 text-amber-600 dark:text-amber-400" />
               <AlertTitle className="text-xs font-semibold">
                 Descuadre Moderado ({formatCurrencyMxn(diferencia)})

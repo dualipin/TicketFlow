@@ -100,45 +100,42 @@ export const HistorialCortesTable: React.FC<HistorialCortesTableProps> = memo(
                         {isOpen ? (
                           <Badge
                             variant="outline"
-                            className="h-5 border-emerald-500/30 bg-emerald-500/10 px-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400"
+                            className="h-5 border-border/80 bg-muted/40 px-1.5 text-xs font-medium text-foreground/80"
                           >
-                            <Clock className="size-3 mr-1" />
-                            EN CURSO
+                            <Clock className="size-3 mr-1 text-muted-foreground" />
+                            En Curso
                           </Badge>
                         ) : (
                           formatFechaCorte(c.fechaCierre)
                         )}
                       </td>
-                      <td className="px-4 py-3 text-right font-medium tabular-nums">
+                      <td className="px-4 py-3 text-right font-normal text-muted-foreground tabular-nums">
                         {formatCurrencyMxn(c.montoInicial)}
                       </td>
-                      <td className="px-4 py-3 text-right font-semibold text-foreground tabular-nums">
+                      <td className="px-4 py-3 text-right font-medium text-foreground/90 tabular-nums">
                         {formatCurrencyMxn(c.montoCalculado)}
                       </td>
-                      <td className="px-4 py-3 text-right font-bold text-foreground tabular-nums">
-                        {c.montoReal !== null ? formatCurrencyMxn(c.montoReal) : '-'}
+                      <td className="px-4 py-3 text-right font-semibold text-foreground tabular-nums">
+                        {c.montoReal !== null ? formatCurrencyMxn(c.montoReal) : '—'}
                       </td>
                       <td className="px-4 py-3 text-center">
                         {isOpen ? (
-                          <span className="text-xs text-muted-foreground">-</span>
+                          <span className="text-xs text-muted-foreground">—</span>
                         ) : diff === 0 ? (
-                          <Badge
-                            variant="secondary"
-                            className="h-5 border-emerald-500/30 bg-emerald-500/10 px-1.5 text-xs text-emerald-700 dark:text-emerald-300"
-                          >
+                          <span className="text-xs font-sans text-muted-foreground/80">
                             Cuadrado
-                          </Badge>
+                          </span>
                         ) : diff > 0 ? (
                           <Badge
-                            variant="secondary"
-                            className="h-5 border-sky-500/30 bg-sky-500/10 px-1.5 text-xs text-sky-700 dark:text-sky-300"
+                            variant="outline"
+                            className="h-5 border-sky-500/30 bg-sky-500/5 px-1.5 text-xs font-mono font-medium text-sky-700 dark:text-sky-300"
                           >
                             +{formatCurrencyMxn(diff)}
                           </Badge>
                         ) : (
                           <Badge
                             variant="destructive"
-                            className="h-5 px-1.5 text-xs"
+                            className="h-5 px-1.5 text-xs font-mono font-medium"
                           >
                             {formatCurrencyMxn(diff)}
                           </Badge>

@@ -75,7 +75,7 @@ export const CorteZTicketModal: React.FC<CorteZTicketModalProps> = ({
         >
           {/* Encabezado */}
           <div className="text-center">
-            <h2 className="text-sm font-black tracking-tight uppercase">TicketFlow POS & Taller</h2>
+            <h2 className="text-sm font-bold tracking-tight uppercase">TicketFlow POS & Taller</h2>
             <p className="text-xs text-muted-foreground">Control de Turnos y Efectivo</p>
             <p className="mt-1 text-xs font-bold uppercase tracking-wider">
               --- CORTE Z #{corte.id} ---
@@ -135,7 +135,7 @@ export const CorteZTicketModal: React.FC<CorteZTicketModalProps> = ({
               <span>{corte.montoReal !== null ? formatCurrencyMxn(corte.montoReal) : '-'}</span>
             </div>
 
-            <div className="flex justify-between items-center pt-1 font-black">
+            <div className="flex justify-between items-center pt-1 font-bold">
               <span>Diferencia:</span>
               <span
                 className={

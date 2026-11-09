@@ -185,10 +185,10 @@ export const CorteCajaView: React.FC = () => {
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-2.5">
                   <Badge
-                    variant="outline"
-                    className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 font-semibold text-xs h-5 px-1.5"
+                    variant="secondary"
+                    className="h-5 border border-border/60 px-2 text-xs font-medium text-foreground/85"
                   >
-                    TURNO ACTIVO #{corte.id}
+                    Turno #{corte.id}
                   </Badge>
                   <span className="text-xs text-muted-foreground flex items-center gap-1">
                     <Clock className="size-3" />
@@ -226,10 +226,10 @@ export const CorteCajaView: React.FC = () => {
                   {isBlindCountActive && (
                     <Badge
                       variant="outline"
-                      className="h-6 border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-200 text-xs font-semibold gap-1"
+                      className="h-6 border-border/80 bg-muted/40 text-muted-foreground text-xs font-medium gap-1.5"
                     >
-                      <ShieldCheck className="size-3" />
-                      Arqueo Ciego Activo
+                      <ShieldCheck className="size-3 text-muted-foreground" />
+                      Arqueo Ciego
                     </Badge>
                   )}
                 </div>
@@ -241,10 +241,10 @@ export const CorteCajaView: React.FC = () => {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border/60 rounded-xl border border-border/70 overflow-hidden">
                 <div className="bg-card p-3.5 flex flex-col gap-0.5">
                   <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-                    <Landmark className="size-3.5" />
+                    <Landmark className="size-3.5 text-muted-foreground" />
                     Fondo Inicial
                   </span>
-                  <span className="text-base font-bold text-foreground font-mono tabular-nums">
+                  <span className="text-sm font-semibold text-foreground font-mono tabular-nums">
                     <NumberFlow
                       value={corte.montoInicial}
                       format={{ style: 'currency', currency: 'MXN' }}
@@ -254,16 +254,16 @@ export const CorteCajaView: React.FC = () => {
 
                 <div className="bg-card p-3.5 flex flex-col gap-0.5">
                   <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-                    <Store className="size-3.5 text-emerald-500" />
+                    <Store className="size-3.5 text-muted-foreground" />
                     Ventas PdV (Ef.)
                   </span>
                   {isBlindCountActive ? (
-                    <span className="text-base font-bold text-muted-foreground tracking-widest flex items-center gap-1">
+                    <span className="text-sm font-semibold text-muted-foreground tracking-widest flex items-center gap-1">
                       <EyeOff className="size-3.5 opacity-60" />
                       ••••••
                     </span>
                   ) : (
-                    <span className="text-base font-bold text-emerald-600 dark:text-emerald-400 font-mono tabular-nums">
+                    <span className="text-sm font-semibold text-foreground font-mono tabular-nums">
                       +
                       <NumberFlow
                         value={corte.ventasEfectivo || 0}
@@ -275,16 +275,16 @@ export const CorteCajaView: React.FC = () => {
 
                 <div className="bg-card p-3.5 flex flex-col gap-0.5">
                   <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-                    <Wrench className="size-3.5 text-sky-500" />
+                    <Wrench className="size-3.5 text-muted-foreground" />
                     Pagos Taller (Ef.)
                   </span>
                   {isBlindCountActive ? (
-                    <span className="text-base font-bold text-muted-foreground tracking-widest flex items-center gap-1">
+                    <span className="text-sm font-semibold text-muted-foreground tracking-widest flex items-center gap-1">
                       <EyeOff className="size-3.5 opacity-60" />
                       ••••••
                     </span>
                   ) : (
-                    <span className="text-base font-bold text-sky-600 dark:text-sky-400 font-mono tabular-nums">
+                    <span className="text-sm font-semibold text-foreground font-mono tabular-nums">
                       +
                       <NumberFlow
                         value={corte.pagosEfectivo || 0}
@@ -294,18 +294,18 @@ export const CorteCajaView: React.FC = () => {
                   )}
                 </div>
 
-                <div className="bg-primary/5 p-3.5 flex flex-col gap-0.5">
-                  <span className="text-xs text-primary font-bold flex items-center gap-1">
-                    <DollarSign className="size-3.5" />
+                <div className="bg-muted/40 p-3.5 flex flex-col gap-0.5">
+                  <span className="text-xs text-foreground font-semibold flex items-center gap-1">
+                    <DollarSign className="size-3.5 text-primary" />
                     Efectivo Esperado
                   </span>
                   {isBlindCountActive ? (
-                    <span className="text-base font-bold text-primary tracking-widest flex items-center gap-1">
+                    <span className="text-sm font-bold text-muted-foreground tracking-widest flex items-center gap-1">
                       <EyeOff className="size-3.5 opacity-60" />
                       ••••••
                     </span>
                   ) : (
-                    <span className="text-base font-black text-primary font-mono tabular-nums">
+                    <span className="text-sm font-bold text-foreground font-mono tabular-nums">
                       <NumberFlow
                         value={corte.montoCalculado}
                         format={{ style: 'currency', currency: 'MXN' }}

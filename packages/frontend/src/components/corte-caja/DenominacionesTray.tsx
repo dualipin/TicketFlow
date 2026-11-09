@@ -80,11 +80,11 @@ export const DenominacionesTray: React.FC<DenominacionesTrayProps> = ({
                 <div className="flex items-center justify-between text-xs">
                   <FieldLabel
                     htmlFor={`denom-${denom}`}
-                    className="font-bold text-foreground"
+                    className="font-semibold text-foreground/90"
                   >
                     ${denom}
                   </FieldLabel>
-                  <span className="font-mono text-xs text-muted-foreground tabular-nums">
+                  <span className={`font-mono text-xs tabular-nums ${subtotal > 0 ? 'text-foreground/80 font-medium' : 'text-muted-foreground/60'}`}>
                     {subtotal > 0 ? formatCurrencyMxn(subtotal) : '—'}
                   </span>
                 </div>
@@ -131,11 +131,11 @@ export const DenominacionesTray: React.FC<DenominacionesTrayProps> = ({
                 <div className="flex items-center justify-between text-xs">
                   <FieldLabel
                     htmlFor={`denom-${denom}`}
-                    className="font-bold text-foreground"
+                    className="font-semibold text-foreground/90"
                   >
                     {labelStr}
                   </FieldLabel>
-                  <span className="font-mono text-xs text-muted-foreground tabular-nums">
+                  <span className={`font-mono text-xs tabular-nums ${subtotal > 0 ? 'text-foreground/80 font-medium' : 'text-muted-foreground/60'}`}>
                     {subtotal > 0 ? formatCurrencyMxn(subtotal) : '—'}
                   </span>
                 </div>

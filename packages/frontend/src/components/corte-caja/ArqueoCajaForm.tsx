@@ -117,7 +117,7 @@ export const ArqueoCajaForm: React.FC<ArqueoCajaFormProps> = ({
             </div>
 
             {/* Total Contado en Vivo */}
-            <div className="rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-mono font-bold text-primary tabular-nums">
+            <div className="rounded-lg bg-muted/60 px-2.5 py-1 text-xs font-mono font-medium text-foreground/90 tabular-nums border border-border/50">
               Contado:{' '}
               <NumberFlow
                 value={montoContado ?? 0}
@@ -168,19 +168,19 @@ export const ArqueoCajaForm: React.FC<ArqueoCajaFormProps> = ({
           {/* Resultado de Verificación */}
           {isVerificado && diferencia !== null && (
             <div
-              className={`flex items-center justify-between rounded-xl border p-3 transition-all ${
+              className={`flex items-center justify-between rounded-xl border p-3 transition-colors ${
                 diferencia === 0
-                  ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300'
+                  ? 'border-emerald-500/20 bg-emerald-500/5 text-emerald-700 dark:text-emerald-300'
                   : diferencia > 0
-                  ? 'border-sky-500/30 bg-sky-500/10 text-sky-800 dark:text-sky-300'
-                  : 'border-destructive/30 bg-destructive/10 text-destructive'
+                  ? 'border-sky-500/20 bg-sky-500/5 text-sky-700 dark:text-sky-300'
+                  : 'border-destructive/20 bg-destructive/5 text-destructive'
               }`}
             >
-              <div className="flex items-center gap-2 text-xs font-bold">
+              <div className="flex items-center gap-2 text-xs font-semibold">
                 {diferencia === 0 ? (
-                  <CheckCircle2 className="size-4 text-emerald-500" />
+                  <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />
                 ) : diferencia > 0 ? (
-                  <ArrowUpRight className="size-4 text-sky-500" />
+                  <ArrowUpRight className="size-4 text-sky-600 dark:text-sky-400" />
                 ) : (
                   <ArrowDownRight className="size-4 text-destructive" />
                 )}
@@ -191,12 +191,12 @@ export const ArqueoCajaForm: React.FC<ArqueoCajaFormProps> = ({
                     ? 'Sobrante en Gaveta'
                     : 'Faltante en Gaveta'}
                 </span>
-                <span className="font-mono text-sm font-black tabular-nums">
+                <span className="font-mono text-sm font-semibold tabular-nums">
                   ({diferencia > 0 ? `+${formatCurrencyMxn(diferencia)}` : formatCurrencyMxn(diferencia)})
                 </span>
               </div>
 
-              <div className="text-xs font-mono text-muted-foreground opacity-90">
+              <div className="text-xs font-mono text-muted-foreground">
                 Esperado: {formatCurrencyMxn(montoEsperado)}
               </div>
             </div>

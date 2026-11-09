@@ -192,7 +192,11 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
               disabled={abrirCorte.isPending}
               className="gap-1.5"
             >
-              {abrirCorte.isPending && <Spinner className="size-3.5" data-icon="inline-start" />}
+              {abrirCorte.isPending ? (
+                <Spinner data-icon="inline-start" />
+              ) : (
+                <Landmark data-icon="inline-start" />
+              )}
               <span>Abrir Caja</span>
             </Button>
           </DialogFooter>

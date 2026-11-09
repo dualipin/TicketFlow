@@ -41,6 +41,8 @@ export const DenominacionesTray: React.FC<DenominacionesTrayProps> = ({
       if (nextIndex < inputsRef.current.length && inputsRef.current[nextIndex]) {
         inputsRef.current[nextIndex]?.focus();
         inputsRef.current[nextIndex]?.select();
+      } else {
+        inputsRef.current[currentIndex]?.blur();
       }
     }
   };

@@ -251,8 +251,11 @@ export const ConfirmarCierreModal: React.FC<ConfirmarCierreModalProps> = ({
               disabled={!evalResult.puedeCerrar || isPending}
               className="gap-1.5"
             >
-              {isPending && <Spinner className="size-3.5" data-icon="inline-start" />}
-              <Lock data-icon="inline-start" />
+              {isPending ? (
+                <Spinner data-icon="inline-start" />
+              ) : (
+                <Lock data-icon="inline-start" />
+              )}
               <span>Confirmar y Cerrar Caja</span>
             </Button>
           </DialogFooter>

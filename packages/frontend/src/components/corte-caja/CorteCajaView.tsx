@@ -237,9 +237,9 @@ export const CorteCajaView: React.FC = () => {
             </CardHeader>
 
             <CardContent className="pt-4 flex flex-col gap-3">
-              {/* Tira Métrica Unificada (Sin tarjetas anidadas) */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-border/60 rounded-xl border border-border/70 bg-muted/20 overflow-hidden">
-                <div className="p-3.5 flex flex-col gap-0.5">
+              {/* Tira Métrica Unificada con Divisores Hairline Sub-píxel 2x2 en móvil y 4x1 en desktop */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border/60 rounded-xl border border-border/70 overflow-hidden">
+                <div className="bg-card p-3.5 flex flex-col gap-0.5">
                   <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
                     <Landmark className="size-3.5" />
                     Fondo Inicial
@@ -252,7 +252,7 @@ export const CorteCajaView: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="p-3.5 flex flex-col gap-0.5">
+                <div className="bg-card p-3.5 flex flex-col gap-0.5">
                   <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
                     <Store className="size-3.5 text-emerald-500" />
                     Ventas PdV (Ef.)
@@ -273,7 +273,7 @@ export const CorteCajaView: React.FC = () => {
                   )}
                 </div>
 
-                <div className="p-3.5 flex flex-col gap-0.5">
+                <div className="bg-card p-3.5 flex flex-col gap-0.5">
                   <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
                     <Wrench className="size-3.5 text-sky-500" />
                     Pagos Taller (Ef.)
@@ -294,7 +294,7 @@ export const CorteCajaView: React.FC = () => {
                   )}
                 </div>
 
-                <div className="p-3.5 flex flex-col gap-0.5 bg-primary/5">
+                <div className="bg-primary/5 p-3.5 flex flex-col gap-0.5">
                   <span className="text-xs text-primary font-bold flex items-center gap-1">
                     <DollarSign className="size-3.5" />
                     Efectivo Esperado
@@ -371,7 +371,7 @@ export const CorteCajaView: React.FC = () => {
       )}
 
       {/* Historial de Turnos */}
-      <div className="flex flex-col gap-3 mt-2">
+      <div className="flex flex-col gap-3 pt-6 border-t border-border/50">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-bold text-foreground flex items-center gap-1.5">
             <History className="size-4 text-primary" />

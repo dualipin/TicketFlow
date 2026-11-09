@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import type { CorteCajaActivo } from '../../api/types.ts';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card.tsx';
 import { Button } from '../ui/button.tsx';
-import { Field, FieldLabel } from '../ui/field.tsx';
+import { Field, FieldLabel, FieldDescription } from '../ui/field.tsx';
 import { InputGroup, InputGroupInput, InputGroupAddon } from '../ui/input-group.tsx';
 import { DenominacionesTray } from './DenominacionesTray.tsx';
 import NumberFlow from '@number-flow/react';
@@ -87,13 +87,13 @@ export const ArqueoCajaForm: React.FC<ArqueoCajaFormProps> = ({
   return (
     <Card className="rounded-xl border border-border bg-card">
       <CardHeader className="border-b border-border/50 pb-3">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-sm font-bold flex items-center gap-1.5">
             <Coins className="size-4 text-primary" />
             Conteo Físico en Gaveta
           </CardTitle>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
             {/* Conmutador de Modo */}
             <div className="flex items-center rounded-lg border border-border/70 bg-muted/40 p-0.5 text-xs">
               <Button
@@ -137,27 +137,32 @@ export const ArqueoCajaForm: React.FC<ArqueoCajaFormProps> = ({
               onReset={() => setConteoDenom({})}
             />
           ) : (
-            <Field className="max-w-md">
-              <FieldLabel htmlFor="monto-real-input" className="text-xs font-semibold">
-                Efectivo Físico Contado ($ MXN)
-              </FieldLabel>
-              <InputGroup className="h-9">
-                <InputGroupAddon align="inline-start">
-                  <DollarSign className="size-4 text-muted-foreground" />
-                </InputGroupAddon>
-                <InputGroupInput
-                  id="monto-real-input"
-                  type="number"
-                  step="0.5"
-                  min="0"
-                  value={montoRapidoInput}
-                  onChange={(e) => setMontoRapidoInput(e.target.value)}
-                  placeholder="Total contado en gaveta..."
-                  className="font-mono text-sm font-bold"
-                  required
-                />
-              </InputGroup>
-            </Field>
+            <div className="max-w-md flex flex-col gap-1.5 py-1">
+              <Field>
+                <FieldLabel htmlFor="monto-real-input" className="text-xs font-semibold">
+                  Efectivo Físico Contado ($ MXN)
+                </FieldLabel>
+                <InputGroup className="h-9">
+                  <InputGroupAddon align="inline-start">
+                    <DollarSign className="size-4 text-muted-foreground" />
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    id="monto-real-input"
+                    type="number"
+                    step="0.5"
+                    min="0"
+                    value={montoRapidoInput}
+                    onChange={(e) => setMontoRapidoInput(e.target.value)}
+                    placeholder="Total contado en gaveta..."
+                    className="font-mono text-sm font-bold"
+                    required
+                  />
+                </InputGroup>
+                <FieldDescription className="text-xs text-muted-foreground">
+                  Ingresa el importe total acumulado si ya realizaste el conteo fuera del sistema.
+                </FieldDescription>
+              </Field>
+            </div>
           )}
 
           {/* Resultado de Verificación */}

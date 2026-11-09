@@ -100,9 +100,9 @@ export const ConfirmarCierreModal: React.FC<ConfirmarCierreModalProps> = ({
         </DialogHeader>
 
         <form onSubmit={handleConfirmSubmit} className="flex flex-col gap-4">
-          {/* Tarjeta de Resumen Financiero */}
-          <div className="grid grid-cols-3 gap-2 rounded-xl border border-border/70 bg-muted/20 p-3">
-            <div className="flex flex-col gap-0.5">
+          {/* Tarjeta de Resumen Financiero con divisores hairline sub-píxel */}
+          <div className="grid grid-cols-3 gap-px bg-border/60 rounded-xl border border-border/70 overflow-hidden">
+            <div className="bg-card p-3 flex flex-col gap-0.5">
               <span className="text-xs text-muted-foreground font-medium">
                 Esperado en Caja
               </span>
@@ -111,7 +111,7 @@ export const ConfirmarCierreModal: React.FC<ConfirmarCierreModalProps> = ({
               </span>
             </div>
 
-            <div className="flex flex-col gap-0.5">
+            <div className="bg-card p-3 flex flex-col gap-0.5">
               <span className="text-xs text-muted-foreground font-medium">
                 Físico Contado
               </span>
@@ -120,7 +120,7 @@ export const ConfirmarCierreModal: React.FC<ConfirmarCierreModalProps> = ({
               </span>
             </div>
 
-            <div className="flex flex-col gap-0.5">
+            <div className="bg-card p-3 flex flex-col gap-0.5">
               <span className="text-xs text-muted-foreground font-medium">
                 Diferencia
               </span>

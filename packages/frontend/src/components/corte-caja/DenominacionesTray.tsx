@@ -114,7 +114,7 @@ export const DenominacionesTray: React.FC<DenominacionesTrayProps> = ({
       </div>
 
       {/* Sección Monedas */}
-      <div className="flex flex-col gap-2 pt-1 border-t border-border/40">
+      <div className="flex flex-col gap-2.5 pt-3 border-t border-border/40">
         <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           Monedas & Morralla
         </span>

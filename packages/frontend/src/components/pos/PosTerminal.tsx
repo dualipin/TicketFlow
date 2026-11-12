@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
-import { toast } from '../ui/sonner.tsx';
+import { toast } from 'sonner';
 import { useCategorias, useVariaciones } from '../../queries/inventario/queries.ts';
 import { useCorteActivo } from '../../queries/corte-caja/queries.ts';
 import { useClientes } from '../../queries/clientes/queries.ts';

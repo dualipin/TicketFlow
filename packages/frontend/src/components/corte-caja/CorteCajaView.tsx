@@ -21,7 +21,7 @@ import {
   EmptyDescription,
   EmptyContent,
 } from '../ui/empty.tsx';
-import { toast } from '../ui/sonner.tsx';
+import { toast } from 'sonner';
 import NumberFlow from '@number-flow/react';
 import { formatFechaCorte } from './corte-caja-engine.ts';
 import {

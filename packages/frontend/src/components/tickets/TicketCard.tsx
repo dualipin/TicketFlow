@@ -11,7 +11,7 @@ import {
   Mic,
   Video,
 } from 'lucide-react';
-import { cn, formatCurrency } from '../../lib/utils.ts';
+import { cn } from '../../lib/utils.ts';
 
 interface TicketCardProps {
   ticket: Ticket;
@@ -73,22 +73,22 @@ const TicketCardComponent: React.FC<TicketCardProps> = ({
 
       {/* Main Body: Device & Issue description */}
       <div className="flex flex-col gap-2 my-2.5">
-        <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-          <Smartphone className="size-4 text-primary shrink-0" />
+        <div className="flex items-center gap-2 text-sm font-medium text-foreground tracking-tight">
+          <Smartphone className="size-4 text-muted-foreground shrink-0" />
           <span className="truncate">{ticket.dispositivo}</span>
         </div>
 
-        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed break-words pl-6">
+        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed break-words text-pretty">
           {ticket.falla}
         </p>
 
         {/* Customer & Media Badges */}
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pl-6 text-xs text-muted-foreground pt-0.5">
-          <span className="font-medium text-foreground truncate max-w-[130px] sm:max-w-[170px]">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground pt-0.5">
+          <span className="font-medium text-foreground truncate max-w-[130px] sm:max-w-[170px] tracking-tight">
             {ticket.cliente?.nombre ?? 'Cliente sin nombre'}
           </span>
           {ticket.cliente?.telefono && (
-            <span className="inline-flex items-center gap-1 font-mono text-muted-foreground shrink-0">
+            <span className="inline-flex items-center gap-1 font-mono tabular-nums text-muted-foreground shrink-0">
               <Phone className="size-3" />
               <span>{ticket.cliente.telefono}</span>
             </span>
@@ -96,19 +96,19 @@ const TicketCardComponent: React.FC<TicketCardProps> = ({
           {adjuntos.length > 0 && (
             <div className="inline-flex items-center gap-1 shrink-0">
               {imgCount > 0 && (
-                <Badge variant="secondary" className="gap-1 px-1.5 py-0 h-4.5 text-xs font-mono">
+                <Badge variant="secondary" className="gap-1 px-1.5 py-0 h-4.5 text-xs font-mono tabular-nums">
                   <ImageIcon className="size-2.5" />
                   <span>{imgCount}</span>
                 </Badge>
               )}
               {audCount > 0 && (
-                <Badge variant="secondary" className="gap-1 px-1.5 py-0 h-4.5 text-xs font-mono">
+                <Badge variant="secondary" className="gap-1 px-1.5 py-0 h-4.5 text-xs font-mono tabular-nums">
                   <Mic className="size-2.5" />
                   <span>{audCount}</span>
                 </Badge>
               )}
               {vidCount > 0 && (
-                <Badge variant="secondary" className="gap-1 px-1.5 py-0 h-4.5 text-xs font-mono">
+                <Badge variant="secondary" className="gap-1 px-1.5 py-0 h-4.5 text-xs font-mono tabular-nums">
                   <Video className="size-2.5" />
                   <span>{vidCount}</span>
                 </Badge>
@@ -119,24 +119,26 @@ const TicketCardComponent: React.FC<TicketCardProps> = ({
       </div>
 
       {/* Footer: Financials and Contextual Status Workflow */}
-      <div className="pt-2.5 border-t border-border/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+      <div className="pt-2.5 border-t border-border/60 flex flex-wrap items-center justify-between gap-2.5">
         {/* Balances */}
         <div className="flex items-center gap-3 text-xs">
           <div className="flex items-center gap-1 text-muted-foreground">
             <span>Total:</span>
             <span className="font-mono tabular-nums font-semibold text-foreground">
-              {formatCurrency(ticket.costoTotal)}
+              {ticket.costoTotal}
             </span>
           </div>
 
           <div
             className={cn(
-              'flex items-center gap-1 font-mono tabular-nums font-semibold',
-              hasPendingBalance ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'
+              'flex items-center gap-1 font-mono tabular-nums',
+              hasPendingBalance
+                ? 'font-semibold text-amber-600 dark:text-amber-400'
+                : 'font-normal text-muted-foreground'
             )}
           >
-            <span className="font-sans font-normal text-muted-foreground">Resta:</span>
-            <span>{formatCurrency(ticket.saldoPendiente)}</span>
+            <span className="font-sans text-muted-foreground">Resta:</span>
+            <span>{ticket.saldoPendiente}</span>
           </div>
         </div>
 

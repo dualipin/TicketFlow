@@ -20,10 +20,10 @@ import {
 } from '../ui/select.tsx';
 import { useRegisterPago, useUpdateTicketStatus } from '../../queries/tickets/mutations.ts';
 import { useAuth } from '../../lib/auth-context.tsx';
-import { toast } from '../ui/sonner.tsx';
+import { toast } from 'sonner';
 import type { MetodoPago } from '../../api/types.ts';
 import { CheckCircle2, ShieldAlert } from 'lucide-react';
-import { formatCurrency } from '../../lib/utils.ts';
+import {  } from '../../lib/utils.ts';
 
 interface ConfirmEntregaDialogProps {
   isOpen: boolean;
@@ -117,15 +117,15 @@ export const ConfirmEntregaDialog: React.FC<ConfirmEntregaDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isSubmitting && onClose()}>
-      <DialogContent className="max-w-md p-6 gap-5 rounded-2xl">
+      <DialogContent className="max-w-md p-6 gap-5 rounded-xl">
         <DialogHeader className="gap-1.5">
           <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
             <ShieldAlert className="size-5" />
-            <DialogTitle className="text-base font-semibold">
+            <DialogTitle className="text-base font-semibold tracking-tight text-balance">
               Equipo con Saldo Deudor Pendiente
             </DialogTitle>
           </div>
-          <DialogDescription className="text-xs text-muted-foreground">
+          <DialogDescription className="text-xs text-muted-foreground text-pretty">
             No se puede entregar el equipo directamente sin resolver el saldo pendiente.
           </DialogDescription>
         </DialogHeader>
@@ -133,14 +133,14 @@ export const ConfirmEntregaDialog: React.FC<ConfirmEntregaDialogProps> = ({
         {/* Info Card */}
         <div className="p-3.5 rounded-xl border border-amber-500/20 bg-amber-500/5 flex flex-col gap-2.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-mono font-semibold text-foreground">{folio}</span>
-            <span className="text-muted-foreground truncate max-w-[200px]">{dispositivo}</span>
+            <span className="font-mono tabular-nums font-semibold text-foreground">{folio}</span>
+            <span className="text-muted-foreground truncate max-w-[200px] tracking-tight">{dispositivo}</span>
           </div>
 
           <div className="flex items-center justify-between pt-1 border-t border-amber-500/15">
             <span className="text-xs font-medium text-foreground">Saldo pendiente por cobrar:</span>
             <Badge variant="destructive" className="font-mono tabular-nums text-xs px-2 py-0.5">
-              {formatCurrency(saldoPendiente)}
+              {(saldoPendiente)}
             </Badge>
           </div>
         </div>
@@ -206,7 +206,7 @@ export const ConfirmEntregaDialog: React.FC<ConfirmEntregaDialogProps> = ({
             ) : (
               <CheckCircle2 data-icon="inline-start" />
             )}
-            <span>Cobrar {formatCurrency(saldoPendiente)} y Entregar</span>
+            <span>Cobrar {(saldoPendiente)} y Entregar</span>
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -3,7 +3,7 @@ import type { TicketEstado } from '../../api/types.ts';
 import { useUpdateTicketStatus } from '../../queries/tickets/mutations.ts';
 import { Button } from '../ui/button.tsx';
 import { Spinner } from '../ui/spinner.tsx';
-import { toast } from '../ui/sonner.tsx';
+import { toast } from 'sonner';
 import { cn } from '../../lib/utils.ts';
 
 interface TicketStatusChangerProps {

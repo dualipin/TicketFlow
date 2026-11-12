@@ -78,7 +78,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ onOpenAbrirCaja }) => {
   const Icon = currentMeta.icon;
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b border-border bg-background/95 backdrop-blur-md px-4 transition-[width,height] ease-linear select-none">
+    <header className="sticky rounded-t-xl top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b border-border bg-background/95 backdrop-blur-md px-4 transition-[width,height] ease-linear select-none">
       <div className="flex w-full items-center justify-between">
         {/* Left Side: Sidebar trigger & Title */}
         <div className="flex items-center gap-2">

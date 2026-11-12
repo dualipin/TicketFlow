@@ -16,7 +16,7 @@ import { Textarea } from '../ui/textarea.tsx';
 import { Button } from '../ui/button.tsx';
 import { Alert, AlertDescription } from '../ui/alert.tsx';
 import { Spinner } from '../ui/spinner.tsx';
-import { toast } from '../ui/sonner.tsx';
+import { toast } from 'sonner';
 import { formatCurrencyMxn } from './corte-caja-engine.ts';
 import { DollarSign, Landmark, History, ArrowDownToLine } from 'lucide-react';
 

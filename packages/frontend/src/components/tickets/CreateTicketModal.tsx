@@ -33,7 +33,7 @@ import {
 } from '../ui/select.tsx';
 import { Alert, AlertDescription } from '../ui/alert.tsx';
 import { Spinner } from '../ui/spinner.tsx';
-import { toast } from '../ui/sonner.tsx';
+import { toast } from 'sonner';
 import { Smartphone, User, DollarSign, Plus, Check, Camera } from 'lucide-react';
 import type { MetodoPago, TicketAdjunto } from '../../api/types.ts';
 
@@ -124,10 +124,10 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
               <Plus className="size-4" />
             </div>
             <div>
-              <DialogTitle className="text-base font-bold">
+              <DialogTitle className="text-base font-semibold tracking-tight text-balance">
                 Recepción de Equipo (Nuevo Ticket)
               </DialogTitle>
-              <DialogDescription className="text-xs">
+              <DialogDescription className="text-xs text-muted-foreground text-pretty">
                 Registra la falla y datos para iniciar el flujo de taller
               </DialogDescription>
             </div>
@@ -303,7 +303,7 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
                   placeholder="0.00"
                   value={costoTotal}
                   onChange={(e) => setCostoTotal(e.target.value)}
-                  className="font-semibold"
+                  className="font-mono tabular-nums font-semibold"
                 />
               </Field>
 
@@ -319,7 +319,7 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
                   placeholder="0.00"
                   value={anticipo}
                   onChange={(e) => setAnticipo(e.target.value)}
-                  className="font-semibold text-emerald-600 dark:text-emerald-400"
+                  className="font-mono tabular-nums font-semibold text-emerald-600 dark:text-emerald-400"
                 />
               </Field>
 

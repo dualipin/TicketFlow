@@ -24,7 +24,7 @@ import {
   DialogTitle,
 } from '../ui/dialog.tsx';
 import { Separator } from '../ui/separator.tsx';
-import { toast } from '../ui/sonner.tsx';
+import { toast } from 'sonner';
 import { Spinner } from '../ui/spinner.tsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs.tsx';
 import {
@@ -657,7 +657,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
             <div className="flex items-center justify-between gap-3 rounded-xl border border-primary/40 bg-primary/5 px-3 py-2.5">
               <div className="flex items-center gap-2.5">
                 <span className="size-2.5 rounded-full bg-destructive animate-ping" />
-                <span className="font-mono text-xs font-semibold text-foreground">
+                <span className="font-mono tabular-nums text-xs font-semibold text-foreground">
                   {formatDuration(audioSeconds)} / {formatDuration(MEDIA_LIMITS.MAX_AUDIO_SECONDS)}
                 </span>
                 <Badge variant="outline" className="text-xs">
@@ -733,14 +733,14 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
                 <div className="absolute top-2 left-2 flex items-center gap-1.5">
                   <Badge
                     variant={cameraMode === 'RECORDING_VIDEO' ? 'destructive' : 'secondary'}
-                    className="gap-1.5 font-mono text-xs"
+                    className="gap-1.5 font-mono tabular-nums text-xs"
                   >
                     {cameraMode === 'RECORDING_VIDEO' && (
                       <span className="size-2 rounded-full bg-background animate-pulse" />
                     )}
                     {formatDuration(recordingSeconds)} / {formatDuration(MEDIA_LIMITS.MAX_VIDEO_SECONDS)}
                   </Badge>
-                  <Badge variant="outline" className="bg-background/80 text-xs">
+                  <Badge variant="outline" className="bg-background/80 text-xs font-mono tabular-nums">
                     720p · 1.2 Mbps
                   </Badge>
                 </div>
@@ -864,11 +864,11 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
                   <audio controls src={aud.url} className="h-8 w-full max-w-xs" preload="metadata" />
                   <div className="hidden sm:flex items-center gap-1.5 shrink-0">
                     {aud.duracionSegundos !== null && (
-                      <Badge variant="outline" className="text-xs font-mono">
+                      <Badge variant="outline" className="text-xs font-mono tabular-nums">
                         {formatDuration(aud.duracionSegundos)}
                       </Badge>
                     )}
-                    <span className="text-xs font-mono text-muted-foreground">
+                    <span className="text-xs font-mono tabular-nums text-muted-foreground">
                       {formatBytes(aud.tamanoBytes)}
                     </span>
                   </div>
@@ -902,15 +902,15 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
                 <div className="flex items-center justify-between gap-2 px-1">
                   <div className="flex items-center gap-1.5">
                     <Film className="size-3.5 text-primary" />
-                    <span className="text-xs font-medium text-foreground truncate max-w-44">
+                    <span className="text-xs font-medium text-foreground truncate max-w-44 tracking-tight">
                       {vid.nombreOriginal}
                     </span>
                     {vid.duracionSegundos !== null && (
-                      <Badge variant="secondary" className="text-xs font-mono">
+                      <Badge variant="secondary" className="text-xs font-mono tabular-nums">
                         {formatDuration(vid.duracionSegundos)}
                       </Badge>
                     )}
-                    <Badge variant="outline" className="text-xs font-mono">
+                    <Badge variant="outline" className="text-xs font-mono tabular-nums">
                       {formatBytes(vid.tamanoBytes)}
                     </Badge>
                   </div>

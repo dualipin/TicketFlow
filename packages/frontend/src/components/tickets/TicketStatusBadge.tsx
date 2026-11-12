@@ -29,31 +29,31 @@ const statusConfig: Record<
   RECIBIDO: {
     label: 'Recibido',
     variant: 'outline',
-    className: 'border-border bg-card text-foreground',
+    className: 'border-border/80 bg-card text-foreground',
     icon: Inbox,
   },
   DIAGNOSTICO: {
     label: 'En Diagnóstico',
     variant: 'secondary',
-    className: 'border-border/60 bg-muted text-muted-foreground',
+    className: 'border-border/60 bg-muted/70 text-muted-foreground',
     icon: Search,
   },
   EN_REPARACION: {
     label: 'En Reparación',
     variant: 'outline',
-    className: 'border-primary/30 bg-primary/10 text-primary',
+    className: 'border-primary/25 bg-primary/10 text-primary',
     icon: Wrench,
   },
   LISTO: {
     label: 'Listo p/ Entrega',
-    variant: 'default',
-    className: 'bg-primary text-primary-foreground',
+    variant: 'outline',
+    className: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
     icon: CheckCircle,
   },
   ENTREGADO: {
     label: 'Entregado',
     variant: 'secondary',
-    className: 'border-border/40 bg-muted text-muted-foreground',
+    className: 'border-border/40 bg-muted/50 text-muted-foreground',
     icon: Truck,
   },
   CANCELADO: {

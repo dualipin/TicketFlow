@@ -1,6 +1,6 @@
 import React, { useState, useId } from 'react';
 import type { Ticket } from '../../api/types.ts';
-import { cn, formatCurrency } from '../../lib/utils.ts';
+import { cn,  } from '../../lib/utils.ts';
 import { useTicket } from '../../queries/tickets/queries.ts';
 import {
   useAddBitacoraNota,
@@ -111,12 +111,12 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <SheetTitle className="font-mono text-base font-semibold text-foreground">
+                <SheetTitle className="font-mono text-base font-semibold text-foreground tracking-tight">
                   {ticket?.folio ?? `Ticket #${ticketId}`}
                 </SheetTitle>
                 {ticket && <TicketStatusBadge estado={ticket.estado} size="sm" />}
               </div>
-              <SheetDescription className="text-xs text-muted-foreground">
+              <SheetDescription className="text-xs text-muted-foreground text-pretty">
                 Detalle operativo y seguimiento de servicio
               </SheetDescription>
             </div>
@@ -161,10 +161,10 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
               {/* Guided Service Transition Bar */}
               <div className="rounded-xl border border-border bg-card p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-2xs">
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-xs font-semibold text-foreground">
+                  <span className="text-xs font-semibold text-foreground tracking-tight">
                     Ciclo de Servicio
                   </span>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-xs text-muted-foreground text-pretty">
                     Avance de estado guiado según diagnóstico
                   </span>
                 </div>
@@ -178,21 +178,21 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
 
               {/* General Information Section */}
               <div className="rounded-xl border border-border bg-card p-4 flex flex-col gap-3 shadow-2xs">
-                <div className="text-xs font-semibold text-primary flex items-center gap-2">
-                  <Smartphone className="size-4 shrink-0" />
-                  <span className="text-foreground text-sm font-medium truncate">{ticket.dispositivo}</span>
+                <div className="text-xs font-semibold text-foreground flex items-center gap-2">
+                  <Smartphone className="size-4 shrink-0 text-muted-foreground" />
+                  <span className="text-foreground text-sm font-medium truncate tracking-tight">{ticket.dispositivo}</span>
                 </div>
 
                 <div className="flex flex-col gap-1">
                   <span className="text-xs font-medium text-muted-foreground">
                     Falla reportada por el cliente:
                   </span>
-                  <p className="text-xs text-foreground bg-muted/40 p-2.5 rounded-lg border border-border/30 break-words leading-relaxed">
+                  <p className="text-xs text-foreground bg-muted/40 p-2.5 rounded-lg border border-border/30 break-words leading-relaxed text-pretty">
                     {ticket.falla}
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 pt-1 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-xs">
                   <div className="flex items-start gap-2 min-w-0">
                     <KeyRound className="size-3.5 text-muted-foreground mt-0.5 shrink-0" />
                     <div className="min-w-0">
@@ -225,7 +225,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                       {ticket.cliente?.nombre ?? 'Cliente sin nombre'}
                     </span>
                   </div>
-                  <span className="font-mono text-muted-foreground text-xs shrink-0">
+                  <span className="font-mono tabular-nums text-muted-foreground text-xs shrink-0">
                     {ticket.cliente?.telefono}
                   </span>
                 </div>
@@ -234,11 +234,11 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
               {/* Multimedia Evidence Section */}
               <div className="rounded-xl border border-border bg-card p-4 flex flex-col gap-3 shadow-2xs">
                 <div className="flex items-center justify-between">
-                  <div className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                    <Camera className="size-3.5 text-primary" />
+                  <div className="text-xs font-semibold text-foreground flex items-center gap-1.5 tracking-tight">
+                    <Camera className="size-3.5 text-muted-foreground" />
                     <span>Evidencias Multimedia</span>
                   </div>
-                  <Badge variant="outline" className="text-xs rounded-md">
+                  <Badge variant="outline" className="text-xs rounded-md font-mono tabular-nums">
                     {ticket.adjuntos?.length || 0} archivos
                   </Badge>
                 </div>
@@ -253,8 +253,8 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
               {/* Financial Status & Dynamic Budget */}
               <div className="rounded-xl border border-border bg-card p-4 flex flex-col gap-3 shadow-2xs">
                 <div className="flex items-center justify-between">
-                  <div className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                    <DollarSign className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <div className="text-xs font-semibold text-foreground flex items-center gap-1.5 tracking-tight">
+                    <DollarSign className="size-3.5 text-muted-foreground" />
                     <span>Finanzas y Presupuesto</span>
                   </div>
                   {!isEditingCosto && (
@@ -281,7 +281,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                       value={costoInput}
                       onChange={(e) => setCostoInput(e.target.value)}
                       aria-label="Costo total de cotización"
-                      className="h-8 w-32 text-xs font-medium"
+                      className="h-8 w-32 text-xs font-mono tabular-nums font-semibold"
                       placeholder="Total $"
                       autoFocus
                     />
@@ -313,7 +313,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                         Costo Total Cotizado:
                       </span>
                       <span className="text-base font-semibold font-mono tabular-nums text-foreground">
-                        {formatCurrency(ticket.costoTotal)}
+                        {(ticket.costoTotal)}
                       </span>
                     </div>
 
@@ -322,14 +322,17 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                         'rounded-lg p-2.5 border',
                         ticket.saldoPendiente > 0
                           ? 'bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-400'
-                          : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400'
+                          : 'bg-muted/20 border-border/40 text-muted-foreground'
                       )}
                     >
                       <span className="block text-xs opacity-80">
                         Saldo Pendiente:
                       </span>
-                      <span className="text-base font-semibold font-mono tabular-nums">
-                        {formatCurrency(ticket.saldoPendiente)}
+                      <span className={cn(
+                        'text-base font-mono tabular-nums',
+                        ticket.saldoPendiente > 0 ? 'font-semibold text-foreground' : 'font-medium'
+                      )}>
+                        {(ticket.saldoPendiente)}
                       </span>
                     </div>
                   </div>
@@ -352,8 +355,8 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                           className="flex items-center justify-between text-xs bg-muted/20 px-2.5 py-1.5 rounded-md border border-border/30"
                         >
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold font-mono tabular-nums text-emerald-600 dark:text-emerald-400">
-                              +{formatCurrency(pago.monto)}
+                            <span className="font-semibold font-mono tabular-nums text-foreground">
+                              +{(pago.monto)}
                             </span>
                             <Badge variant="secondary" className="text-xs px-1.5 py-0 h-4.5 rounded-sm">
                               {pago.metodoPago}
@@ -364,7 +367,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                               </span>
                             )}
                           </div>
-                          <span className="text-xs text-muted-foreground font-mono">
+                          <span className="text-xs text-muted-foreground font-mono tabular-nums">
                             {new Date(pago.fecha).toLocaleDateString()}
                           </span>
                         </div>
@@ -377,11 +380,11 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
               {/* Bitácora / Timeline Section */}
               <div className="rounded-xl border border-border bg-card p-4 flex flex-col gap-3 shadow-2xs">
                 <div className="flex items-center justify-between">
-                  <div className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                    <Clock className="size-3.5 text-primary" />
+                  <div className="text-xs font-semibold text-foreground flex items-center gap-1.5 tracking-tight">
+                    <Clock className="size-3.5 text-muted-foreground" />
                     <span>Bitácora Técnica</span>
                   </div>
-                  <Badge variant="outline" className="text-xs rounded-md">
+                  <Badge variant="outline" className="text-xs rounded-md font-mono tabular-nums">
                     {ticket.bitacora?.length || 0} notas
                   </Badge>
                 </div>
@@ -473,7 +476,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                               )}
                             </div>
 
-                            <span className="font-mono text-[11px]">
+                            <span className="font-mono tabular-nums text-xs">
                               {new Date(item.createdAt).toLocaleTimeString([], {
                                 hour: '2-digit',
                                 minute: '2-digit',
@@ -481,7 +484,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                             </span>
                           </div>
 
-                          <p className="text-xs whitespace-pre-wrap leading-relaxed break-words">
+                          <p className="text-xs whitespace-pre-wrap leading-relaxed break-words text-pretty">
                             {item.nota}
                           </p>
                         </div>
@@ -496,7 +499,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
 
         {/* Footer */}
         <SheetFooter className="border-t border-border px-5 py-3 bg-muted/10 flex-row items-center justify-between">
-          <span className="text-xs text-muted-foreground font-mono">
+          <span className="text-xs text-muted-foreground font-mono tabular-nums">
             Ticket ID: {ticketId}
           </span>
           <Button variant="outline" size="sm" onClick={onClose} className="text-xs rounded-lg">

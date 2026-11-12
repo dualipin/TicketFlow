@@ -4,7 +4,7 @@ import { useUpdateTicketStatus } from '../../queries/tickets/mutations.ts';
 import { Button } from '../ui/button.tsx';
 import { Spinner } from '../ui/spinner.tsx';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover.tsx';
-import { toast } from '../ui/sonner.tsx';
+import { toast } from 'sonner';
 import { cn } from '../../lib/utils.ts';
 import {
   getNextTicketStep,
@@ -90,14 +90,14 @@ export const TicketStatusWorkflow: React.FC<TicketStatusWorkflowProps> = ({
           variant="default"
           disabled={isPending}
           onClick={() => handleApplyStatus(nextStep.nextStatus)}
-          className="h-8 px-2.5 text-xs font-medium rounded-lg gap-1.5 shadow-2xs"
+          className="h-8 px-2.5 text-xs font-medium rounded-lg gap-1.5 shadow-2xs shrink-0"
         >
           {isPending ? (
             <Spinner data-icon="inline-start" />
           ) : (
             <ArrowRight data-icon="inline-end" />
           )}
-          <span>{nextStep.label}</span>
+          <span className="truncate max-w-[140px] sm:max-w-none">{nextStep.label}</span>
         </Button>
       ) : (
         <span className="text-xs text-muted-foreground font-normal px-2.5 py-1 rounded-md bg-muted/50 border border-border/70">

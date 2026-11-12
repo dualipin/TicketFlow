@@ -76,11 +76,11 @@ export const TallerView: React.FC = () => {
       {/* Top Banner / Actions Bar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-1">
-          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground flex items-center gap-2.5">
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground flex items-center gap-2.5 text-balance">
             <Wrench className="size-5 text-primary" />
             <span>Cola Técnica de Reparaciones</span>
           </h1>
-          <p className="text-xs text-muted-foreground font-normal">
+          <p className="text-xs text-muted-foreground font-normal text-pretty">
             Gestión operativa de órdenes, diagnósticos, bitácoras y liquidaciones.
           </p>
         </div>
@@ -99,7 +99,7 @@ export const TallerView: React.FC = () => {
       <SectionCards />
 
       {/* Filter Toolbar */}
-      <div className="rounded-xl border border-border bg-card/70 p-3.5 flex flex-col gap-3 shadow-2xs backdrop-blur-xs">
+      <div className="rounded-xl border border-border bg-card p-3 flex flex-col gap-3 shadow-2xs">
         {/* Top row: Search input & quick toggles */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           {/* Search Input using InputGroup */}
@@ -123,13 +123,15 @@ export const TallerView: React.FC = () => {
           <div className="flex items-center gap-2">
             <Button
               type="button"
-              variant={onlyConSaldo ? 'default' : 'outline'}
+              variant={onlyConSaldo ? 'secondary' : 'outline'}
               size="sm"
               aria-pressed={onlyConSaldo}
               onClick={() => setOnlyConSaldo(!onlyConSaldo)}
               className={cn(
                 'rounded-lg text-xs gap-1.5 font-medium transition-colors',
-                !onlyConSaldo && 'text-muted-foreground hover:text-foreground'
+                onlyConSaldo
+                  ? 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400'
+                  : 'text-muted-foreground hover:text-foreground'
               )}
             >
               <DollarSign data-icon="inline-start" />
@@ -175,12 +177,12 @@ export const TallerView: React.FC = () => {
       <section className="flex flex-col gap-3.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h2 className="text-sm font-semibold tracking-tight text-foreground flex items-center gap-1.5">
+            <h2 className="text-sm font-semibold tracking-tight text-foreground flex items-center gap-1.5 text-balance">
               <Layers className="size-4 text-primary" />
               <span>Cola de Equipos en Servicio</span>
             </h2>
             {ticketsQuery.data && (
-              <Badge variant="secondary" className="text-xs font-normal tabular-nums">
+              <Badge variant="secondary" className="text-xs font-normal tabular-nums font-mono">
                 {ticketsQuery.data.length} órdenes
               </Badge>
             )}

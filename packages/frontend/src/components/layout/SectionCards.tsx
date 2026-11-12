@@ -57,14 +57,14 @@ export const SectionCards: React.FC = () => {
     : 0;
 
   return (
-    <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
       {/* 1. Reparaciones en Taller */}
-      <Card className="@container/card">
+      <Card className="@container/card bg-card border-border shadow-2xs">
         <CardHeader>
-          <CardDescription className="text-sm text-muted-foreground font-medium">
+          <CardDescription className="text-sm text-muted-foreground font-medium text-balance">
             Taller Activo
           </CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums tracking-tight text-foreground @[250px]/card:text-3xl">
+          <CardTitle className="text-2xl font-semibold tabular-nums tracking-tight text-foreground">
             <NumberFlow value={ticketsActivosCount} />
           </CardTitle>
           <CardAction>
@@ -78,19 +78,19 @@ export const SectionCards: React.FC = () => {
           <div className="line-clamp-1 flex items-center gap-1.5 font-medium text-foreground/90">
             <span>Órdenes en diagnóstico y servicio</span>
           </div>
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-muted-foreground text-pretty">
             {tickets.length} folios históricos registrados
           </div>
         </CardFooter>
       </Card>
 
       {/* 2. Listos para Entrega */}
-      <Card className="@container/card">
+      <Card className="@container/card bg-card border-border shadow-2xs">
         <CardHeader>
-          <CardDescription className="text-sm text-muted-foreground font-medium">
+          <CardDescription className="text-sm text-muted-foreground font-medium text-balance">
             Listos para Entrega
           </CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums tracking-tight text-foreground @[250px]/card:text-3xl">
+          <CardTitle className="text-2xl font-semibold tabular-nums tracking-tight text-foreground">
             <NumberFlow value={ticketsListosCount} />
           </CardTitle>
           <CardAction>
@@ -107,22 +107,23 @@ export const SectionCards: React.FC = () => {
           <div className="line-clamp-1 flex items-center gap-1.5 font-medium text-foreground/90">
             <span>Reparaciones concluidas</span>
           </div>
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-muted-foreground text-pretty">
             Avisar a cliente para retiro de equipo
           </div>
         </CardFooter>
       </Card>
 
       {/* 3. Ingresos / Ventas del Turno */}
-      <Card className="@container/card">
+      <Card className="@container/card bg-card border-border shadow-2xs">
         <CardHeader>
-          <CardDescription className="text-sm text-muted-foreground font-medium">
+          <CardDescription className="text-sm text-muted-foreground font-medium text-balance">
             Ventas del Turno
           </CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums tracking-tight text-foreground @[250px]/card:text-3xl">
+          <CardTitle className="text-2xl font-semibold tabular-nums tracking-tight text-foreground">
             <NumberFlow
               value={totalVentasTurno}
-              format={{ style: 'currency', currency: 'USD' }}
+              format={{ style: 'currency', currency: 'MXN' }}
+              locales="es-MX"
             />
           </CardTitle>
           <CardAction>
@@ -136,22 +137,23 @@ export const SectionCards: React.FC = () => {
           <div className="line-clamp-1 flex items-center gap-1.5 font-medium text-foreground/90">
             <span>Total facturado en mostrador</span>
           </div>
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-muted-foreground text-pretty">
             {corteData?.activo ? `Turno #${corteData.corte?.id} en curso` : 'Sin turno activo'}
           </div>
         </CardFooter>
       </Card>
 
       {/* 4. Efectivo en Turno / Caja */}
-      <Card className="@container/card">
+      <Card className="@container/card bg-card border-border shadow-2xs">
         <CardHeader>
-          <CardDescription className="text-sm text-muted-foreground font-medium">
+          <CardDescription className="text-sm text-muted-foreground font-medium text-balance">
             Efectivo en Caja
           </CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums tracking-tight text-foreground @[250px]/card:text-3xl">
+          <CardTitle className="text-2xl font-semibold tabular-nums tracking-tight text-foreground">
             <NumberFlow
               value={montoCaja}
-              format={{ style: 'currency', currency: 'USD' }}
+              format={{ style: 'currency', currency: 'MXN' }}
+              locales="es-MX"
             />
           </CardTitle>
           <CardAction>
@@ -178,7 +180,7 @@ export const SectionCards: React.FC = () => {
           <div className="line-clamp-1 flex items-center gap-1.5 font-medium text-foreground/90">
             <span>Saldo contable en gaveta</span>
           </div>
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-muted-foreground text-pretty">
             Incluye fondo inicial y cobros en efectivo
           </div>
         </CardFooter>

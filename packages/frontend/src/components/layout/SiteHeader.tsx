@@ -160,7 +160,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ onOpenAbrirCaja }) => {
               variant="ghost"
               size="sm"
               onClick={lock}
-              className="text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg px-2 sm:px-2.5 gap-1.5 text-xs"
+              className="text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg w-8 px-0 has-data-[icon=inline-start]:pl-0 sm:w-auto sm:px-2.5 sm:has-data-[icon=inline-start]:pl-2 gap-1.5 text-xs"
               title="Bloquear pantalla o cambiar operador"
               aria-label="Bloquear pantalla o cambiar operador"
             >
@@ -172,7 +172,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ onOpenAbrirCaja }) => {
               variant="default"
               size="sm"
               onClick={() => setIsLocked(true)}
-              className="px-2.5 sm:px-3 text-xs rounded-full"
+              className="w-8 px-0 has-data-[icon=inline-start]:pl-0 sm:w-auto sm:px-3 sm:has-data-[icon=inline-start]:pl-2 text-xs rounded-full"
               title="Identificarse"
               aria-label="Identificarse"
             >

@@ -3,7 +3,12 @@ import type { Categoria, VariacionWithProducto } from '../../api/types.ts';
 import { Card, CardContent } from '../ui/card.tsx';
 import { Button } from '../ui/button.tsx';
 import { Badge } from '../ui/badge.tsx';
-import { InputGroup, InputGroupAddon, InputGroupInput } from '../ui/input-group.tsx';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from '../ui/input-group.tsx';
 import { Spinner } from '../ui/spinner.tsx';
 import {
   Empty,
@@ -133,17 +138,15 @@ export const PosCatalog: React.FC<PosCatalogProps> = ({
               />
               {searchQuery ? (
                 <InputGroupAddon align="inline-end">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-sm"
+                  <InputGroupButton
+                    size="icon-xs"
                     onClick={() => onSearchChange('')}
                     className="text-muted-foreground hover:text-foreground"
                     title="Limpiar búsqueda"
                     aria-label="Limpiar búsqueda"
                   >
-                    <X className="size-4" />
-                  </Button>
+                    <X />
+                  </InputGroupButton>
                 </InputGroupAddon>
               ) : (
                 <InputGroupAddon align="inline-end">

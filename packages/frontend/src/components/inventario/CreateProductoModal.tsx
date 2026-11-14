@@ -13,7 +13,12 @@ import { Button } from '../ui/button.tsx';
 import { Input } from '../ui/input.tsx';
 import { Textarea } from '../ui/textarea.tsx';
 import { FieldGroup, Field, FieldLabel, FieldDescription, FieldError } from '../ui/field.tsx';
-import { InputGroup, InputGroupAddon } from '../ui/input-group.tsx';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from '../ui/input-group.tsx';
 import { Switch } from '../ui/switch.tsx';
 import { Spinner } from '../ui/spinner.tsx';
 import { toast } from 'sonner';
@@ -362,7 +367,7 @@ export const CreateProductoModal: React.FC<CreateProductoModalProps> = ({
                   <InputGroupAddon>
                     <Barcode className="size-3.5 text-muted-foreground" />
                   </InputGroupAddon>
-                  <Input
+                  <InputGroupInput
                     id="prod-sku"
                     placeholder={esServicio ? 'SRV-0001' : 'Escanea o escribe'}
                     value={skuSimple}
@@ -370,17 +375,15 @@ export const CreateProductoModal: React.FC<CreateProductoModalProps> = ({
                     className="font-mono uppercase"
                   />
                   <InputGroupAddon align="inline-end" className="py-0 pr-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-sm"
+                    <InputGroupButton
+                      size="icon-xs"
                       onClick={() => setSkuSimple(generateSku(esServicio ? 'SRV' : 'SKU'))}
                       title="Generar SKU automático"
                       aria-label="Generar SKU automático"
-                      className="text-muted-foreground hover:text-foreground"
+                      className="text-muted-foreground hover:text-primary"
                     >
-                      <Sparkles className="text-amber-500" />
-                    </Button>
+                      <Sparkles className="text-primary" />
+                    </InputGroupButton>
                   </InputGroupAddon>
                 </InputGroup>
                 <FieldDescription className="text-xs">
@@ -474,25 +477,25 @@ export const CreateProductoModal: React.FC<CreateProductoModalProps> = ({
 
                     {/* SKU */}
                     <div className="col-span-12 sm:col-span-3">
-                      <div className="relative flex items-center">
-                        <Input
+                      <InputGroup className="h-8">
+                        <InputGroupInput
                           placeholder="SKU"
                           value={v.codigo}
                           onChange={(e) => handleVariantChange(v.id, 'codigo', e.target.value)}
-                          className="h-8 font-mono uppercase pr-9"
+                          className="font-mono uppercase"
                         />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon-sm"
-                          onClick={() => handleVariantChange(v.id, 'codigo', generateSku('SKU'))}
-                          title="Generar SKU"
-                          aria-label="Generar SKU"
-                          className="absolute right-0 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-amber-500"
-                        >
-                          <Sparkles />
-                        </Button>
-                      </div>
+                        <InputGroupAddon align="inline-end" className="py-0 pr-1">
+                          <InputGroupButton
+                            size="icon-xs"
+                            onClick={() => handleVariantChange(v.id, 'codigo', generateSku('SKU'))}
+                            title="Generar SKU"
+                            aria-label="Generar SKU"
+                            className="text-muted-foreground hover:text-primary"
+                          >
+                            <Sparkles />
+                          </InputGroupButton>
+                        </InputGroupAddon>
+                      </InputGroup>
                       {errors[`variant_sku_${v.id}`] && (
                         <span className="text-xs text-destructive block mt-0.5">
                           {errors[`variant_sku_${v.id}`]}

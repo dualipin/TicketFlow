@@ -23,7 +23,7 @@ A diferencia de los sistemas POS genéricos de retail que carecen de trazabilida
 ## Operating Context
 
 - **Entorno de trabajo:** Mostrador comercial y mesas de taller con operación intensiva, cambios rápidos de operador durante el día mediante bloqueo de pantalla por PIN (`LockScreen`).
-- **Dispositivos y periféricos:** Uso preferente en equipos de escritorio y laptops, lectores de códigos de barras USB/Bluetooth, teclados mecánicos o numéricos y soporte PWA para dispositivos táctiles/móviles.
+- **Dispositivos y periféricos:** Uso preferente en equipos de escritorio y laptops, lectores de códigos de barras USB/Bluetooth y teclados mecánicos o numéricos.
 - **Rituales operativos:** Apertura obligatoria de caja con balance inicial, arqueo y corte al cierre de turno, registro de clientes al recibir órdenes o compras, y consulta rápida de historial de tickets.
 
 ## Capabilities and Constraints
@@ -33,7 +33,6 @@ A diferencia de los sistemas POS genéricos de retail que carecen de trazabilida
 - **Corte de Caja:** Control estricto de turnos; saldo en tiempo real (`NumberFlow`), cálculo de diferencias de arqueo y registro de movimientos de entrada/salida de efectivo.
 - **Inventario:** Catálogo de productos y repuestos, categorización, control de stock y edición con carga de imágenes optimizada.
 - **Identificadores únicos:** Uso de folios y códigos únicos para tickets, ventas y productos.
-- **Offline / PWA:** Configurado como Progressive Web App (PWA) con Service Worker y capacidades de ejecución en cliente para resiliencia ante cortes de red.
 
 ## Brand Commitments
 
@@ -44,7 +43,7 @@ A diferencia de los sistemas POS genéricos de retail que carecen de trazabilida
 ## Evidence on Hand
 
 - Código fuente implementado en monorepo:
-  - Frontend (`packages/frontend`): React 19, Vite, Tailwind CSS v4, Base UI, Lucide React, PWA plugin, TanStack Query.
+  - Frontend (`packages/frontend`): React 19, Vite, Tailwind CSS v4, Base UI, Lucide React, TanStack Query.
   - Backend (`packages/backend`): Hono, Bun, Prisma ORM, módulos verticales de inventario, clientes, adjuntos y tickets.
 - Componentes clave operativos existentes: `PosTerminal`, `TallerView`, `CorteCajaView`, `InventarioView`, `LockScreen`, `SiteHeader` y `DashboardLayout`.
 

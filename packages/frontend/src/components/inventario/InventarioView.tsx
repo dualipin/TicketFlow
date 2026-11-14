@@ -335,7 +335,7 @@ export const InventarioView: React.FC = () => {
                       {/* Tipo */}
                       <td className="py-3 px-4">
                         {isServicio ? (
-                          <Badge variant="blue" className="gap-1">
+                          <Badge variant="outline" className="gap-1 border-sky-500/30 bg-sky-500/10 text-sky-600 dark:text-sky-400">
                             <Wrench className="size-2.5" /> Servicio
                           </Badge>
                         ) : (
@@ -400,12 +400,13 @@ export const InventarioView: React.FC = () => {
                           </span>
                         ) : (
                           <Badge
-                            variant={
+                            variant={totalStock <= 0 ? 'destructive' : 'outline'}
+                            className={
                               totalStock <= 0
-                                ? 'destructive'
+                                ? undefined
                                 : totalStock <= 3
-                                ? 'yellow'
-                                : 'green'
+                                ? 'border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                                : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
                             }
                           >
                             {totalStock <= 0

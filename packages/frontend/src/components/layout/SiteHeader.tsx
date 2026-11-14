@@ -3,7 +3,6 @@ import { NavLink, useLocation } from 'react-router';
 import NumberFlow from '@number-flow/react';
 import { useAuth } from '../../lib/auth-context.tsx';
 import { useTheme } from '../../lib/theme-context.tsx';
-import { usePwaInstall } from '../../hooks/usePwaInstall.ts';
 import { useCorteActivo } from '../../queries/corte-caja/queries.ts';
 import { SidebarTrigger } from '../ui/sidebar.tsx';
 import { Separator } from '../ui/separator.tsx';
@@ -20,7 +19,6 @@ import {
   Sun,
   Moon,
   Monitor,
-  Download,
 } from 'lucide-react';
 
 interface SiteHeaderProps {
@@ -62,7 +60,6 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ onOpenAbrirCaja }) => {
   const location = useLocation();
   const { currentUser, lock, setIsLocked } = useAuth();
   const { theme, resolvedTheme, cycleTheme } = useTheme();
-  const { isInstallable, installApp } = usePwaInstall();
   const { data: corteActivoData } = useCorteActivo();
 
   const isCajaAbierta = Boolean(corteActivoData?.activo);
@@ -130,20 +127,6 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ onOpenAbrirCaja }) => {
             >
               <AlertCircle className="size-3 text-[#ffc533]" data-icon="inline-start" />
               <span>Abrir Turno</span>
-            </Button>
-          )}
-
-          {/* Botón de Instalación PWA (Visible cuando el navegador detecta que es instalable) */}
-          {isInstallable && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={installApp}
-              className="gap-1.5 text-xs rounded-full border-primary/30 bg-primary/10 hover:bg-primary/20 text-primary h-7 font-medium"
-              title="Instalar TicketFlow como aplicación en el escritorio o dispositivo"
-            >
-              <Download data-icon="inline-start" />
-              <span className="hidden sm:inline">Instalar App</span>
             </Button>
           )}
 

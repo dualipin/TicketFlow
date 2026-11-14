@@ -23,6 +23,7 @@ interface TicketStatusWorkflowProps {
   ticketId: number;
   currentStatus: TicketEstado;
   saldoPendiente?: number;
+  workshopOnly?: boolean;
   className?: string;
   onRequestEntregaGuard?: () => void;
   onSuccess?: () => void;
@@ -32,6 +33,7 @@ export const TicketStatusWorkflow: React.FC<TicketStatusWorkflowProps> = ({
   ticketId,
   currentStatus,
   saldoPendiente = 0,
+  workshopOnly = false,
   className,
   onRequestEntregaGuard,
   onSuccess,
@@ -40,7 +42,13 @@ export const TicketStatusWorkflow: React.FC<TicketStatusWorkflowProps> = ({
   const updateStatus = useUpdateTicketStatus();
 
   const nextStep = getNextTicketStep(currentStatus);
-  const alternatives = getAlternativeTicketSteps(currentStatus);
+  const effectiveNextStep =
+    workshopOnly && currentStatus === 'LISTO' ? null : nextStep;
+
+  const rawAlternatives = getAlternativeTicketSteps(currentStatus);
+  const alternatives = workshopOnly
+    ? rawAlternatives.filter((alt) => alt.status !== 'ENTREGADO')
+    : rawAlternatives;
 
   const handleApplyStatus = (newStatus: TicketEstado) => {
     // If attempting to mark ENTREGADO with pending balance, delegate to guard
@@ -83,13 +91,13 @@ export const TicketStatusWorkflow: React.FC<TicketStatusWorkflowProps> = ({
       onClick={(e) => e.stopPropagation()}
     >
       {/* Primary Forward Step Action */}
-      {nextStep ? (
+      {effectiveNextStep ? (
         <Button
           type="button"
           size="sm"
           variant="default"
           disabled={isPending}
-          onClick={() => handleApplyStatus(nextStep.nextStatus)}
+          onClick={() => handleApplyStatus(effectiveNextStep.nextStatus)}
           className="h-8 px-2.5 text-xs font-medium rounded-lg gap-1.5 shadow-2xs shrink-0"
         >
           {isPending ? (
@@ -97,13 +105,13 @@ export const TicketStatusWorkflow: React.FC<TicketStatusWorkflowProps> = ({
           ) : (
             <ArrowRight data-icon="inline-end" />
           )}
-          <span className="truncate max-w-[140px] sm:max-w-none">{nextStep.label}</span>
+          <span className="truncate max-w-[140px] sm:max-w-none">{effectiveNextStep.label}</span>
         </Button>
-      ) : (
+      ) : !(workshopOnly && currentStatus === 'LISTO') ? (
         <span className="text-xs text-muted-foreground font-normal px-2.5 py-1 rounded-md bg-muted/50 border border-border/70">
           {currentStatus === 'ENTREGADO' ? 'Entregado' : 'Cancelado'}
         </span>
-      )}
+      ) : null}
 
       {/* Alternative Options Popover */}
       {alternatives.length > 0 && (

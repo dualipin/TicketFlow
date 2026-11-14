@@ -26,11 +26,9 @@ import {
 import { Separator } from '../ui/separator.tsx';
 import { toast } from 'sonner';
 import { Spinner } from '../ui/spinner.tsx';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs.tsx';
 import {
   Camera,
   Film,
-  Image as ImageIcon,
   Maximize2,
   Mic,
   Pause,
@@ -59,8 +57,6 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
   const deleteMutation = useDeleteTicketAdjunto();
 
   const imageInputRef = useRef<HTMLInputElement | null>(null);
-  const audioInputRef = useRef<HTMLInputElement | null>(null);
-  const videoInputRef = useRef<HTMLInputElement | null>(null);
 
   // Camera & Video Recorder state
   const videoPreviewRef = useRef<HTMLVideoElement | null>(null);
@@ -324,27 +320,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
     setAudioSeconds(0);
   };
 
-  const handleSelectAudioFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setMediaError(null);
-    setIsProcessingFiles(true);
-    try {
-      const created = await uploadMutation.mutateAsync({
-        file,
-        ticketId,
-      });
-      appendAdjunto(created);
-      toast.success('Archivo de audio adjuntado');
-    } catch (err: any) {
-      setMediaError(err?.message || 'Error al subir archivo de audio.');
-    } finally {
-      setIsProcessingFiles(false);
-      e.target.value = '';
-    }
-  };
-
-  // 4. Grabación de Video corto con compresión en vivo (720p ~1.2 Mbps)
+  // 4. Grabación de Video corto con compresión en vivo
   const openVideoCamera = async (nextFacing: 'environment' | 'user' = facingMode) => {
     stopActiveMedia();
     setMediaError(null);
@@ -454,33 +430,6 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
     setRecordingSeconds(0);
   };
 
-  const handleSelectVideoFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setMediaError(null);
-
-    if (file.size > MEDIA_LIMITS.MAX_VIDEO_FILE_BYTES) {
-      setMediaError('El archivo de video supera el límite permitido de 25 MB.');
-      e.target.value = '';
-      return;
-    }
-
-    setIsProcessingFiles(true);
-    try {
-      const created = await uploadMutation.mutateAsync({
-        file,
-        ticketId,
-      });
-      appendAdjunto(created);
-      toast.success(`Video adjuntado (${formatBytes(created.tamanoBytes)})`);
-    } catch (err: any) {
-      setMediaError(err?.message || 'Error al subir archivo de video.');
-    } finally {
-      setIsProcessingFiles(false);
-      e.target.value = '';
-    }
-  };
-
   const handleFlipCamera = () => {
     const nextFacing = facingMode === 'environment' ? 'user' : 'environment';
     setFacingMode(nextFacing);
@@ -503,7 +452,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Inputs ocultos de respaldo para selección de archivos */}
+      {/* Input oculto para selección de fotografías */}
       <input
         ref={imageInputRef}
         type="file"
@@ -512,96 +461,171 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
         className="hidden"
         onChange={handleSelectImages}
       />
-      <input
-        ref={audioInputRef}
-        type="file"
-        accept="audio/*"
-        className="hidden"
-        onChange={handleSelectAudioFile}
-      />
-      <input
-        ref={videoInputRef}
-        type="file"
-        accept="video/mp4,video/webm,video/quicktime"
-        className="hidden"
-        onChange={handleSelectVideoFile}
-      />
 
-      <Tabs defaultValue="fotos" className="w-full">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <TabsList className="h-8">
-            <TabsTrigger value="fotos" className="gap-1.5 text-xs">
-              <ImageIcon className="size-3.5" />
-              <span>Fotos ({images.length}/{MEDIA_LIMITS.MAX_IMAGES})</span>
-            </TabsTrigger>
-            <TabsTrigger value="audio" className="gap-1.5 text-xs">
-              <Mic className="size-3.5" />
-              <span>Audio ({audios.length})</span>
-            </TabsTrigger>
-            <TabsTrigger value="video" className="gap-1.5 text-xs">
-              <Video className="size-3.5" />
-              <span>Video ({videos.length})</span>
-            </TabsTrigger>
-          </TabsList>
+      {/* Barra compacta de acciones directas */}
+      <div className="flex flex-wrap items-center gap-1.5">
+        <Button
+          type="button"
+          variant="outline"
+          size="xs"
+          onClick={() => imageInputRef.current?.click()}
+          disabled={isProcessingFiles || images.length >= MEDIA_LIMITS.MAX_IMAGES}
+        >
+          <Upload data-icon="inline-start" />
+          <span>Subir foto</span>
+        </Button>
 
-          {isProcessingFiles && (
-            <Badge variant="secondary" className="gap-1.5 text-xs">
-              <Spinner className="size-3" />
-              <span>Optimizando y subiendo...</span>
-            </Badge>
-          )}
-        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="xs"
+          onClick={() =>
+            cameraMode === 'PHOTO_PREVIEW' ? stopActiveMedia() : startPhotoCamera()
+          }
+          disabled={isProcessingFiles || images.length >= MEDIA_LIMITS.MAX_IMAGES}
+        >
+          <Camera data-icon="inline-start" />
+          <span>{cameraMode === 'PHOTO_PREVIEW' ? 'Cerrar cámara' : 'Tomar foto'}</span>
+        </Button>
 
-        {/* Pestaña 1: Fotografías */}
-        <TabsContent value="fotos" className="flex flex-col gap-2.5 pt-2">
-          <div className="flex flex-wrap items-center gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          size="xs"
+          onClick={() =>
+            audioStatus === 'IDLE' ? startAudioRecording() : stopAudioRecording()
+          }
+          disabled={isProcessingFiles}
+        >
+          <Mic data-icon="inline-start" />
+          <span>{audioStatus === 'IDLE' ? 'Grabar audio' : 'Detener audio'}</span>
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          size="xs"
+          onClick={() =>
+            cameraMode === 'VIDEO_PREVIEW' || cameraMode === 'RECORDING_VIDEO'
+              ? stopActiveMedia()
+              : openVideoCamera()
+          }
+          disabled={isProcessingFiles}
+        >
+          <Video data-icon="inline-start" />
+          <span>
+            {cameraMode === 'VIDEO_PREVIEW' || cameraMode === 'RECORDING_VIDEO'
+              ? 'Cerrar video'
+              : 'Grabar video'}
+          </span>
+        </Button>
+
+        {isProcessingFiles && (
+          <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Spinner className="size-3" />
+            <span>Subiendo...</span>
+          </span>
+        )}
+      </div>
+
+      {/* Visor de cámara de fotos */}
+      {cameraMode === 'PHOTO_PREVIEW' && (
+        <div className="relative flex flex-col gap-2 rounded-xl border border-border bg-card p-2.5">
+          <video
+            ref={videoPreviewRef}
+            muted
+            playsInline
+            className="w-full max-h-52 rounded-lg bg-muted object-cover"
+          />
+          <div className="flex items-center justify-between gap-2">
             <Button
               type="button"
               variant="outline"
               size="xs"
-              disabled={isProcessingFiles || images.length >= MEDIA_LIMITS.MAX_IMAGES}
-              onClick={() => imageInputRef.current?.click()}
+              onClick={handleFlipCamera}
             >
-              <Upload data-icon="inline-start" />
-              Subir imágenes
+              <RefreshCw data-icon="inline-start" />
+              <span>Cambiar cámara</span>
             </Button>
+            <Button
+              type="button"
+              size="xs"
+              onClick={handleSnapPhoto}
+              disabled={isProcessingFiles}
+            >
+              <Camera data-icon="inline-start" />
+              <span>Capturar foto</span>
+            </Button>
+          </div>
+        </div>
+      )}
 
-            {cameraMode !== 'PHOTO_PREVIEW' ? (
-              <Button
-                type="button"
-                variant="secondary"
-                size="xs"
-                disabled={isProcessingFiles || images.length >= MEDIA_LIMITS.MAX_IMAGES}
-                onClick={() => startPhotoCamera()}
-              >
-                <Camera data-icon="inline-start" />
-                Tomar foto con cámara
-              </Button>
-            ) : (
-              <Button
-                type="button"
-                variant="ghost"
-                size="xs"
-                onClick={stopActiveMedia}
-              >
-                Cerrar cámara
-              </Button>
-            )}
-
-            <span className="text-xs text-muted-foreground">
-              Compresión automática WebP (máx. 1920px)
+      {/* Control activo de grabación de audio */}
+      {audioStatus !== 'IDLE' && (
+        <div className="flex items-center justify-between gap-3 rounded-xl border border-primary/40 bg-primary/5 px-3 py-2.5">
+          <div className="flex items-center gap-2.5">
+            <span className="size-2.5 rounded-full bg-destructive animate-ping" />
+            <span className="font-mono tabular-nums text-xs font-semibold text-foreground">
+              {formatDuration(audioSeconds)} / {formatDuration(MEDIA_LIMITS.MAX_AUDIO_SECONDS)}
             </span>
+            <Badge variant="outline" className="text-xs">
+              {audioStatus === 'PAUSED' ? 'En pausa' : 'Grabando...'}
+            </Badge>
           </div>
 
-          {cameraMode === 'PHOTO_PREVIEW' && (
-            <div className="relative flex flex-col gap-2 rounded-xl border border-border bg-card p-2.5">
-              <video
-                ref={videoPreviewRef}
-                muted
-                playsInline
-                className="w-full max-h-52 rounded-lg bg-muted object-cover"
-              />
-              <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5">
+            <Button
+              type="button"
+              variant="outline"
+              size="xs"
+              onClick={togglePauseAudio}
+            >
+              {audioStatus === 'PAUSED' ? (
+                <Play data-icon="inline-start" />
+              ) : (
+                <Pause data-icon="inline-start" />
+              )}
+              <span>{audioStatus === 'PAUSED' ? 'Reanudar' : 'Pausar'}</span>
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              size="xs"
+              onClick={stopAudioRecording}
+            >
+              <Square data-icon="inline-start" />
+              <span>Guardar audio</span>
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Visor de grabación de video */}
+      {(cameraMode === 'VIDEO_PREVIEW' || cameraMode === 'RECORDING_VIDEO') && (
+        <div className="flex flex-col gap-2.5 rounded-xl border border-border bg-card p-2.5">
+          <div className="relative overflow-hidden rounded-lg bg-muted">
+            <video
+              ref={videoPreviewRef}
+              muted
+              playsInline
+              className="w-full max-h-56 object-cover"
+            />
+            <div className="absolute top-2 left-2 flex items-center gap-1.5">
+              <Badge
+                variant={cameraMode === 'RECORDING_VIDEO' ? 'destructive' : 'secondary'}
+                className="gap-1.5 font-mono tabular-nums text-xs"
+              >
+                {cameraMode === 'RECORDING_VIDEO' && (
+                  <span className="size-2 rounded-full bg-background animate-pulse" />
+                )}
+                {formatDuration(recordingSeconds)} / {formatDuration(MEDIA_LIMITS.MAX_VIDEO_SECONDS)}
+              </Badge>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5">
+              {cameraMode === 'VIDEO_PREVIEW' && (
                 <Button
                   type="button"
                   variant="outline"
@@ -609,191 +633,42 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
                   onClick={handleFlipCamera}
                 >
                   <RefreshCw data-icon="inline-start" />
-                  Cambiar cámara
+                  <span>Rotar cámara</span>
                 </Button>
-                <Button
-                  type="button"
-                  size="xs"
-                  onClick={handleSnapPhoto}
-                  disabled={isProcessingFiles}
-                >
-                  <Camera data-icon="inline-start" />
-                  Capturar Foto
-                </Button>
-              </div>
-            </div>
-          )}
-        </TabsContent>
-
-        {/* Pestaña 2: Grabación de Audio */}
-        <TabsContent value="audio" className="flex flex-col gap-2.5 pt-2">
-          {audioStatus === 'IDLE' ? (
-            <div className="flex flex-wrap items-center gap-2">
+              )}
               <Button
                 type="button"
-                variant="secondary"
+                variant="ghost"
                 size="xs"
-                disabled={isProcessingFiles}
-                onClick={startAudioRecording}
+                onClick={stopActiveMedia}
               >
-                <Mic data-icon="inline-start" />
-                Grabar nota de audio
+                Cancelar
               </Button>
+            </div>
+
+            {cameraMode === 'VIDEO_PREVIEW' ? (
               <Button
                 type="button"
-                variant="outline"
                 size="xs"
-                disabled={isProcessingFiles}
-                onClick={() => audioInputRef.current?.click()}
-              >
-                <Upload data-icon="inline-start" />
-                Subir archivo de audio
-              </Button>
-              <span className="text-xs text-muted-foreground">
-                Máx. 2 min · Compresión Opus 96 kbps
-              </span>
-            </div>
-          ) : (
-            <div className="flex items-center justify-between gap-3 rounded-xl border border-primary/40 bg-primary/5 px-3 py-2.5">
-              <div className="flex items-center gap-2.5">
-                <span className="size-2.5 rounded-full bg-destructive animate-ping" />
-                <span className="font-mono tabular-nums text-xs font-semibold text-foreground">
-                  {formatDuration(audioSeconds)} / {formatDuration(MEDIA_LIMITS.MAX_AUDIO_SECONDS)}
-                </span>
-                <Badge variant="outline" className="text-xs">
-                  {audioStatus === 'PAUSED' ? 'En pausa' : 'Grabando voz...'}
-                </Badge>
-              </div>
-
-              <div className="flex items-center gap-1.5">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="xs"
-                  onClick={togglePauseAudio}
-                >
-                  {audioStatus === 'PAUSED' ? (
-                    <Play data-icon="inline-start" />
-                  ) : (
-                    <Pause data-icon="inline-start" />
-                  )}
-                  {audioStatus === 'PAUSED' ? 'Reanudar' : 'Pausar'}
-                </Button>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="xs"
-                  onClick={stopAudioRecording}
-                >
-                  <Square data-icon="inline-start" />
-                  Guardar audio
-                </Button>
-              </div>
-            </div>
-          )}
-        </TabsContent>
-
-        {/* Pestaña 3: Grabación de Video Corto */}
-        <TabsContent value="video" className="flex flex-col gap-2.5 pt-2">
-          {cameraMode !== 'VIDEO_PREVIEW' && cameraMode !== 'RECORDING_VIDEO' ? (
-            <div className="flex flex-wrap items-center gap-2">
-              <Button
-                type="button"
-                variant="secondary"
-                size="xs"
-                disabled={isProcessingFiles}
-                onClick={() => openVideoCamera()}
+                onClick={startVideoRecording}
               >
                 <Video data-icon="inline-start" />
-                Grabar video corto
+                <span>Iniciar grabación</span>
               </Button>
+            ) : (
               <Button
                 type="button"
-                variant="outline"
+                variant="destructive"
                 size="xs"
-                disabled={isProcessingFiles}
-                onClick={() => videoInputRef.current?.click()}
+                onClick={stopVideoRecording}
               >
-                <Upload data-icon="inline-start" />
-                Subir video
+                <Square data-icon="inline-start" />
+                <span>Detener y guardar</span>
               </Button>
-              <span className="text-xs text-muted-foreground">
-                Máx. 60s · Compresión 720p (~1.2 Mbps en cliente)
-              </span>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-2.5 rounded-xl border border-border bg-card p-2.5">
-              <div className="relative overflow-hidden rounded-lg bg-muted">
-                <video
-                  ref={videoPreviewRef}
-                  muted
-                  playsInline
-                  className="w-full max-h-56 object-cover"
-                />
-                <div className="absolute top-2 left-2 flex items-center gap-1.5">
-                  <Badge
-                    variant={cameraMode === 'RECORDING_VIDEO' ? 'destructive' : 'secondary'}
-                    className="gap-1.5 font-mono tabular-nums text-xs"
-                  >
-                    {cameraMode === 'RECORDING_VIDEO' && (
-                      <span className="size-2 rounded-full bg-background animate-pulse" />
-                    )}
-                    {formatDuration(recordingSeconds)} / {formatDuration(MEDIA_LIMITS.MAX_VIDEO_SECONDS)}
-                  </Badge>
-                  <Badge variant="outline" className="bg-background/80 text-xs font-mono tabular-nums">
-                    720p · 1.2 Mbps
-                  </Badge>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1.5">
-                  {cameraMode === 'VIDEO_PREVIEW' && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="xs"
-                      onClick={handleFlipCamera}
-                    >
-                      <RefreshCw data-icon="inline-start" />
-                      Rotar cámara
-                    </Button>
-                  )}
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="xs"
-                    onClick={stopActiveMedia}
-                  >
-                    Cancelar
-                  </Button>
-                </div>
-
-                {cameraMode === 'VIDEO_PREVIEW' ? (
-                  <Button
-                    type="button"
-                    size="xs"
-                    onClick={startVideoRecording}
-                  >
-                    <Video data-icon="inline-start" />
-                    Iniciar Grabación
-                  </Button>
-                ) : (
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="xs"
-                    onClick={stopVideoRecording}
-                  >
-                    <Square data-icon="inline-start" />
-                    Detener y Guardar Video
-                  </Button>
-                )}
-              </div>
-            </div>
-          )}
-        </TabsContent>
-      </Tabs>
+            )}
+          </div>
+        </div>
+      )}
 
       {mediaError && (
         <Alert variant="destructive">

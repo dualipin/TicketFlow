@@ -2,35 +2,25 @@ import React from 'react';
 import type { Ticket } from '../../api/types.ts';
 import { TicketStatusBadge } from './TicketStatusBadge.tsx';
 import { TicketStatusWorkflow } from './TicketStatusWorkflow.tsx';
-import { Badge } from '../ui/badge.tsx';
-import {
-  Phone,
-  Smartphone,
-  AlertCircle,
-  Image as ImageIcon,
-  Mic,
-  Video,
-} from 'lucide-react';
+import { Smartphone, KeyRound, Paperclip } from 'lucide-react';
 import { cn } from '../../lib/utils.ts';
 
 interface TicketCardProps {
   ticket: Ticket;
   onSelectTicket: (id: number) => void;
-  onRequestEntregaGuard?: (ticket: Ticket) => void;
   isSelected?: boolean;
 }
 
 const TicketCardComponent: React.FC<TicketCardProps> = ({
   ticket,
   onSelectTicket,
-  onRequestEntregaGuard,
   isSelected = false,
 }) => {
-  const hasPendingBalance = ticket.saldoPendiente > 0;
   const adjuntos = ticket.adjuntos ?? [];
-  const imgCount = adjuntos.filter((a) => a.tipo === 'IMAGEN').length;
-  const audCount = adjuntos.filter((a) => a.tipo === 'AUDIO').length;
-  const vidCount = adjuntos.filter((a) => a.tipo === 'VIDEO').length;
+  const fechaIngreso = new Date(ticket.createdAt).toLocaleDateString('es-MX', {
+    day: '2-digit',
+    month: 'short',
+  });
 
   return (
     <div
@@ -45,14 +35,14 @@ const TicketCardComponent: React.FC<TicketCardProps> = ({
         }
       }}
       className={cn(
-        'group relative flex flex-col justify-between p-4 rounded-xl border bg-card transition-all duration-150 cursor-pointer',
+        'group relative flex flex-col justify-between p-4 rounded-xl border bg-card transition-colors duration-150 cursor-pointer',
         'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
         isSelected
           ? 'border-primary ring-1 ring-primary/25 bg-primary/[0.02]'
-          : 'border-border hover:border-foreground/30 hover:shadow-2xs'
+          : 'border-border hover:border-foreground/30'
       )}
     >
-      {/* Top Header: Folio, Status Badge & Debt Tag */}
+      {/* Header: Folio, Status Badge & Entry Date */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <span className="font-mono text-sm font-semibold tracking-tight text-foreground shrink-0">
@@ -60,20 +50,14 @@ const TicketCardComponent: React.FC<TicketCardProps> = ({
           </span>
           <TicketStatusBadge estado={ticket.estado} size="sm" />
         </div>
-        {hasPendingBalance && ticket.estado === 'ENTREGADO' && (
-          <Badge
-            variant="outline"
-            className="gap-1 bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20 text-xs font-normal shrink-0"
-          >
-            <AlertCircle className="size-3" />
-            <span>Deudor</span>
-          </Badge>
-        )}
+        <span className="font-mono text-xs tabular-nums text-muted-foreground shrink-0">
+          {fechaIngreso}
+        </span>
       </div>
 
-      {/* Main Body: Device & Issue description */}
-      <div className="flex flex-col gap-2 my-2.5">
-        <div className="flex items-center gap-2 text-sm font-medium text-foreground tracking-tight">
+      {/* Body: Device & Reported Issue */}
+      <div className="flex flex-col gap-1.5 my-2.5">
+        <div className="flex items-center gap-1.5 text-sm font-medium text-foreground tracking-tight">
           <Smartphone className="size-4 text-muted-foreground shrink-0" />
           <span className="truncate">{ticket.dispositivo}</span>
         </div>
@@ -81,73 +65,40 @@ const TicketCardComponent: React.FC<TicketCardProps> = ({
         <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed break-words text-pretty">
           {ticket.falla}
         </p>
-
-        {/* Customer & Media Badges */}
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground pt-0.5">
-          <span className="font-medium text-foreground truncate max-w-[130px] sm:max-w-[170px] tracking-tight">
-            {ticket.cliente?.nombre ?? 'Cliente sin nombre'}
-          </span>
-          {ticket.cliente?.telefono && (
-            <span className="inline-flex items-center gap-1 font-mono tabular-nums text-muted-foreground shrink-0">
-              <Phone className="size-3" />
-              <span>{ticket.cliente.telefono}</span>
-            </span>
-          )}
-          {adjuntos.length > 0 && (
-            <div className="inline-flex items-center gap-1 shrink-0">
-              {imgCount > 0 && (
-                <Badge variant="secondary" className="gap-1 px-1.5 py-0 h-4.5 text-xs font-mono tabular-nums">
-                  <ImageIcon className="size-2.5" />
-                  <span>{imgCount}</span>
-                </Badge>
-              )}
-              {audCount > 0 && (
-                <Badge variant="secondary" className="gap-1 px-1.5 py-0 h-4.5 text-xs font-mono tabular-nums">
-                  <Mic className="size-2.5" />
-                  <span>{audCount}</span>
-                </Badge>
-              )}
-              {vidCount > 0 && (
-                <Badge variant="secondary" className="gap-1 px-1.5 py-0 h-4.5 text-xs font-mono tabular-nums">
-                  <Video className="size-2.5" />
-                  <span>{vidCount}</span>
-                </Badge>
-              )}
-            </div>
-          )}
-        </div>
       </div>
 
-      {/* Footer: Financials and Contextual Status Workflow */}
-      <div className="pt-2.5 border-t border-border/60 flex flex-wrap items-center justify-between gap-2.5">
-        {/* Balances */}
-        <div className="flex items-center gap-3 text-xs">
-          <div className="flex items-center gap-1 text-muted-foreground">
-            <span>Total:</span>
-            <span className="font-mono tabular-nums font-semibold text-foreground">
-              {ticket.costoTotal}
-            </span>
-          </div>
+      {/* Footer: Client, PIN, Media Count & Workshop Action */}
+      <div className="pt-2.5 border-t border-border/60 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0 text-xs text-muted-foreground">
+          <span className="truncate max-w-[120px] font-medium text-foreground/80">
+            {ticket.cliente?.nombre ?? 'Sin cliente'}
+          </span>
 
-          <div
-            className={cn(
-              'flex items-center gap-1 font-mono tabular-nums',
-              hasPendingBalance
-                ? 'font-semibold text-amber-600 dark:text-amber-400'
-                : 'font-normal text-muted-foreground'
-            )}
-          >
-            <span className="font-sans text-muted-foreground">Resta:</span>
-            <span>{ticket.saldoPendiente}</span>
-          </div>
+          {ticket.contrasena && (
+            <span
+              className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-foreground shrink-0"
+              title="PIN / Contraseña"
+            >
+              <KeyRound className="size-3 text-muted-foreground" />
+              <span>{ticket.contrasena}</span>
+            </span>
+          )}
+
+          {adjuntos.length > 0 && (
+            <span
+              className="inline-flex items-center gap-1 font-mono tabular-nums text-xs text-muted-foreground shrink-0"
+              title={`${adjuntos.length} evidencia(s) adjunta(s)`}
+            >
+              <Paperclip className="size-3" />
+              <span>{adjuntos.length}</span>
+            </span>
+          )}
         </div>
 
-        {/* Linear Forward-Step + Overflow Menu */}
         <TicketStatusWorkflow
           ticketId={ticket.id}
           currentStatus={ticket.estado}
-          saldoPendiente={ticket.saldoPendiente}
-          onRequestEntregaGuard={() => onRequestEntregaGuard?.(ticket)}
+          workshopOnly
         />
       </div>
     </div>

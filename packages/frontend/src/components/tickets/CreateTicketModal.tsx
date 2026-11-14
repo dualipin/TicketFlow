@@ -9,6 +9,7 @@ import { TicketMediaCapture } from './TicketMediaCapture.tsx';
 import { Button } from '../ui/button.tsx';
 import { Input } from '../ui/input.tsx';
 import { Textarea } from '../ui/textarea.tsx';
+import { Separator } from '../ui/separator.tsx';
 import {
   Dialog,
   DialogContent,
@@ -17,12 +18,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '../ui/dialog.tsx';
-import {
-  Field,
-  FieldLabel,
-  FieldSet,
-  FieldLegend,
-} from '../ui/field.tsx';
+import { Field, FieldGroup, FieldLabel } from '../ui/field.tsx';
 import {
   Select,
   SelectTrigger,
@@ -34,8 +30,8 @@ import {
 import { Alert, AlertDescription } from '../ui/alert.tsx';
 import { Spinner } from '../ui/spinner.tsx';
 import { toast } from 'sonner';
-import { Smartphone, User, DollarSign, Plus, Check, Camera } from 'lucide-react';
-import type { MetodoPago, TicketAdjunto } from '../../api/types.ts';
+import { Check } from 'lucide-react';
+import type { TicketAdjunto } from '../../api/types.ts';
 
 interface CreateTicketModalProps {
   isOpen: boolean;
@@ -62,10 +58,20 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
   const [contrasena, setContrasena] = useState('');
   const [accesorios, setAccesorios] = useState('');
   const [costoTotal, setCostoTotal] = useState('');
-  const [anticipo, setAnticipo] = useState('');
-  const [metodoPago, setMetodoPago] = useState<MetodoPago>('EFECTIVO');
-  const [notaInicial, setNotaInicial] = useState('Equipo recibido en mostrador para revisión general');
   const [adjuntos, setAdjuntos] = useState<TicketAdjunto[]>([]);
+
+  const resetForm = () => {
+    setUseExistingClient(false);
+    setSelectedClienteId(undefined);
+    setNombreCliente('');
+    setTelefonoCliente('');
+    setDispositivo('');
+    setFalla('');
+    setContrasena('');
+    setAccesorios('');
+    setCostoTotal('');
+    setAdjuntos([]);
+  };
 
   const handleCloseWithCleanup = () => {
     if (adjuntos.length > 0) {
@@ -80,6 +86,7 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!dispositivo.trim() || !falla.trim()) return;
+    if (useExistingClient && !selectedClienteId) return;
 
     createTicket.mutate(
       {
@@ -91,23 +98,20 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
         contrasena: contrasena.trim() || undefined,
         accesorios: accesorios.trim() || undefined,
         costoTotal: Number(costoTotal) || 0,
-        anticipo: Number(anticipo) || 0,
-        metodoPago,
-        usuarioId: currentUser?.id ?? 3,
-        notaInicial: notaInicial.trim() || undefined,
+        usuarioId: currentUser?.id ?? 2,
         adjuntoIds: adjuntos.map((a) => a.id),
       },
       {
         onSuccess: (newTicket) => {
-          toast.success(`Orden creada con éxito`, {
+          toast.success('Orden creada con éxito', {
             description: `Folio ${newTicket.folio} - ${newTicket.dispositivo}`,
           });
-          setAdjuntos([]);
+          resetForm();
           onClose();
           onCreated?.(newTicket.id);
         },
         onError: (err: any) => {
-          toast.error(`Error al abrir orden`, {
+          toast.error('Error al abrir orden', {
             description: err?.message || 'No se pudo crear el ticket.',
           });
         },
@@ -119,244 +123,180 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleCloseWithCleanup()}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-hidden flex flex-col p-6">
         <DialogHeader>
-          <div className="flex items-center gap-2">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Plus className="size-4" />
-            </div>
-            <div>
-              <DialogTitle className="text-base font-semibold tracking-tight text-balance">
-                Recepción de Equipo (Nuevo Ticket)
-              </DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground text-pretty">
-                Registra la falla y datos para iniciar el flujo de taller
-              </DialogDescription>
-            </div>
-          </div>
+          <DialogTitle className="text-base font-semibold tracking-tight text-balance">
+            Nuevo Ticket de Taller
+          </DialogTitle>
+          <DialogDescription className="text-xs text-muted-foreground text-pretty">
+            Registra cliente, falla del equipo y evidencias de recepción
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto flex flex-col gap-4 py-2 pr-1">
-          {/* Client Section */}
-          <FieldSet className="rounded-lg bg-muted/20 p-3 border border-border/60 gap-3">
-            <div className="flex items-center justify-between">
-              <FieldLegend className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-0">
-                <User className="size-3.5 text-primary" />
-                Datos del Cliente
-              </FieldLegend>
+          <FieldGroup className="flex flex-col gap-4">
+            {/* Client Section */}
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs font-semibold text-foreground">
+                  Cliente
+                </span>
+                {existingClientes && existingClientes.length > 0 && (
+                  <Button
+                    type="button"
+                    variant="link"
+                    size="xs"
+                    onClick={() => setUseExistingClient(!useExistingClient)}
+                    className="h-auto p-0 text-xs font-medium"
+                  >
+                    {useExistingClient ? '+ Registrar cliente nuevo' : 'Seleccionar cliente existente'}
+                  </Button>
+                )}
+              </div>
 
-              {existingClientes && existingClientes.length > 0 && (
-                <Button
-                  type="button"
-                  variant="link"
-                  size="xs"
-                  onClick={() => setUseExistingClient(!useExistingClient)}
-                  className="h-auto p-0 text-xs font-medium"
-                >
-                  {useExistingClient ? '+ Registrar cliente nuevo' : 'Seleccionar cliente existente'}
-                </Button>
+              {useExistingClient ? (
+                <Field>
+                  <FieldLabel htmlFor="cliente-select" className="text-xs">
+                    Cliente Registrado
+                  </FieldLabel>
+                  <Select
+                    value={selectedClienteId ? String(selectedClienteId) : ''}
+                    onValueChange={(val) => setSelectedClienteId(val ? Number(val) : undefined)}
+                  >
+                    <SelectTrigger id="cliente-select" className="w-full">
+                      <SelectValue placeholder="Selecciona un cliente de la lista..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {existingClientes?.map((c) => (
+                          <SelectItem key={c.id} value={String(c.id)}>
+                            {c.nombre} ({c.telefono})
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </Field>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Field>
+                    <FieldLabel htmlFor="nombre-cliente" className="text-xs">
+                      Nombre Completo
+                    </FieldLabel>
+                    <Input
+                      id="nombre-cliente"
+                      required
+                      placeholder="Ej. Juan Pérez"
+                      value={nombreCliente}
+                      onChange={(e) => setNombreCliente(e.target.value)}
+                    />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="telefono-cliente" className="text-xs">
+                      Teléfono
+                    </FieldLabel>
+                    <Input
+                      id="telefono-cliente"
+                      type="tel"
+                      required
+                      placeholder="5512345678"
+                      value={telefonoCliente}
+                      onChange={(e) => setTelefonoCliente(e.target.value)}
+                    />
+                  </Field>
+                </div>
               )}
             </div>
 
-            {useExistingClient ? (
+            <Separator />
+
+            {/* Device & Issue Section */}
+            <div className="flex flex-col gap-3">
+              <span className="text-xs font-semibold text-foreground">
+                Equipo y Falla
+              </span>
+
               <Field>
-                <FieldLabel htmlFor="cliente-select" className="text-xs">
-                  Cliente Registrado
+                <FieldLabel htmlFor="dispositivo" className="text-xs">
+                  Dispositivo / Modelo
                 </FieldLabel>
-                <Select
-                  value={selectedClienteId ? String(selectedClienteId) : ''}
-                  onValueChange={(val) => setSelectedClienteId(val ? Number(val) : undefined)}
-                >
-                  <SelectTrigger id="cliente-select" className="w-full">
-                    <SelectValue placeholder="Selecciona un cliente de la lista..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {existingClientes?.map((c) => (
-                        <SelectItem key={c.id} value={String(c.id)}>
-                          {c.nombre} ({c.telefono})
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                <Input
+                  id="dispositivo"
+                  required
+                  placeholder="Ej. iPhone 13 Pro Max, Laptop Dell Inspiron 15"
+                  value={dispositivo}
+                  onChange={(e) => setDispositivo(e.target.value)}
+                />
               </Field>
-            ) : (
-              <div className="grid grid-cols-2 gap-3">
+
+              <Field>
+                <FieldLabel htmlFor="falla" className="text-xs">
+                  Falla reportada
+                </FieldLabel>
+                <Textarea
+                  id="falla"
+                  required
+                  rows={2}
+                  placeholder="Descripción de la falla observada..."
+                  value={falla}
+                  onChange={(e) => setFalla(e.target.value)}
+                  className="resize-none"
+                />
+              </Field>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <Field>
-                  <FieldLabel htmlFor="nombre-cliente" className="text-xs">
-                    Nombre Completo
+                  <FieldLabel htmlFor="contrasena" className="text-xs">
+                    PIN / Contraseña
                   </FieldLabel>
                   <Input
-                    id="nombre-cliente"
-                    required
-                    placeholder="Ej. Juan Pérez"
-                    value={nombreCliente}
-                    onChange={(e) => setNombreCliente(e.target.value)}
+                    id="contrasena"
+                    placeholder="PIN o patrón"
+                    value={contrasena}
+                    onChange={(e) => setContrasena(e.target.value)}
                   />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="telefono-cliente" className="text-xs">
-                    Teléfono (WhatsApp)
+                  <FieldLabel htmlFor="accesorios" className="text-xs">
+                    Accesorios
                   </FieldLabel>
                   <Input
-                    id="telefono-cliente"
-                    type="tel"
-                    required
-                    placeholder="52155..."
-                    value={telefonoCliente}
-                    onChange={(e) => setTelefonoCliente(e.target.value)}
+                    id="accesorios"
+                    placeholder="Funda, cargador..."
+                    value={accesorios}
+                    onChange={(e) => setAccesorios(e.target.value)}
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="costo-total" className="text-xs">
+                    Costo estimado ($)
+                  </FieldLabel>
+                  <Input
+                    id="costo-total"
+                    type="number"
+                    min="0"
+                    step="0.5"
+                    placeholder="0.00"
+                    value={costoTotal}
+                    onChange={(e) => setCostoTotal(e.target.value)}
+                    className="font-mono tabular-nums"
                   />
                 </Field>
               </div>
-            )}
-          </FieldSet>
-
-          {/* Device and Problem */}
-          <FieldSet className="rounded-lg bg-muted/20 p-3 border border-border/60 gap-3">
-            <FieldLegend className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-0">
-              <Smartphone className="size-3.5 text-primary" />
-              Dispositivo y Falla
-            </FieldLegend>
-
-            <Field>
-              <FieldLabel htmlFor="dispositivo" className="text-xs">
-                Dispositivo / Modelo
-              </FieldLabel>
-              <Input
-                id="dispositivo"
-                required
-                placeholder="Ej. iPhone 13 Pro Max Azul, Laptop Dell Inspiron 15"
-                value={dispositivo}
-                onChange={(e) => setDispositivo(e.target.value)}
-              />
-            </Field>
-
-            <Field>
-              <FieldLabel htmlFor="falla" className="text-xs">
-                Falla reportada
-              </FieldLabel>
-              <Textarea
-                id="falla"
-                required
-                rows={2}
-                placeholder="Descripción detallada de la falla observada por el cliente..."
-                value={falla}
-                onChange={(e) => setFalla(e.target.value)}
-                className="resize-none"
-              />
-            </Field>
-
-            <div className="grid grid-cols-2 gap-3">
-              <Field>
-                <FieldLabel htmlFor="contrasena" className="text-xs">
-                  PIN / Contraseña
-                </FieldLabel>
-                <Input
-                  id="contrasena"
-                  placeholder="PIN o patrón"
-                  value={contrasena}
-                  onChange={(e) => setContrasena(e.target.value)}
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="accesorios" className="text-xs">
-                  Accesorios dejados
-                </FieldLabel>
-                <Input
-                  id="accesorios"
-                  placeholder="Funda, cargador, etc."
-                  value={accesorios}
-                  onChange={(e) => setAccesorios(e.target.value)}
-                />
-              </Field>
             </div>
-          </FieldSet>
 
-          {/* Evidencias Multimedia (Fotos, Audio y Video) */}
-          <FieldSet className="rounded-lg bg-muted/20 p-3 border border-border/60 gap-3">
-            <FieldLegend className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-0">
-              <Camera className="size-3.5 text-primary" />
-              Evidencias Multimedia (Imágenes, Audio y Video)
-            </FieldLegend>
-            <TicketMediaCapture
-              adjuntos={adjuntos}
-              onChange={setAdjuntos}
-            />
-          </FieldSet>
+            <Separator />
 
-          {/* Pricing and Advance Payment */}
-          <FieldSet className="rounded-lg bg-muted/20 p-3 border border-border/60 gap-3">
-            <FieldLegend className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-0">
-              <DollarSign className="size-3.5 text-emerald-600 dark:text-emerald-400" />
-              Presupuesto y Anticipo
-            </FieldLegend>
-
-            <div className="grid grid-cols-3 gap-3">
-              <Field>
-                <FieldLabel htmlFor="costo-total" className="text-xs">
-                  Cotización ($)
-                </FieldLabel>
-                <Input
-                  id="costo-total"
-                  type="number"
-                  min="0"
-                  step="0.5"
-                  placeholder="0.00"
-                  value={costoTotal}
-                  onChange={(e) => setCostoTotal(e.target.value)}
-                  className="font-mono tabular-nums font-semibold"
-                />
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="anticipo" className="text-xs">
-                  Anticipo ($)
-                </FieldLabel>
-                <Input
-                  id="anticipo"
-                  type="number"
-                  min="0"
-                  step="0.5"
-                  placeholder="0.00"
-                  value={anticipo}
-                  onChange={(e) => setAnticipo(e.target.value)}
-                  className="font-mono tabular-nums font-semibold text-emerald-600 dark:text-emerald-400"
-                />
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="metodo-pago" className="text-xs">
-                  Método de Pago
-                </FieldLabel>
-                <Select
-                  value={metodoPago}
-                  onValueChange={(val) => setMetodoPago(val as MetodoPago)}
-                >
-                  <SelectTrigger id="metodo-pago" className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="EFECTIVO">Efectivo</SelectItem>
-                      <SelectItem value="TARJETA">Tarjeta</SelectItem>
-                      <SelectItem value="TRANSFERENCIA">Transferencia</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </Field>
+            {/* Media Evidence Section */}
+            <div className="flex flex-col gap-2.5">
+              <span className="text-xs font-semibold text-foreground">
+                Evidencias
+              </span>
+              <TicketMediaCapture
+                adjuntos={adjuntos}
+                onChange={setAdjuntos}
+                compact
+              />
             </div>
-          </FieldSet>
-
-          {/* Initial Bitácora note */}
-          <Field>
-            <FieldLabel htmlFor="nota-inicial" className="text-xs">
-              Nota inicial de recepción
-            </FieldLabel>
-            <Input
-              id="nota-inicial"
-              value={notaInicial}
-              onChange={(e) => setNotaInicial(e.target.value)}
-            />
-          </Field>
+          </FieldGroup>
 
           {createTicket.isError && (
             <Alert variant="destructive">
@@ -376,7 +316,7 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
               type="submit"
               size="sm"
               disabled={createTicket.isPending}
-              className="gap-1.5 rounded-lg"
+              className="rounded-lg"
             >
               {createTicket.isPending ? (
                 <Spinner data-icon="inline-start" />

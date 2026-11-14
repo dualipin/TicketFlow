@@ -204,7 +204,6 @@ flowchart TD
 - **Left Cluster:** `SidebarTrigger` toggle button, vertical separator, and active route title with module icon.
 - **Right Cluster:**
   - **Live Cash Drawer Pill:** Real-time shift indicator with green checkmark, Shift ID, and animated currency calculation via `<NumberFlow />`.
-  - **PWA Install Action:** Appears automatically when the browser detects installability.
   - **ModeToggle:** Instant theme cycling between Dark, Light, and System modes.
   - **User Lock Action:** One-click screen lock for operator handoff.
 

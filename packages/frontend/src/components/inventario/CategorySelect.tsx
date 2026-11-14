@@ -57,19 +57,19 @@ export const CategorySelect: React.FC<CategorySelectProps> = ({
 
   return (
     <Field data-invalid={Boolean(error)}>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <FieldLabel htmlFor="categoria-select" className="text-xs font-medium">
           Categoría {required && <span className="text-destructive">*</span>}
         </FieldLabel>
         <Button
           type="button"
           variant="link"
-          size="xs"
+          size="sm"
           onClick={() => {
             setIsCreatingNew(!isCreatingNew);
             setNewCatNombre('');
           }}
-          className="h-auto p-0 text-[11px] text-primary"
+          className="px-2 text-xs text-primary"
         >
           {isCreatingNew ? (
             <span className="flex items-center gap-1">
@@ -101,16 +101,15 @@ export const CategorySelect: React.FC<CategorySelectProps> = ({
                 }
               }}
               autoFocus
-              className="text-xs"
             />
-            <InputGroupAddon align="inline-end">
+            <InputGroupAddon align="inline-end" className="py-0 pr-1">
               <Button
                 type="button"
-                size="xs"
+                size="sm"
                 variant="default"
                 disabled={createCategoria.isPending || !newCatNombre.trim()}
                 onClick={handleSaveNewCategory}
-                className="h-6 px-2 text-xs"
+                className="px-2.5 text-xs"
               >
                 {createCategoria.isPending ? (
                   <Spinner data-icon="inline-start" />
@@ -121,7 +120,7 @@ export const CategorySelect: React.FC<CategorySelectProps> = ({
               </Button>
             </InputGroupAddon>
           </InputGroup>
-          <FieldDescription className="text-[11px]">
+          <FieldDescription className="text-xs">
             Escribe el nombre de la nueva categoría y presiona Enter o "Crear".
           </FieldDescription>
         </div>

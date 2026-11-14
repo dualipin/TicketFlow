@@ -243,7 +243,7 @@ export const EditProductoModal: React.FC<EditProductoModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center gap-2">
             <div className="p-2 rounded-lg bg-primary/10 text-primary">
@@ -302,7 +302,6 @@ export const EditProductoModal: React.FC<EditProductoModalProps> = ({
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
                 aria-invalid={Boolean(errors.nombre)}
-                className="text-xs"
               />
               {errors.nombre && <FieldError>{errors.nombre}</FieldError>}
             </Field>
@@ -332,19 +331,19 @@ export const EditProductoModal: React.FC<EditProductoModalProps> = ({
                 rows={2}
                 value={descripcion}
                 onChange={(e) => setDescripcion(e.target.value)}
-                className="text-xs resize-none"
+                className="resize-none"
               />
             </Field>
           </FieldGroup>
 
           {/* 3. Variaciones & Precios */}
           {esServicio === 0 && (
-            <div className="flex items-center justify-between p-3 rounded-lg border border-border bg-card/60">
+            <div className="flex items-center justify-between gap-3 p-3 rounded-lg border border-border bg-card/60">
               <div className="flex flex-col gap-0.5">
                 <span className="text-xs font-medium text-foreground flex items-center gap-1.5">
                   <Boxes className="size-3.5 text-primary" /> Múltiples Variantes
                 </span>
-                <span className="text-[11px] text-muted-foreground">
+                <span className="text-xs text-muted-foreground">
                   Habilita si el producto tiene varios modelos, colores o calidades.
                 </span>
               </div>
@@ -371,22 +370,23 @@ export const EditProductoModal: React.FC<EditProductoModalProps> = ({
                     value={skuSimple}
                     onChange={(e) => setSkuSimple(e.target.value)}
                     aria-invalid={Boolean(errors.skuSimple)}
-                    className="text-xs font-mono uppercase"
+                    className="font-mono uppercase"
                   />
-                  <InputGroupAddon align="inline-end">
+                  <InputGroupAddon align="inline-end" className="py-0 pr-1">
                     <Button
                       type="button"
                       variant="ghost"
-                      size="icon-xs"
+                      size="icon-sm"
                       onClick={() => setSkuSimple(generateSku(esServicio ? 'SRV' : 'SKU'))}
                       title="Generar SKU"
-                      className="size-6 text-muted-foreground hover:text-foreground"
+                      aria-label="Generar SKU"
+                      className="text-muted-foreground hover:text-foreground"
                     >
-                      <Sparkles className="size-3 text-primary" />
+                      <Sparkles className="text-primary" />
                     </Button>
                   </InputGroupAddon>
                 </InputGroup>
-                <FieldDescription className="text-[10px]">
+                <FieldDescription className="text-xs">
                   Compatible con lector USB o auto-generable.
                 </FieldDescription>
               </Field>
@@ -407,7 +407,7 @@ export const EditProductoModal: React.FC<EditProductoModalProps> = ({
                     value={precioSimple}
                     onChange={(e) => setPrecioSimple(e.target.value)}
                     aria-invalid={Boolean(errors.precioSimple)}
-                    className="text-xs font-mono"
+                    className="font-mono"
                   />
                 </InputGroup>
                 {errors.precioSimple && <FieldError>{errors.precioSimple}</FieldError>}
@@ -426,7 +426,7 @@ export const EditProductoModal: React.FC<EditProductoModalProps> = ({
                     value={stockSimple}
                     onChange={(e) => setStockSimple(e.target.value)}
                     aria-invalid={Boolean(errors.stockSimple)}
-                    className="text-xs font-mono"
+                    className="font-mono"
                   />
                   {errors.stockSimple && <FieldError>{errors.stockSimple}</FieldError>}
                 </Field>
@@ -437,16 +437,16 @@ export const EditProductoModal: React.FC<EditProductoModalProps> = ({
           {/* Modo Múltiples Variantes */}
           {esServicio === 0 && tieneVariantes && (
             <div className="flex flex-col gap-2.5 p-3 bg-muted/20 rounded-lg border border-border">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="text-xs font-semibold text-foreground">
                   Lista de Variantes ({variantes.length})
                 </span>
                 <Button
                   type="button"
                   variant="outline"
-                  size="xs"
+                  size="sm"
                   onClick={handleAddVariantRow}
-                  className="h-7 text-xs flex items-center gap-1"
+                  className="text-xs"
                 >
                   <Plus data-icon="inline-start" /> Añadir variante
                 </Button>
@@ -458,47 +458,48 @@ export const EditProductoModal: React.FC<EditProductoModalProps> = ({
                     key={v.localId}
                     className="grid grid-cols-12 gap-2 items-center p-2 rounded-md bg-card border border-border"
                   >
-                    <div className="col-span-4">
+                    <div className="col-span-12 sm:col-span-4">
                       <Input
                         placeholder="Nombre de variante"
                         value={v.nombre}
                         onChange={(e) => handleVariantChange(v.localId, 'nombre', e.target.value)}
-                        className="text-xs h-7"
+                        className="h-8"
                       />
                       {errors[`variant_nombre_${v.localId}`] && (
-                        <span className="text-[10px] text-destructive block mt-0.5">
+                        <span className="text-xs text-destructive block mt-0.5">
                           {errors[`variant_nombre_${v.localId}`]}
                         </span>
                       )}
                     </div>
 
-                    <div className="col-span-3">
+                    <div className="col-span-12 sm:col-span-3">
                       <div className="relative flex items-center">
                         <Input
                           placeholder="SKU"
                           value={v.codigo}
                           onChange={(e) => handleVariantChange(v.localId, 'codigo', e.target.value)}
-                          className="text-xs h-7 font-mono uppercase pr-6"
+                          className="h-8 font-mono uppercase pr-9"
                         />
                         <Button
                           type="button"
                           variant="ghost"
-                          size="icon-xs"
+                          size="icon-sm"
                           onClick={() => handleVariantChange(v.localId, 'codigo', generateSku('SKU'))}
                           title="Generar SKU"
-                          className="absolute right-0.5 top-1/2 -translate-y-1/2 size-6 text-muted-foreground hover:text-primary"
+                          aria-label="Generar SKU"
+                          className="absolute right-0 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary"
                         >
-                          <Sparkles className="size-3" />
+                          <Sparkles />
                         </Button>
                       </div>
                       {errors[`variant_sku_${v.localId}`] && (
-                        <span className="text-[10px] text-destructive block mt-0.5">
+                        <span className="text-xs text-destructive block mt-0.5">
                           {errors[`variant_sku_${v.localId}`]}
                         </span>
                       )}
                     </div>
 
-                    <div className="col-span-2">
+                    <div className="col-span-5 sm:col-span-2">
                       <Input
                         type="number"
                         step="0.01"
@@ -506,11 +507,11 @@ export const EditProductoModal: React.FC<EditProductoModalProps> = ({
                         placeholder="Precio $"
                         value={v.precioBase}
                         onChange={(e) => handleVariantChange(v.localId, 'precioBase', e.target.value)}
-                        className="text-xs h-7 font-mono"
+                        className="h-8 font-mono"
                       />
                     </div>
 
-                    <div className="col-span-2">
+                    <div className="col-span-5 sm:col-span-2">
                       <Input
                         type="number"
                         step="1"
@@ -518,20 +519,21 @@ export const EditProductoModal: React.FC<EditProductoModalProps> = ({
                         placeholder="Stock"
                         value={v.stock}
                         onChange={(e) => handleVariantChange(v.localId, 'stock', e.target.value)}
-                        className="text-xs h-7 font-mono"
+                        className="h-8 font-mono"
                       />
                     </div>
 
-                    <div className="col-span-1 flex justify-center">
+                    <div className="col-span-2 sm:col-span-1 flex justify-end sm:justify-center">
                       <Button
                         type="button"
                         variant="ghost"
-                        size="icon-xs"
+                        size="icon-sm"
                         disabled={variantes.length <= 1}
                         onClick={() => handleRemoveVariantRow(v.localId)}
-                        className="size-6 text-muted-foreground hover:text-destructive"
+                        aria-label="Eliminar variante"
+                        className="text-muted-foreground hover:text-destructive"
                       >
-                        <Trash2 className="size-3" />
+                        <Trash2 />
                       </Button>
                     </div>
                   </div>

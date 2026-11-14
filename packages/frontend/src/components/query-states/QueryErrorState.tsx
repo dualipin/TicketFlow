@@ -37,12 +37,12 @@ export const QueryErrorState: React.FC<QueryErrorStateProps> = ({
       <ServerCrash className="size-5 shrink-0" />
 
       <div className="flex-1 flex flex-col gap-2">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <AlertTitle className="text-sm font-semibold">{title}</AlertTitle>
           {isSimulated && (
             <Badge
               variant="outline"
-              className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 text-[10px]"
+              className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 text-xs"
             >
               Simulación Demo
             </Badge>

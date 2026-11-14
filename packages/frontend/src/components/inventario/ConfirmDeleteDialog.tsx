@@ -66,7 +66,7 @@ export const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
             Esta acción evaluará el historial contable de{' '}
             <strong className="text-foreground">{producto.nombre}</strong>:
           </p>
-          <ul className="list-disc list-inside flex flex-col gap-1 bg-muted/40 p-2.5 rounded-lg border border-border text-[11px]">
+          <ul className="list-disc list-inside flex flex-col gap-1 bg-muted/40 p-2.5 rounded-lg border border-border text-xs">
             <li>
               Si ya cuenta con ventas en el Punto de Venta, se{' '}
               <strong className="text-foreground">archivará</strong> de forma segura para

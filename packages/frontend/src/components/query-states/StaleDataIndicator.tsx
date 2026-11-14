@@ -51,12 +51,12 @@ export const StaleDataIndicator: React.FC<StaleDataIndicatorProps> = ({
               {isStale ? 'Estado: En caché (Obsoleto / Stale)' : 'Estado: En caché (Fresco / Fresh)'}
             </span>
             {queryKeySummary && (
-              <span className="font-mono text-[10px] text-muted-foreground">
+              <span className="font-mono text-xs text-muted-foreground">
                 [{queryKeySummary}]
               </span>
             )}
           </div>
-          <span className="text-[10px] text-muted-foreground">
+          <span className="text-xs text-muted-foreground">
             {formattedTime
               ? `Última sincronización: ${formattedTime}`
               : 'Sin marca de tiempo registrada'}
@@ -67,12 +67,15 @@ export const StaleDataIndicator: React.FC<StaleDataIndicatorProps> = ({
       {onRefetch && (
         <Button
           variant="outline"
-          size="xs"
+          size="sm"
           onClick={onRefetch}
           disabled={isFetching}
-          className="gap-1 border-current/30 text-[10px] hover:bg-current/10"
+          className="border-current/30 text-xs hover:bg-current/10"
         >
-          <RotateCw className={cn('size-2.5', isFetching && 'animate-spin')} />
+          <RotateCw
+            data-icon="inline-start"
+            className={cn(isFetching && 'animate-spin')}
+          />
           Refrescar ahora
         </Button>
       )}

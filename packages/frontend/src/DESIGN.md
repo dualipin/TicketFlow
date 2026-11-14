@@ -40,7 +40,7 @@ seo:
       answer: "TicketFlow uses 100% free, standard open-source shadcn/ui built on `@base-ui/react` primitives (base-mira style). There are zero dependencies on paid kits or closed registries. All dashboard components (`AppSidebar`, `SiteHeader`, `SectionCards`, `sidebar.tsx`) are local, customizable code in the repository."
     - id: "typography"
       title: "What typography does TicketFlow use?"
-      answer: "Inter Variable is the primary sans-serif font across UI and display headings with tight tracking (`-0.25px` body, down to `-1.0px` on headlines). Monospace type (JetBrains Mono / Geist Mono) is strictly reserved for ticket folios (`#TK-1001`), barcodes, monetary figures, and keyboard shortcuts."
+      answer: "Nunito Sans Variable (body) and Geist Variable (headings) are paired with a responsive root `rem` scale (`17px` mobile, `18px` desktop >= 768px) and natural body tracking (`0` on body, with tighter tracking `-0.2px` to `-0.6px` reserved for headings). Monospace type (JetBrains Mono / Geist Mono) is strictly reserved for ticket folios (`#TK-1001`), barcodes, monetary figures, and keyboard shortcuts."
 
 colors:
   # Base Neutral Scale (OKLCH)
@@ -132,11 +132,11 @@ typography:
     lineHeight: 1.40
     letterSpacing: -0.2px
   body:
-    fontFamily: Inter Variable, -apple-system, sans-serif
-    fontSize: 16px
+    fontFamily: Nunito Sans Variable, -apple-system, sans-serif
+    fontSize: "1rem (17px mobile / 18px >= 768px)"
     fontWeight: 400
     lineHeight: 1.50
-    letterSpacing: -0.25px
+    letterSpacing: 0
   body-sm:
     fontFamily: Inter Variable, -apple-system, sans-serif
     fontSize: 14px
@@ -255,7 +255,7 @@ Saturated chromatic colors are strictly reserved for data visualization and stat
 
 ### Buttons ([`button.tsx`](file:///c:/Users/dualipin/Projects/ticketflow/packages/frontend/src/components/ui/button.tsx))
 - Built on `@base-ui/react/button` with `class-variance-authority`.
-- Standard sizes: `h-8` (default), `h-7` (sm), `h-6` (xs), `h-9.5` (lg).
+- Standard sizes: `h-9` (default), `h-8` (sm), `h-8 sm:h-7` (xs), `h-10` (lg).
 - Variants: `default` (high-contrast pill), `outline` (border-border), `ghost`, `secondary`, `destructive`.
 - Focus ring: `focus-visible:ring-2 focus-visible:ring-ring/30`.
 
@@ -276,7 +276,7 @@ Saturated chromatic colors are strictly reserved for data visualization and stat
 - Use **container query classes** (`@container/main`, `@container/card`) for cards and layout blocks that must adapt to sidebar expansion.
 - Import icons exclusively from `lucide-react` using `data-icon="inline-start"` or `data-icon="inline-end"` inside buttons.
 - Use `flex` / `grid` with `gap-*` for all spatial layout.
-- Maintain `16px` base root font size (`1rem = 16px`).
+- Maintain the responsive root `rem` scale (`17px` mobile, `18px` at `>= 768px`) without global negative body letter-spacing.
 
 ### Don't
 - **Never add paid third-party registries to `components.json`**. TicketFlow is 100% free and uses standard open-source shadcn/ui.

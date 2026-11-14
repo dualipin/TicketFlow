@@ -145,9 +145,9 @@ export const HistorialCortesTable: React.FC<HistorialCortesTableProps> = memo(
                         <Button
                           type="button"
                           variant="ghost"
-                          size="xs"
+                          size="sm"
                           onClick={() => onSelectCorteZ(c)}
-                          className="h-7 text-xs font-sans text-muted-foreground hover:text-primary"
+                          className="text-xs font-sans text-muted-foreground hover:text-primary"
                           title="Ver o imprimir comprobante Corte Z"
                         >
                           <Receipt data-icon="inline-start" />

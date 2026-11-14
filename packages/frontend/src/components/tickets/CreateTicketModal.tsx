@@ -143,9 +143,9 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({
                   <Button
                     type="button"
                     variant="link"
-                    size="xs"
+                    size="sm"
                     onClick={() => setUseExistingClient(!useExistingClient)}
-                    className="h-auto p-0 text-xs font-medium"
+                    className="min-h-8 h-auto px-1.5 py-1 text-xs font-medium"
                   >
                     {useExistingClient ? '+ Registrar cliente nuevo' : 'Seleccionar cliente existente'}
                   </Button>

@@ -116,11 +116,11 @@ export const PosCustomerCombobox: React.FC<PosCustomerComboboxProps> = ({
                       e.stopPropagation();
                       onSelectCliente(null);
                     }}
-                    className="p-1 rounded-sm text-muted-foreground hover:text-foreground"
+                    className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground"
                     title="Quitar cliente seleccionado"
                     aria-label="Quitar cliente seleccionado"
                   >
-                    <X className="size-3.5" />
+                    <X className="size-4" />
                   </button>
                 )}
                 <ChevronsUpDown className="size-4 text-muted-foreground" />
@@ -138,7 +138,7 @@ export const PosCustomerCombobox: React.FC<PosCustomerComboboxProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar por nombre o teléfono..."
-              className="pl-8 text-xs h-9"
+              className="pl-8 h-9"
               aria-label="Filtrar clientes"
             />
           </div>

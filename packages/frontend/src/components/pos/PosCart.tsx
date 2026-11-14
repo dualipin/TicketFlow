@@ -114,13 +114,13 @@ export const PosCart: React.FC<PosCartProps> = ({
                           <Button
                             type="button"
                             variant="ghost"
-                            size="sm"
+                            size="icon-sm"
                             onClick={() => onDeleteHeldCart(h.id)}
-                            className="size-7 p-0 text-muted-foreground hover:text-destructive"
+                            className="text-muted-foreground hover:text-destructive shrink-0"
                             title="Descartar ticket en espera"
                             aria-label={`Descartar ticket en espera de ${h.selectedCliente?.nombre || 'Público en General'}`}
                           >
-                            <X className="size-3.5" />
+                            <X className="size-4" />
                           </Button>
                         </div>
 
@@ -275,7 +275,7 @@ export const PosCart: React.FC<PosCartProps> = ({
                         onChange={(e) =>
                           onUpdatePrice(item.variacionId, Number(e.target.value))
                         }
-                        className="w-20 h-9 text-xs font-semibold px-2 rounded-md border border-border/70 bg-background text-right"
+                        className="w-20 h-9 text-base md:text-xs font-semibold px-2 rounded-md border border-border/70 bg-background text-right"
                         title="Precio de servicio editable"
                         aria-label={`Precio unitario para servicio ${item.productoNombre}`}
                       />
@@ -293,7 +293,7 @@ export const PosCart: React.FC<PosCartProps> = ({
                             onChange={(e) =>
                               onUpdatePrice(item.variacionId, Number(e.target.value))
                             }
-                            className="w-20 h-9 text-xs font-semibold px-2 rounded-md border border-amber-500/60 bg-amber-500/10 text-foreground text-right"
+                            className="w-20 h-9 text-base md:text-xs font-semibold px-2 rounded-md border border-amber-500/60 bg-amber-500/10 text-foreground text-right"
                             title="Precio especial de oferta"
                             aria-label={`Precio especial para ${item.productoNombre}`}
                           />

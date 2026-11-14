@@ -205,7 +205,7 @@ export const CorteCajaView: React.FC = () => {
                     <Button
                       type="button"
                       variant="outline"
-                      size="xs"
+                      size="sm"
                       onClick={() => setAdminShowExpected(!adminShowExpected)}
                       className="text-xs"
                     >

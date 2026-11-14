@@ -204,7 +204,6 @@ export const VentasHistorial: React.FC = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Buscar por # folio, cliente o cajero..."
-                  className="text-sm"
                 />
               </InputGroup>
             </div>
@@ -312,11 +311,11 @@ export const VentasHistorial: React.FC = () => {
                     <td className="px-4 py-3 text-right">
                       <Button
                         variant="ghost"
-                        size="xs"
-                        className="opacity-70 group-hover:opacity-100 gap-1 text-xs"
+                        size="sm"
+                        className="opacity-80 group-hover:opacity-100 gap-1 text-xs"
                       >
                         <span>Detalle</span>
-                        <ChevronRight className="size-3" />
+                        <ChevronRight data-icon="inline-end" />
                       </Button>
                     </td>
                   </tr>

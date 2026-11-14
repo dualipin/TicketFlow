@@ -99,7 +99,7 @@ export const TallerView: React.FC = () => {
         </Tabs>
 
         <div className="flex flex-wrap items-center gap-2">
-          <InputGroup className="h-8 w-full sm:w-64 bg-background rounded-lg">
+          <InputGroup className="h-9 w-full sm:w-64 bg-background rounded-lg">
             <InputGroupAddon align="inline-start">
               <Search className="size-3.5 text-muted-foreground" />
             </InputGroupAddon>
@@ -109,7 +109,6 @@ export const TallerView: React.FC = () => {
               onChange={(e) => setSearchInput(e.target.value)}
               aria-label="Buscar folio, equipo, cliente o falla"
               placeholder="Buscar folio, equipo, cliente o falla..."
-              className="text-xs"
             />
           </InputGroup>
 
@@ -117,9 +116,9 @@ export const TallerView: React.FC = () => {
             <Button
               type="button"
               variant="ghost"
-              size="xs"
+              size="sm"
               onClick={handleResetFilters}
-              className="text-xs text-muted-foreground hover:text-foreground rounded-lg h-8"
+              className="text-xs text-muted-foreground hover:text-foreground rounded-lg"
             >
               Limpiar
             </Button>

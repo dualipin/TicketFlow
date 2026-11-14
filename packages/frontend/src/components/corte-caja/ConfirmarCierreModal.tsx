@@ -206,7 +206,7 @@ export const ConfirmarCierreModal: React.FC<ConfirmarCierreModalProps> = ({
               }
               rows={3}
               required={evalResult.requiereNotaJustificacion}
-              className="resize-none text-xs"
+              className="resize-none"
             />
           </Field>
 

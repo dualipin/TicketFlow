@@ -121,13 +121,13 @@ export const TicketStatusWorkflow: React.FC<TicketStatusWorkflowProps> = ({
               <Button
                 type="button"
                 variant="outline"
-                size="sm"
+                size="icon-sm"
                 aria-label="Más transiciones de estado"
-                className="size-8 p-0 rounded-lg border-border/80 text-muted-foreground hover:text-foreground"
+                className="rounded-lg border-border/80 text-muted-foreground hover:text-foreground"
               />
             }
           >
-            <MoreHorizontal className="size-3.5" />
+            <MoreHorizontal className="size-4" />
           </PopoverTrigger>
 
           <PopoverContent
@@ -144,7 +144,7 @@ export const TicketStatusWorkflow: React.FC<TicketStatusWorkflowProps> = ({
                 onClick={() => handleApplyStatus(alt.status)}
                 disabled={isPending}
                 className={cn(
-                  'flex items-center justify-between w-full px-2 py-1.5 rounded-lg text-xs text-left transition-colors',
+                  'flex items-center justify-between w-full min-h-8 px-2.5 py-2 rounded-lg text-xs text-left transition-colors',
                   alt.status === 'CANCELADO'
                     ? 'text-destructive hover:bg-destructive/10'
                     : 'text-foreground hover:bg-muted'

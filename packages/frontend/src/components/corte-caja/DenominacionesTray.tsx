@@ -61,9 +61,9 @@ export const DenominacionesTray: React.FC<DenominacionesTrayProps> = ({
             <Button
               type="button"
               variant="ghost"
-              size="xs"
+              size="sm"
               onClick={onReset}
-              className="h-6 text-xs text-muted-foreground hover:text-foreground"
+              className="text-xs text-muted-foreground hover:text-foreground"
             >
               <RotateCcw data-icon="inline-start" />
               Limpiar
@@ -90,7 +90,7 @@ export const DenominacionesTray: React.FC<DenominacionesTrayProps> = ({
                     {subtotal > 0 ? formatCurrencyMxn(subtotal) : '—'}
                   </span>
                 </div>
-                <InputGroup className="h-8">
+                <InputGroup className="h-9">
                   <InputGroupInput
                     id={`denom-${denom}`}
                     ref={(el) => {
@@ -103,7 +103,7 @@ export const DenominacionesTray: React.FC<DenominacionesTrayProps> = ({
                     onChange={(e) => handleQtyChange(denom, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(e, globalIndex)}
                     placeholder="0"
-                    className="h-8 text-center font-mono text-xs font-semibold"
+                    className="h-9 text-center font-mono font-semibold"
                   />
                   <InputGroupAddon align="inline-end" className="pr-2 text-xs text-muted-foreground/70">
                     pz
@@ -141,7 +141,7 @@ export const DenominacionesTray: React.FC<DenominacionesTrayProps> = ({
                     {subtotal > 0 ? formatCurrencyMxn(subtotal) : '—'}
                   </span>
                 </div>
-                <InputGroup className="h-8">
+                <InputGroup className="h-9">
                   <InputGroupInput
                     id={`denom-${denom}`}
                     ref={(el) => {
@@ -154,7 +154,7 @@ export const DenominacionesTray: React.FC<DenominacionesTrayProps> = ({
                     onChange={(e) => handleQtyChange(denom, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(e, globalIndex)}
                     placeholder="0"
-                    className="h-8 text-center font-mono text-xs font-semibold"
+                    className="h-9 text-center font-mono font-semibold"
                   />
                   <InputGroupAddon align="inline-end" className="pr-1.5 text-xs text-muted-foreground/70">
                     pz

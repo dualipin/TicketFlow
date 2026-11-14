@@ -154,7 +154,7 @@ export const ArqueoCajaForm: React.FC<ArqueoCajaFormProps> = ({
                     value={montoRapidoInput}
                     onChange={(e) => setMontoRapidoInput(e.target.value)}
                     placeholder="Total contado en gaveta..."
-                    className="font-mono text-sm font-bold"
+                    className="font-mono md:text-sm font-bold"
                     required
                   />
                 </InputGroup>

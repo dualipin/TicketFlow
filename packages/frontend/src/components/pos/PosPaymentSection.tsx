@@ -291,7 +291,7 @@ export const PosPaymentSection: React.FC<PosPaymentSectionProps> = ({
                     value={montoEfectivoMixto}
                     onChange={(e) => onMontoEfectivoMixtoChange(e.target.value)}
                     placeholder="0.00"
-                    className="pl-7 text-sm font-bold h-9"
+                    className="pl-7 md:text-sm font-bold h-9"
                     aria-label="Porción en efectivo del pago mixto"
                   />
                   <span className="absolute left-2.5 top-2.5 text-xs text-muted-foreground font-semibold">
@@ -314,7 +314,7 @@ export const PosPaymentSection: React.FC<PosPaymentSectionProps> = ({
                     value={montoTarjetaMixto}
                     onChange={(e) => onMontoTarjetaMixtoChange(e.target.value)}
                     placeholder="0.00"
-                    className="pl-7 text-sm font-bold h-9"
+                    className="pl-7 md:text-sm font-bold h-9"
                     aria-label="Porción en tarjeta o transferencia del pago mixto"
                   />
                   <span className="absolute left-2.5 top-2.5 text-xs text-muted-foreground font-semibold">

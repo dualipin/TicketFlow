@@ -40,10 +40,7 @@ export const QueryErrorState: React.FC<QueryErrorStateProps> = ({
         <div className="flex flex-wrap items-center gap-2">
           <AlertTitle className="text-sm font-semibold">{title}</AlertTitle>
           {isSimulated && (
-            <Badge
-              variant="outline"
-              className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 text-xs"
-            >
+            <Badge variant="secondary" className="text-xs">
               Simulación Demo
             </Badge>
           )}

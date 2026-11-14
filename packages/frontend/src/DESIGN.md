@@ -12,7 +12,7 @@ seo:
     - "Collapsible Inset Sidebar navigation (`variant='inset'`) with `Ctrl+B` toggle, active badges, and mobile drawer"
     - "Dual-Theme OKLCH color system — seamless Light and Dark modes with clean neutral surfaces and 1px hairline borders"
     - "KPI Metric Cards (`SectionCards`) powered by container queries (`@container/main`, `@container/card`) and dynamic elevation gradients"
-    - "Inter typography site-wide with mechanical letter-spacing and monospace precision for serials, prices, and barcodes"
+    - "Geist Variable headings and Nunito Sans Variable body typography with responsive root rem scale (17px mobile / 18px desktop) and monospace precision for serials, prices, and barcodes"
     - "Contextual SiteHeader with live cash shift balance (`NumberFlow`), fast shortcuts, and theme switcher (`ModeToggle`)"
   tags:
     - "Developer Tools & SaaS"
@@ -108,25 +108,25 @@ colors:
 
 typography:
   headline:
-    fontFamily: Inter Variable, -apple-system, sans-serif
+    fontFamily: Geist Variable, -apple-system, sans-serif
     fontSize: 28px
     fontWeight: 600
     lineHeight: 1.20
     letterSpacing: -0.6px
   heading-xl:
-    fontFamily: Inter Variable, -apple-system, sans-serif
+    fontFamily: Geist Variable, -apple-system, sans-serif
     fontSize: 24px
     fontWeight: 600
     lineHeight: 1.30
     letterSpacing: -0.4px
   heading-lg:
-    fontFamily: Inter Variable, -apple-system, sans-serif
+    fontFamily: Geist Variable, -apple-system, sans-serif
     fontSize: 20px
     fontWeight: 600
     lineHeight: 1.35
     letterSpacing: -0.3px
   heading-md:
-    fontFamily: Inter Variable, -apple-system, sans-serif
+    fontFamily: Geist Variable, -apple-system, sans-serif
     fontSize: 18px
     fontWeight: 500
     lineHeight: 1.40
@@ -138,14 +138,14 @@ typography:
     lineHeight: 1.50
     letterSpacing: 0
   body-sm:
-    fontFamily: Inter Variable, -apple-system, sans-serif
-    fontSize: 14px
+    fontFamily: Nunito Sans Variable, -apple-system, sans-serif
+    fontSize: "0.875rem (14.88px mobile / 15.75px >= 768px)"
     fontWeight: 400
     lineHeight: 1.50
     letterSpacing: 0
   caption:
-    fontFamily: Inter Variable, -apple-system, sans-serif
-    fontSize: 12px
+    fontFamily: Nunito Sans Variable, -apple-system, sans-serif
+    fontSize: "0.75rem (12.75px mobile / 13.5px >= 768px)"
     fontWeight: 400
     lineHeight: 1.40
     letterSpacing: 0.1px
@@ -159,7 +159,7 @@ typography:
 rounded:
   sm: "calc(var(--radius) - 4px)"
   md: "calc(var(--radius) - 2px)"
-  lg: "var(--radius)" # 0.45rem (7.2px)
+  lg: "var(--radius)" # 0.875rem
   xl: "calc(var(--radius) + 4px)"
   "2xl": "calc(var(--radius) + 8px)"
   "3xl": "calc(var(--radius) + 12px)"

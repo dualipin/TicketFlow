@@ -41,6 +41,17 @@ import {
 } from 'lucide-react';
 import type { ProductoWithDetails } from '../../api/types.ts';
 
+const ESTADO_FILTER_OPTIONS = [
+  { value: 'ACTIVOS', label: 'Activos' },
+  { value: 'ARCHIVADOS', label: 'Archivados' },
+] as const;
+
+const TIPO_FILTER_OPTIONS = [
+  { value: 'ALL', label: 'Todos' },
+  { value: '0', label: 'Productos' },
+  { value: '1', label: 'Servicios' },
+] as const;
+
 export const InventarioView: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingProducto, setEditingProducto] = useState<ProductoWithDetails | null>(null);
@@ -170,55 +181,34 @@ export const InventarioView: React.FC = () => {
         <div className="flex items-center gap-2 flex-wrap">
           {/* Filtro por Estado (Activos vs Archivados) */}
           <div className="flex items-center rounded-lg border border-border bg-muted/40 p-0.5">
-            <Button
-              type="button"
-              variant={estadoFilter === 'ACTIVOS' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setEstadoFilter('ACTIVOS')}
-              className="text-xs px-2.5"
-            >
-              Activos
-            </Button>
-            <Button
-              type="button"
-              variant={estadoFilter === 'ARCHIVADOS' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setEstadoFilter('ARCHIVADOS')}
-              className="text-xs px-2.5"
-            >
-              Archivados
-            </Button>
+            {ESTADO_FILTER_OPTIONS.map((option) => (
+              <Button
+                key={option.value}
+                type="button"
+                variant={estadoFilter === option.value ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setEstadoFilter(option.value)}
+                className="text-xs px-2.5"
+              >
+                {option.label}
+              </Button>
+            ))}
           </div>
 
           {/* Filtro por Tipo */}
           <div className="flex items-center rounded-lg border border-border bg-muted/40 p-0.5">
-            <Button
-              type="button"
-              variant={tipoFilter === 'ALL' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setTipoFilter('ALL')}
-              className="text-xs px-2.5"
-            >
-              Todos
-            </Button>
-            <Button
-              type="button"
-              variant={tipoFilter === '0' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setTipoFilter('0')}
-              className="text-xs px-2.5"
-            >
-              Productos
-            </Button>
-            <Button
-              type="button"
-              variant={tipoFilter === '1' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setTipoFilter('1')}
-              className="text-xs px-2.5"
-            >
-              Servicios
-            </Button>
+            {TIPO_FILTER_OPTIONS.map((option) => (
+              <Button
+                key={option.value}
+                type="button"
+                variant={tipoFilter === option.value ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setTipoFilter(option.value)}
+                className="text-xs px-2.5"
+              >
+                {option.label}
+              </Button>
+            ))}
           </div>
 
           {/* Filtro por Categoría */}

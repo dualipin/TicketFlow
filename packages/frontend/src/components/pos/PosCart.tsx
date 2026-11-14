@@ -5,6 +5,8 @@ import type { HeldCart } from './pos-engine.ts';
 import { CardHeader, CardTitle } from '../ui/card.tsx';
 import { Button } from '../ui/button.tsx';
 import { Badge } from '../ui/badge.tsx';
+import { Input } from '../ui/input.tsx';
+import { cn } from 'cn';
 import {
   Popover,
   PopoverTrigger,
@@ -263,70 +265,66 @@ export const PosCart: React.FC<PosCartProps> = ({
 
                 {/* Manejo de Precio: Servicio directo, Físico protegido con toggle oferta */}
                 <div className="flex items-center gap-1.5">
-                  {item.esServicio ? (
-                    /* Servicio: editable directo */
+                  {item.esServicio || item.isOfferPrice ? (
                     <div className="flex items-center gap-1">
-                      <span className="text-xs text-muted-foreground font-semibold">$</span>
-                      <input
+                      {item.esServicio && (
+                        <span className="text-xs text-muted-foreground font-semibold">$</span>
+                      )}
+                      <Input
                         type="number"
-                        step="10"
+                        step={item.esServicio ? '10' : '5'}
                         min="0"
                         value={item.precioUnit}
                         onChange={(e) =>
                           onUpdatePrice(item.variacionId, Number(e.target.value))
                         }
-                        className="w-20 h-9 text-base md:text-xs font-semibold px-2 rounded-md border border-border/70 bg-background text-right"
-                        title="Precio de servicio editable"
-                        aria-label={`Precio unitario para servicio ${item.productoNombre}`}
+                        className={cn(
+                          'w-20 h-9 md:text-xs font-semibold px-2 rounded-md text-right',
+                          item.esServicio
+                            ? 'border-border/70 bg-background'
+                            : 'border-ring bg-accent'
+                        )}
+                        title={
+                          item.esServicio
+                            ? 'Precio de servicio editable'
+                            : 'Precio especial de oferta'
+                        }
+                        aria-label={
+                          item.esServicio
+                            ? `Precio unitario para servicio ${item.productoNombre}`
+                            : `Precio especial para ${item.productoNombre}`
+                        }
                       />
+                      {!item.esServicio && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onToggleOfferMode(item.variacionId)}
+                          className="size-9 p-0 text-primary"
+                          title="Cerrar ajuste de precio"
+                          aria-label="Cerrar ajuste de precio"
+                        >
+                          ✓
+                        </Button>
+                      )}
                     </div>
                   ) : (
-                    /* Físico: botón de oferta para editar */
                     <div className="flex items-center gap-1">
-                      {item.isOfferPrice ? (
-                        <div className="flex items-center gap-1">
-                          <input
-                            type="number"
-                            step="5"
-                            min="0"
-                            value={item.precioUnit}
-                            onChange={(e) =>
-                              onUpdatePrice(item.variacionId, Number(e.target.value))
-                            }
-                            className="w-20 h-9 text-base md:text-xs font-semibold px-2 rounded-md border border-amber-500/60 bg-amber-500/10 text-foreground text-right"
-                            title="Precio especial de oferta"
-                            aria-label={`Precio especial para ${item.productoNombre}`}
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => onToggleOfferMode(item.variacionId)}
-                            className="size-9 p-0 text-amber-600"
-                            title="Cerrar ajuste de precio"
-                            aria-label="Cerrar ajuste de precio"
-                          >
-                            ✓
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1">
-                          <span className="text-xs font-semibold text-foreground">
-                            ${item.precioUnit.toFixed(2)}
-                          </span>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => onToggleOfferMode(item.variacionId)}
-                            className="size-9 p-0 text-muted-foreground hover:text-amber-500"
-                            title="Aplicar precio especial u oferta"
-                            aria-label={`Aplicar precio especial u oferta para ${item.productoNombre}`}
-                          >
-                            <Tag className="size-3.5" />
-                          </Button>
-                        </div>
-                      )}
+                      <span className="text-xs font-semibold text-foreground">
+                        ${item.precioUnit.toFixed(2)}
+                      </span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onToggleOfferMode(item.variacionId)}
+                        className="size-9 p-0 text-muted-foreground hover:text-primary"
+                        title="Aplicar precio especial u oferta"
+                        aria-label={`Aplicar precio especial u oferta para ${item.productoNombre}`}
+                      >
+                        <Tag className="size-3.5" />
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -337,7 +335,7 @@ export const PosCart: React.FC<PosCartProps> = ({
                     ${(item.precioUnit * item.cantidad).toFixed(2)}
                   </span>
                   {item.isOfferPrice && (
-                    <span className="text-xs text-amber-600 block leading-tight font-medium">
+                    <span className="text-xs text-primary block leading-tight font-medium">
                       Oferta
                     </span>
                   )}

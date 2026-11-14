@@ -95,7 +95,6 @@ export const CreateClienteModal: React.FC<CreateClienteModalProps> = ({
               onChange={(e) => setNombre(e.target.value)}
               placeholder="Ej. Juan Pérez"
               required
-              className="text-xs"
               autoFocus
             />
           </Field>
@@ -107,7 +106,6 @@ export const CreateClienteModal: React.FC<CreateClienteModalProps> = ({
               onChange={(e) => setTelefono(e.target.value)}
               placeholder="Ej. 5512345678"
               required
-              className="text-xs"
             />
           </Field>
 
@@ -118,7 +116,7 @@ export const CreateClienteModal: React.FC<CreateClienteModalProps> = ({
               onChange={(e) => setNotas(e.target.value)}
               placeholder="Dirección, preferencias o comentarios..."
               rows={2}
-              className="text-xs resize-none"
+              className="resize-none"
             />
           </Field>
 

@@ -463,11 +463,11 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
       />
 
       {/* Barra compacta de acciones directas */}
-      <div className="flex flex-wrap items-center gap-1.5">
+      <div className="flex flex-wrap items-center gap-2">
         <Button
           type="button"
           variant="outline"
-          size="xs"
+          size="sm"
           onClick={() => imageInputRef.current?.click()}
           disabled={isProcessingFiles || images.length >= MEDIA_LIMITS.MAX_IMAGES}
         >
@@ -478,7 +478,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
         <Button
           type="button"
           variant="outline"
-          size="xs"
+          size="sm"
           onClick={() =>
             cameraMode === 'PHOTO_PREVIEW' ? stopActiveMedia() : startPhotoCamera()
           }
@@ -491,7 +491,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
         <Button
           type="button"
           variant="outline"
-          size="xs"
+          size="sm"
           onClick={() =>
             audioStatus === 'IDLE' ? startAudioRecording() : stopAudioRecording()
           }
@@ -504,7 +504,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
         <Button
           type="button"
           variant="outline"
-          size="xs"
+          size="sm"
           onClick={() =>
             cameraMode === 'VIDEO_PREVIEW' || cameraMode === 'RECORDING_VIDEO'
               ? stopActiveMedia()
@@ -541,7 +541,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
             <Button
               type="button"
               variant="outline"
-              size="xs"
+              size="sm"
               onClick={handleFlipCamera}
             >
               <RefreshCw data-icon="inline-start" />
@@ -549,7 +549,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
             </Button>
             <Button
               type="button"
-              size="xs"
+              size="sm"
               onClick={handleSnapPhoto}
               disabled={isProcessingFiles}
             >
@@ -562,7 +562,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
 
       {/* Control activo de grabación de audio */}
       {audioStatus !== 'IDLE' && (
-        <div className="flex items-center justify-between gap-3 rounded-xl border border-primary/40 bg-primary/5 px-3 py-2.5">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/40 bg-primary/5 px-3 py-2.5">
           <div className="flex items-center gap-2.5">
             <span className="size-2.5 rounded-full bg-destructive animate-ping" />
             <span className="font-mono tabular-nums text-xs font-semibold text-foreground">
@@ -573,11 +573,11 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
             </Badge>
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             <Button
               type="button"
               variant="outline"
-              size="xs"
+              size="sm"
               onClick={togglePauseAudio}
             >
               {audioStatus === 'PAUSED' ? (
@@ -590,7 +590,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
             <Button
               type="button"
               variant="destructive"
-              size="xs"
+              size="sm"
               onClick={stopAudioRecording}
             >
               <Square data-icon="inline-start" />
@@ -623,13 +623,13 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-1.5">
               {cameraMode === 'VIDEO_PREVIEW' && (
                 <Button
                   type="button"
                   variant="outline"
-                  size="xs"
+                  size="sm"
                   onClick={handleFlipCamera}
                 >
                   <RefreshCw data-icon="inline-start" />
@@ -639,7 +639,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
               <Button
                 type="button"
                 variant="ghost"
-                size="xs"
+                size="sm"
                 onClick={stopActiveMedia}
               >
                 Cancelar
@@ -649,7 +649,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
             {cameraMode === 'VIDEO_PREVIEW' ? (
               <Button
                 type="button"
-                size="xs"
+                size="sm"
                 onClick={startVideoRecording}
               >
                 <Video data-icon="inline-start" />
@@ -659,7 +659,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
               <Button
                 type="button"
                 variant="destructive"
-                size="xs"
+                size="sm"
                 onClick={stopVideoRecording}
               >
                 <Square data-icon="inline-start" />
@@ -683,7 +683,7 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
           <Separator />
           <div className="flex flex-col gap-2">
             {images.length > 0 && (
-              <div className={compact ? 'grid grid-cols-3 gap-2' : 'grid grid-cols-4 gap-2'}>
+              <div className={compact ? 'grid grid-cols-2 sm:grid-cols-3 gap-2' : 'grid grid-cols-2 sm:grid-cols-4 gap-2'}>
                 {images.map((img) => (
                   <div
                     key={img.id}
@@ -695,30 +695,32 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
                       className="size-full object-cover cursor-pointer transition-transform group-hover:scale-105"
                       onClick={() => setLightboxItem(img)}
                     />
-                    <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-background/85 px-1.5 py-1 backdrop-blur-xs">
+                    <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-1 bg-background/85 px-1.5 py-1 backdrop-blur-xs">
                       <span className="text-xs font-mono text-muted-foreground truncate">
                         {formatBytes(img.tamanoBytes)}
                       </span>
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-0.5 shrink-0">
                         <Button
                           type="button"
                           variant="ghost"
-                          size="icon-xs"
+                          size="icon-sm"
                           onClick={() => setLightboxItem(img)}
                           title="Ver imagen completa"
+                          aria-label="Ver imagen completa"
                         >
-                          <Maximize2 className="size-3" />
+                          <Maximize2 className="size-3.5" />
                         </Button>
                         <Button
                           type="button"
                           variant="ghost"
-                          size="icon-xs"
+                          size="icon-sm"
                           className="text-destructive hover:text-destructive"
                           onClick={() => handleRemoveAdjunto(img)}
                           disabled={deleteMutation.isPending}
                           title="Eliminar imagen"
+                          aria-label="Eliminar imagen"
                         >
-                          <Trash2 className="size-3" />
+                          <Trash2 className="size-3.5" />
                         </Button>
                       </div>
                     </div>
@@ -733,8 +735,8 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
                 className="flex items-center justify-between gap-2 rounded-lg border border-border bg-card p-2"
               >
                 <div className="flex items-center gap-2 min-w-0 flex-1">
-                  <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
-                    <Mic className="size-3.5" />
+                  <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+                    <Mic className="size-4" />
                   </div>
                   <audio controls src={aud.url} className="h-8 w-full max-w-xs" preload="metadata" />
                   <div className="hidden sm:flex items-center gap-1.5 shrink-0">
@@ -751,13 +753,14 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
                 <Button
                   type="button"
                   variant="ghost"
-                  size="icon-xs"
+                  size="icon-sm"
                   className="text-destructive hover:text-destructive shrink-0"
                   onClick={() => handleRemoveAdjunto(aud)}
                   disabled={deleteMutation.isPending}
                   title="Eliminar audio"
+                  aria-label="Eliminar audio"
                 >
-                  <Trash2 className="size-3.5" />
+                  <Trash2 className="size-4" />
                 </Button>
               </div>
             ))}
@@ -775,8 +778,8 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
                   className="w-full max-h-48 rounded-md bg-muted object-contain"
                 />
                 <div className="flex items-center justify-between gap-2 px-1">
-                  <div className="flex items-center gap-1.5">
-                    <Film className="size-3.5 text-primary" />
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <Film className="size-3.5 text-primary shrink-0" />
                     <span className="text-xs font-medium text-foreground truncate max-w-44 tracking-tight">
                       {vid.nombreOriginal}
                     </span>
@@ -792,13 +795,14 @@ export const TicketMediaCapture: React.FC<TicketMediaCaptureProps> = ({
                   <Button
                     type="button"
                     variant="ghost"
-                    size="icon-xs"
-                    className="text-destructive hover:text-destructive"
+                    size="icon-sm"
+                    className="text-destructive hover:text-destructive shrink-0"
                     onClick={() => handleRemoveAdjunto(vid)}
                     disabled={deleteMutation.isPending}
                     title="Eliminar video"
+                    aria-label="Eliminar video"
                   >
-                    <Trash2 className="size-3.5" />
+                    <Trash2 className="size-4" />
                   </Button>
                 </div>
               </div>

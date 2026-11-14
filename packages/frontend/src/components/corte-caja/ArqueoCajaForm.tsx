@@ -95,22 +95,22 @@ export const ArqueoCajaForm: React.FC<ArqueoCajaFormProps> = ({
 
           <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
             {/* Conmutador de Modo */}
-            <div className="flex items-center rounded-lg border border-border/70 bg-muted/40 p-0.5 text-xs">
+            <div className="flex items-center gap-1 rounded-lg border border-border/70 bg-muted/40 p-1 text-xs">
               <Button
                 type="button"
                 variant={modoConteo === 'denominacion' ? 'default' : 'ghost'}
-                size="xs"
+                size="sm"
                 onClick={() => handleCambiarModo('denominacion')}
-                className="h-6 text-xs font-medium"
+                className="text-xs font-medium"
               >
                 Bandeja de Billetes
               </Button>
               <Button
                 type="button"
                 variant={modoConteo === 'rapido' ? 'default' : 'ghost'}
-                size="xs"
+                size="sm"
                 onClick={() => handleCambiarModo('rapido')}
-                className="h-6 text-xs font-medium"
+                className="text-xs font-medium"
               >
                 Total Directo
               </Button>

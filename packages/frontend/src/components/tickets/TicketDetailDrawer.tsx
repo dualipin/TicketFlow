@@ -168,13 +168,13 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                           value={costoInput}
                           onChange={(e) => setCostoInput(e.target.value)}
                           aria-label="Costo de reparación"
-                          className="h-7 w-24 text-xs font-mono tabular-nums font-semibold"
+                          className="h-8 w-28 font-mono tabular-nums font-semibold"
                           placeholder="0.00"
                           autoFocus
                         />
                         <Button
                           type="submit"
-                          size="xs"
+                          size="sm"
                           disabled={updateCostoMutation.isPending}
                           className="rounded-md"
                         >
@@ -186,7 +186,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                         <Button
                           type="button"
                           variant="ghost"
-                          size="xs"
+                          size="sm"
                           onClick={() => setIsEditingCosto(false)}
                           className="rounded-md"
                         >
@@ -201,12 +201,12 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                         <Button
                           type="button"
                           variant="ghost"
-                          size="xs"
+                          size="sm"
                           onClick={() => {
                             setCostoInput(String(ticket.costoTotal));
                             setIsEditingCosto(true);
                           }}
-                          className="text-xs text-primary px-2 rounded-md hover:bg-primary/10"
+                          className="text-xs text-primary px-2.5 rounded-md hover:bg-primary/10"
                         >
                           Ajustar
                         </Button>
@@ -246,7 +246,7 @@ export const TicketDetailDrawer: React.FC<TicketDetailDrawerProps> = ({
                       aria-label="Registrar diagnóstico, avance o refacción utilizada"
                       placeholder="Registrar diagnóstico, avance o refacción utilizada..."
                       rows={2}
-                      className="resize-none text-xs"
+                      className="resize-none"
                     />
                   </Field>
 

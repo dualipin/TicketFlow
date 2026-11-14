@@ -88,11 +88,11 @@ export const TicketStatusChanger: React.FC<TicketStatusChangerProps> = ({
             role="radio"
             aria-checked={isCurrent}
             variant={isCurrent ? 'default' : 'outline'}
-            size="xs"
+            size="sm"
             disabled={isCurrent || updateStatus.isPending}
             onClick={() => handleSelect(opt.value)}
             className={cn(
-              'h-7 px-2.5 text-xs select-none rounded-md',
+              'px-3 text-xs select-none rounded-md',
               isCurrent
                 ? 'bg-primary text-primary-foreground cursor-default font-medium'
                 : 'text-muted-foreground hover:text-foreground border-border/80'

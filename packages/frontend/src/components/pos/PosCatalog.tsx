@@ -12,7 +12,7 @@ import {
   EmptyTitle,
   EmptyDescription,
 } from '../ui/empty.tsx';
-import { Barcode, Store, Wrench, Plus, PackageX } from 'lucide-react';
+import { Barcode, Store, Wrench, Plus, PackageX, X } from 'lucide-react';
 
 interface CatalogItemCardProps {
   variacion: VariacionWithProducto;
@@ -129,7 +129,6 @@ export const PosCatalog: React.FC<PosCatalogProps> = ({
                 onChange={(e) => onSearchChange(e.target.value)}
                 onKeyDown={onBarcodeKeyDown}
                 placeholder="Escanear código SKU o buscar por nombre (presiona Enter para agregar)..."
-                className="text-sm"
                 autoFocus
               />
               {searchQuery ? (
@@ -137,13 +136,13 @@ export const PosCatalog: React.FC<PosCatalogProps> = ({
                   <Button
                     type="button"
                     variant="ghost"
-                    size="xs"
+                    size="icon-sm"
                     onClick={() => onSearchChange('')}
-                    className="size-6 p-0 text-muted-foreground hover:text-foreground"
+                    className="text-muted-foreground hover:text-foreground"
                     title="Limpiar búsqueda"
                     aria-label="Limpiar búsqueda"
                   >
-                    ✕
+                    <X className="size-4" />
                   </Button>
                 </InputGroupAddon>
               ) : (
@@ -158,13 +157,13 @@ export const PosCatalog: React.FC<PosCatalogProps> = ({
 
           {/* Filtro de Tipo: Todos, Físicos, Servicios */}
           <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-border/50">
-            <div className="flex items-center gap-1.5">
+            <div className="flex flex-wrap items-center gap-1.5">
               <Button
                 type="button"
                 size="sm"
                 variant={tipoFilter === 'ALL' ? 'default' : 'outline'}
                 onClick={() => onTipoFilterChange('ALL')}
-                className="text-xs h-7.5 px-3"
+                className="text-xs px-3"
               >
                 Todos
               </Button>
@@ -173,7 +172,7 @@ export const PosCatalog: React.FC<PosCatalogProps> = ({
                 size="sm"
                 variant={tipoFilter === 'FISICOS' ? 'default' : 'outline'}
                 onClick={() => onTipoFilterChange('FISICOS')}
-                className="text-xs h-7.5 px-3 gap-1.5"
+                className="text-xs px-3 gap-1.5"
               >
                 <Store className="size-3.5" data-icon="inline-start" />
                 <span>Productos Físicos</span>
@@ -183,7 +182,7 @@ export const PosCatalog: React.FC<PosCatalogProps> = ({
                 size="sm"
                 variant={tipoFilter === 'SERVICIOS' ? 'default' : 'outline'}
                 onClick={() => onTipoFilterChange('SERVICIOS')}
-                className="text-xs h-7.5 px-3 gap-1.5"
+                className="text-xs px-3 gap-1.5"
               >
                 <Wrench className="size-3.5" data-icon="inline-start" />
                 <span>Servicios de Taller</span>
@@ -203,7 +202,7 @@ export const PosCatalog: React.FC<PosCatalogProps> = ({
                 size="sm"
                 variant={selectedCategoriaId === 'ALL' ? 'secondary' : 'ghost'}
                 onClick={() => onSelectCategoria('ALL')}
-                className="text-xs h-7.5 px-3 shrink-0"
+                className="text-xs px-3 shrink-0"
               >
                 Todas las Categorías
               </Button>
@@ -214,7 +213,7 @@ export const PosCatalog: React.FC<PosCatalogProps> = ({
                   size="sm"
                   variant={selectedCategoriaId === cat.id ? 'secondary' : 'ghost'}
                   onClick={() => onSelectCategoria(cat.id)}
-                  className="text-xs h-7.5 px-3 shrink-0"
+                  className="text-xs px-3 shrink-0"
                 >
                   {cat.nombre}
                 </Button>

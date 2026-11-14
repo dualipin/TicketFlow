@@ -129,7 +129,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
               <Button
                 type="button"
                 variant="outline"
-                size="xs"
+                size="sm"
                 onClick={handleCopiarFondoAnterior}
                 className="mt-0.5 w-full text-xs"
               >
@@ -156,7 +156,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
                 onChange={(e) => setMontoInicial(e.target.value)}
                 placeholder="0.00"
                 required
-                className="font-mono text-sm font-semibold"
+                className="font-mono text-base md:text-sm font-semibold"
                 autoFocus
               />
             </InputGroup>
@@ -172,7 +172,7 @@ export const AbrirCajaModal: React.FC<AbrirCajaModalProps> = ({
               onChange={(e) => setNotas(e.target.value)}
               placeholder="Ej. Turno matutino, recibido de Administrador..."
               rows={2}
-              className="resize-none text-xs"
+              className="resize-none"
             />
           </Field>
 

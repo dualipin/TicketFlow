@@ -127,29 +127,29 @@ export const InventarioView: React.FC = () => {
       {/* 2. Tarjetas de Resumen Rápido */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="p-3.5 rounded-xl bg-card border border-border flex flex-col gap-1">
-          <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1.5">
-            <Package className="size-3.5 text-primary" /> Productos Físicos
+          <span className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
+            <Package className="size-3.5 text-primary shrink-0" /> Productos Físicos
           </span>
           <span className="text-xl font-bold text-foreground">{stats.totalProductos}</span>
         </div>
 
         <div className="p-3.5 rounded-xl bg-card border border-border flex flex-col gap-1">
-          <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1.5">
-            <Wrench className="size-3.5 text-primary/80" /> Servicios de Taller
+          <span className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
+            <Wrench className="size-3.5 text-primary/80 shrink-0" /> Servicios de Taller
           </span>
           <span className="text-xl font-bold text-foreground">{stats.totalServicios}</span>
         </div>
 
         <div className="p-3.5 rounded-xl bg-card border border-border flex flex-col gap-1">
-          <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1.5">
-            <Archive className="size-3.5 text-foreground" /> Stock Físico Total
+          <span className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
+            <Archive className="size-3.5 text-foreground shrink-0" /> Stock Físico Total
           </span>
           <span className="text-xl font-bold text-foreground">{stats.totalStock} uds</span>
         </div>
 
         <div className="p-3.5 rounded-xl bg-card border border-border flex flex-col gap-1">
-          <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1.5">
-            <AlertTriangle className="size-3.5 text-destructive" /> Variantes Bajo Stock
+          <span className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
+            <AlertTriangle className="size-3.5 text-destructive shrink-0" /> Variantes Bajo Stock
           </span>
           <span className="text-xl font-bold text-destructive">{stats.bajoStock}</span>
         </div>
@@ -158,12 +158,12 @@ export const InventarioView: React.FC = () => {
       {/* 3. Barra de Búsqueda y Filtros */}
       <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
             placeholder="Buscar por nombre, SKU o variación..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-8 text-xs"
+            className="pl-9"
           />
         </div>
 
@@ -173,18 +173,18 @@ export const InventarioView: React.FC = () => {
             <Button
               type="button"
               variant={estadoFilter === 'ACTIVOS' ? 'default' : 'ghost'}
-              size="xs"
+              size="sm"
               onClick={() => setEstadoFilter('ACTIVOS')}
-              className="text-xs h-7 px-2.5"
+              className="text-xs px-2.5"
             >
               Activos
             </Button>
             <Button
               type="button"
               variant={estadoFilter === 'ARCHIVADOS' ? 'default' : 'ghost'}
-              size="xs"
+              size="sm"
               onClick={() => setEstadoFilter('ARCHIVADOS')}
-              className="text-xs h-7 px-2.5"
+              className="text-xs px-2.5"
             >
               Archivados
             </Button>
@@ -195,27 +195,27 @@ export const InventarioView: React.FC = () => {
             <Button
               type="button"
               variant={tipoFilter === 'ALL' ? 'default' : 'ghost'}
-              size="xs"
+              size="sm"
               onClick={() => setTipoFilter('ALL')}
-              className="text-xs h-7 px-2.5"
+              className="text-xs px-2.5"
             >
               Todos
             </Button>
             <Button
               type="button"
               variant={tipoFilter === '0' ? 'default' : 'ghost'}
-              size="xs"
+              size="sm"
               onClick={() => setTipoFilter('0')}
-              className="text-xs h-7 px-2.5"
+              className="text-xs px-2.5"
             >
               Productos
             </Button>
             <Button
               type="button"
               variant={tipoFilter === '1' ? 'default' : 'ghost'}
-              size="xs"
+              size="sm"
               onClick={() => setTipoFilter('1')}
-              className="text-xs h-7 px-2.5"
+              className="text-xs px-2.5"
             >
               Servicios
             </Button>
@@ -226,7 +226,7 @@ export const InventarioView: React.FC = () => {
             value={categoriaIdFilter}
             onValueChange={(val) => setCategoriaIdFilter(val ?? 'ALL')}
           >
-            <SelectTrigger className="w-[180px] text-xs h-8">
+            <SelectTrigger className="w-full sm:w-[190px] text-xs">
               <SelectValue placeholder="Todas las categorías" />
             </SelectTrigger>
             <SelectContent>
@@ -291,7 +291,7 @@ export const InventarioView: React.FC = () => {
         <div className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-muted/50 border-b border-border text-muted-foreground uppercase text-[10px] tracking-wider font-medium">
+              <thead className="bg-muted/50 border-b border-border text-muted-foreground uppercase text-xs tracking-wider font-medium">
                 <tr>
                   <th className="py-3 px-4">Artículo / Descripción</th>
                   <th className="py-3 px-4">Tipo</th>
@@ -321,11 +321,11 @@ export const InventarioView: React.FC = () => {
                       {/* Artículo */}
                       <td className="py-3 px-4">
                         <div className="flex flex-col gap-0.5">
-                          <span className="font-semibold text-foreground text-xs">
+                          <span className="font-semibold text-foreground text-sm">
                             {prod.nombre}
                           </span>
                           {prod.descripcion && (
-                            <span className="text-[11px] text-muted-foreground line-clamp-1">
+                            <span className="text-xs text-muted-foreground line-clamp-1">
                               {prod.descripcion}
                             </span>
                           )}
@@ -359,11 +359,11 @@ export const InventarioView: React.FC = () => {
                           {prod.variaciones?.map((v) => (
                             <div
                               key={v.id}
-                              className="flex items-center justify-between gap-2 p-1.5 rounded-md bg-muted/40 text-[11px] border border-border/50"
+                              className="flex items-center justify-between gap-2 p-1.5 rounded-md bg-muted/40 text-xs border border-border/50"
                             >
                               <div className="flex items-center gap-1.5 min-w-0">
-                                <span className="font-mono text-muted-foreground bg-background px-1 py-0.5 rounded text-[10px] border border-border flex items-center gap-1 shrink-0">
-                                  <Barcode className="size-2.5" />
+                                <span className="font-mono text-muted-foreground bg-background px-1.5 py-0.5 rounded text-xs border border-border flex items-center gap-1 shrink-0">
+                                  <Barcode className="size-3" />
                                   {v.codigo}
                                 </span>
                                 <span className="text-foreground font-medium truncate">
@@ -375,7 +375,7 @@ export const InventarioView: React.FC = () => {
                                   ${v.precioBase.toFixed(2)}
                                 </span>
                                 {!isServicio && (
-                                  <span className="text-muted-foreground text-[10px]">
+                                  <span className="text-muted-foreground text-xs">
                                     ({v.stock} uds)
                                   </span>
                                 )}
@@ -395,7 +395,7 @@ export const InventarioView: React.FC = () => {
                       {/* Stock Total */}
                       <td className="py-3 px-4 text-right">
                         {isServicio ? (
-                          <span className="text-[11px] text-muted-foreground italic">
+                          <span className="text-xs text-muted-foreground italic">
                             Sin stock (Servicio)
                           </span>
                         ) : (
@@ -423,11 +423,11 @@ export const InventarioView: React.FC = () => {
                             <Button
                               type="button"
                               variant="outline"
-                              size="xs"
+                              size="sm"
                               disabled={reactivarProducto.isPending}
                               onClick={() => handleReactivar(prod)}
                               title="Reactivar producto en catálogo"
-                              className="h-7 px-2 text-xs flex items-center gap-1"
+                              className="text-xs"
                             >
                               <RotateCcw data-icon="inline-start" />
                               Reactivar
@@ -437,22 +437,24 @@ export const InventarioView: React.FC = () => {
                               <Button
                                 type="button"
                                 variant="ghost"
-                                size="icon-xs"
+                                size="icon-sm"
                                 onClick={() => setEditingProducto(prod)}
                                 title="Editar producto"
-                                className="size-7 text-muted-foreground hover:text-foreground"
+                                aria-label="Editar producto"
+                                className="text-muted-foreground hover:text-foreground"
                               >
-                                <Pencil className="size-3.5" />
+                                <Pencil />
                               </Button>
                               <Button
                                 type="button"
                                 variant="ghost"
-                                size="icon-xs"
+                                size="icon-sm"
                                 onClick={() => setDeletingProducto(prod)}
                                 title="Eliminar o archivar"
-                                className="size-7 text-muted-foreground hover:text-destructive"
+                                aria-label="Eliminar o archivar"
+                                className="text-muted-foreground hover:text-destructive"
                               >
-                                <Trash2 className="size-3.5" />
+                                <Trash2 />
                               </Button>
                             </>
                           )}

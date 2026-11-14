@@ -194,8 +194,8 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-200">
-      <Card className="w-full max-w-lg p-6 sm:p-8 rounded-xl border border-border bg-card shadow-none transition-all">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-200">
+      <Card className="my-auto w-full max-w-lg p-6 sm:p-8 rounded-xl border border-border bg-card shadow-none transition-all">
         {/* Header de la Pantalla de Bloqueo */}
         <div className="text-center mb-6">
           <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -204,7 +204,7 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground">
             {selectedUser ? `Hola, ${selectedUser.nombre}` : 'Estación de Trabajo'}
           </h2>
-          <p className="text-xs text-muted-foreground mt-1 font-normal">
+          <p className="text-sm text-muted-foreground mt-1 font-normal">
             {selectedUser
               ? selectedUser.rol === 'ADMIN'
                 ? 'Ingresa tu PIN de 6 dígitos o tu contraseña'
@@ -217,7 +217,7 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
         {errorMessage && (
           <Alert variant="destructive" className="mb-5">
             <AlertCircle className="size-4 shrink-0" />
-            <AlertDescription className="font-medium text-xs">
+            <AlertDescription className="font-medium text-sm">
               {errorMessage}
             </AlertDescription>
           </Alert>
@@ -229,10 +229,10 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
             {isLoadingUsuarios ? (
               <div className="py-12 flex flex-col items-center justify-center gap-2 text-muted-foreground">
                 <Spinner className="size-6 text-primary" />
-                <span className="text-xs">Cargando usuarios activos...</span>
+                <span className="text-sm">Cargando usuarios activos...</span>
               </div>
             ) : usuariosError ? (
-              <div className="py-8 text-center text-xs text-destructive">
+              <div className="py-8 text-center text-sm text-destructive">
                 Error al cargar usuarios. Verifica la conexión con el servidor.
               </div>
             ) : (
@@ -257,7 +257,7 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
                         <div className="flex items-center gap-1.5 mt-0.5">
                           <Badge
                             variant="secondary"
-                            className="text-[10px] gap-1 font-normal rounded-full"
+                            className="gap-1 font-normal rounded-full"
                           >
                             {badge.icon}
                             {badge.label}
@@ -274,8 +274,8 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
           /* PASO 2: Ingreso de PIN / Contraseña */
           <div>
             {/* Tarjeta del usuario seleccionado con botón de volver */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-accent/40 border border-border/60 mb-5">
-              <div className="flex items-center gap-2.5">
+            <div className="flex items-center justify-between gap-2 p-3 rounded-xl bg-accent/40 border border-border/60 mb-5">
+              <div className="flex items-center gap-2.5 min-w-0">
                 <Avatar
                   className={cn(
                     'size-9 rounded-lg flex items-center justify-center font-bold text-xs border shrink-0',
@@ -284,11 +284,11 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
                 >
                   <AvatarFallback>{selectedUser.nombre.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
-                <div>
-                  <div className="font-semibold text-xs text-foreground truncate max-w-[200px]">
+                <div className="min-w-0">
+                  <div className="font-semibold text-sm text-foreground truncate">
                     {selectedUser.nombre}
                   </div>
-                  <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+                  <div className="text-xs text-muted-foreground flex items-center gap-1">
                     {getRoleBadge(selectedUser.rol).label}
                   </div>
                 </div>
@@ -299,9 +299,9 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
                 size="sm"
                 onClick={handleBackToUserList}
                 disabled={isSubmitting}
-                className="h-8 gap-1 text-xs text-muted-foreground hover:text-foreground"
+                className="shrink-0 gap-1 text-xs text-muted-foreground hover:text-foreground"
               >
-                <ArrowLeft className="size-3.5" data-icon="inline-start" />
+                <ArrowLeft data-icon="inline-start" />
                 <span>Cambiar</span>
               </Button>
             </div>
@@ -401,7 +401,7 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
                   </Button>
                 </div>
 
-                <p className="text-[11px] text-muted-foreground mt-3 font-normal">
+                <p className="text-xs text-center text-muted-foreground mt-3 font-normal">
                   Puedes escribir directamente con el teclado numérico de tu PC
                 </p>
               </div>
@@ -409,10 +409,10 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
               /* Sub-vista B: Contraseña tradicional para ADMIN / Remoto */
               <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-4 pt-1">
                 <Field>
-                  <FieldLabel htmlFor="pwd-field" className="text-xs">
+                  <FieldLabel htmlFor="pwd-field">
                     Contraseña tradicional
                   </FieldLabel>
-                  <InputGroup className="h-9">
+                  <InputGroup>
                     <InputGroupInput
                       id="pwd-field"
                       type={showPassword ? 'text' : 'password'}
@@ -427,11 +427,12 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onSuccess }) => {
                       <Button
                         type="button"
                         variant="ghost"
-                        size="icon"
+                        size="icon-sm"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                        className="text-muted-foreground hover:text-foreground"
+                        aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                       >
-                        {showPassword ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
+                        {showPassword ? <EyeOff /> : <Eye />}
                       </Button>
                     </InputGroupAddon>
                   </InputGroup>

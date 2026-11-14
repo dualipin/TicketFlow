@@ -200,7 +200,6 @@
 
   body {
     @apply bg-background text-foreground;
-    letter-spacing: -0.25px;
     font-feature-settings: "calt", "kern", "liga";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -208,6 +207,13 @@
 
   html {
     @apply font-sans;
+    font-size: 17px;
+  }
+
+  @media (min-width: 768px) {
+    html {
+      font-size: 18px;
+    }
   }
 
   [data-slot="button"],

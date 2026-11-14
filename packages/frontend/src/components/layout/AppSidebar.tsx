@@ -216,23 +216,24 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
                 </Avatar>
                 <div className="flex flex-col min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
                   <div className="flex items-center gap-1.5">
-                    <span className="truncate text-xs font-medium text-foreground">
+                    <span className="truncate text-sm font-medium text-foreground">
                       {currentUser.nombre}
                     </span>
                     {getRoleIcon(currentUser.rol)}
                   </div>
-                  <span className="text-[10px] text-muted-foreground truncate">
+                  <span className="text-xs text-muted-foreground truncate">
                     Rol: {currentUser.rol}
                   </span>
                 </div>
                 <Button
                   variant="ghost"
-                  size="icon-xs"
+                  size="icon-sm"
                   onClick={lock}
-                  className="size-6 text-muted-foreground hover:text-foreground shrink-0 group-data-[collapsible=icon]:hidden"
+                  className="text-muted-foreground hover:text-foreground shrink-0 group-data-[collapsible=icon]:hidden"
                   title="Bloquear pantalla o cambiar operador"
+                  aria-label="Bloquear pantalla o cambiar operador"
                 >
-                  <Lock className="size-3" />
+                  <Lock />
                 </Button>
               </div>
             ) : (

@@ -29,7 +29,7 @@ export const DashboardLayout: React.FC = () => {
       />
 
       {/* 2. Floating Inset Content Canvas */}
-      <SidebarInset className="flex flex-col min-w-0">
+      <SidebarInset className="flex flex-col min-w-0 overflow-x-clip">
         {/* Header Bar with SidebarTrigger, Dynamic Route Metadata and Turno Status */}
         <SiteHeader onOpenAbrirCaja={() => setIsAbrirCajaModalOpen(true)} />
 

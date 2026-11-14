@@ -552,7 +552,7 @@ export const PosTerminal: React.FC = () => {
       {/* Layout Principal: Dos Columnas (Catálogo a la izquierda, Carrito a la derecha) */}
       <div className="grid gap-6 lg:grid-cols-12 items-start">
         {/* COLUMNA IZQUIERDA: Catálogo de Variaciones y Servicios (7 cols) */}
-        <div className="lg:col-span-7">
+        <div className="min-w-0 lg:col-span-7">
           <PosCatalog
             searchInputRef={searchInputRef}
             searchQuery={searchQuery}
@@ -570,7 +570,7 @@ export const PosTerminal: React.FC = () => {
         </div>
 
         {/* COLUMNA DERECHA: Carrito de Compras & Cobro (5 cols en pantallas grandes) */}
-        <div className="hidden lg:flex lg:col-span-5 flex-col gap-4">
+        <div className="hidden min-w-0 lg:flex lg:col-span-5 flex-col gap-4">
           <Card className="rounded-xl border-border sticky top-28">
             {cartAndPaymentContent}
           </Card>

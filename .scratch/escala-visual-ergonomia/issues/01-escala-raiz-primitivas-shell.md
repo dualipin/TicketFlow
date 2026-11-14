@@ -4,10 +4,14 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] La base tipográfica del documento escala proporcionalmente textos, espaciados y alturas en `rem` tanto en escritorio como en móvil, y desaparece el tracking negativo comprimido del texto de cuerpo.
-- [ ] Las primitivas compartidas de botón, entrada de texto, pestañas y selectores ofrecen objetivos táctiles cómodos en escritorio y móvil, conservando un tamaño de texto en inputs que evita zoom automático al enfocar en navegadores móviles.
-- [ ] En la barra superior contextual, el menú lateral de navegación (y su cajón móvil) y la pantalla de bloqueo por PIN, los textos rígidos micro en píxeles (`10px`/`11px`) se reemplazan por escala relativa y los controles clave evitan variantes subdimensionadas.
-- [ ] La compilación de producción del frontend pasa sin errores de TypeScript ni de empaquetado.
-- [ ] En inspección en navegador real (desktop `>= 1280px` y mobile `~375px`), el shell y las vistas principales se renderizan sin scroll horizontal no deseado, sin solapamientos y sin rotura de la barra superior.
+- [x] La base tipográfica del documento escala proporcionalmente textos, espaciados y alturas en `rem` tanto en escritorio como en móvil, y desaparece el tracking negativo comprimido del texto de cuerpo.
+- [x] Las primitivas compartidas de botón, entrada de texto, pestañas y selectores ofrecen objetivos táctiles cómodos en escritorio y móvil, conservando un tamaño de texto en inputs que evita zoom automático al enfocar en navegadores móviles.
+- [x] En la barra superior contextual, el menú lateral de navegación (y su cajón móvil) y la pantalla de bloqueo por PIN, los textos rígidos micro en píxeles (`10px`/`11px`) se reemplazan por escala relativa y los controles clave evitan variantes subdimensionadas.
+- [x] La compilación de producción del frontend pasa sin errores de TypeScript ni de empaquetado.
+- [x] En inspección en navegador real (desktop `>= 1280px` y mobile `~375px`), el shell y las vistas principales se renderizan sin scroll horizontal no deseado, sin solapamientos y sin rotura de la barra superior.
+
+## Answer
+
+Implementado en `feat/escala-visual-ergonomia` (`17px` móvil / `18px` `>= 768px` en raíz, `letter-spacing` normal en `body`, primitivas `button`/`input-group`/`sidebar`/`theme-toggle` y shell `SiteHeader`/`AppSidebar`/`DashboardLayout`/`LockScreen`). Verificado en navegador real (`1280x800` y `375x812`) con `scrollDelta = 0`, botones de cabecera `>= 34px` e inputs móviles a `17px`.
